@@ -1,0 +1,56 @@
+[0.1] using /home/manish/Desktop/ML/project/PsyParse/data/raw/Psy-Insight/data/en_data_version7.json
+[0.3] 520 English sessions loaded, no CJK characters
+[0.4] removed 0 sessions with Unknown/empty psychotherapy; 520 remain
+      raw label -> normalized label:
+        'Solution-Focused Brief Therapy'                   -> 'SFBT'  (350)
+        'Psychoanalytic Therapy'                           -> 'Psychoanalytic'  (44)
+        'Cognitive Behaviour Therapy'                      -> 'CBT'  (40)
+        'Client-Centered Therapy'                          -> 'PCT'  (22)
+        'Adlerian Therapy'                                 -> 'Adlerian'  (16)
+        'Family Therapy'                                   -> 'Family'  (10)
+        'Acceptance Commitment Therapy'                    -> 'ACT'  (8)
+        'Marriage and Family Systems Therapy'              -> 'Family Systems'  (8)
+        'Rational Emotive Behavior Therapy'                -> 'REBT'  (8)
+        'Gestalt Therapy'                                  -> 'Gestalt'  (5)
+        'Reality Therapy'                                  -> 'Reality'  (4)
+        'Postmodern Therapy'                               -> 'Postmodern'  (3)
+        'Existential Therapy'                              -> 'Existential'  (2)
+      13 distinct therapy types: {'SFBT': 350, 'Psychoanalytic': 44, 'CBT': 40, 'PCT': 22, 'Adlerian': 16, 'Family': 10, 'ACT': 8, 'Family Systems': 8, 'REBT': 8, 'Gestalt': 5, 'Reality': 4, 'Postmodern': 3, 'Existential': 2}
+[0.5] 135 connected components (chain U client name); largest sizes: [35, 35, 32, 29, 27, 27, 22, 21]
+      rare therapy types kept strictly in DB (<= 5 sessions): ['Existential', 'Gestalt', 'Postmodern', 'Reality']
+      86 eligible small groups (<= 3 sessions, topic present, >= 6 turns)
+      eval=20  dev=4  db=487  (+9 sessions of held-out groups dropped from DB as a leakage guard)
+      18 DB sessions have an empty topic -> bucketed as 'Unknown' in app_table
+      53 cases have empty emotional_states (all labels were Unknown/Others/Neutral) - kept, the embedder skips empty fields
+[0.9] all assertions passed (no empty profiles, >=3 therapy types, >=100 cases, zero overlap on dialog_id / chain / client name, names stripped, no therapy names in techniques)
+
+DB distribution (cases per therapy type):
+  SFBT             334
+  Psychoanalytic   39
+  CBT              34
+  PCT              22
+  Adlerian         16
+  Family           10
+  Family Systems   8
+  REBT             6
+  Gestalt          5
+  ACT              4
+  Reality          4
+  Postmodern       3
+  Existential      2
+
+EVAL distribution:
+  SFBT             12
+  CBT              4
+  ACT              2
+  Psychoanalytic   1
+  REBT             1
+
+DEV distribution:
+  CBT              1
+  ACT              1
+  Psychoanalytic   1
+  REBT             1
+
+Cases with no applicable_conditions: 8
+Held-out groups' extra sessions dropped from DB (leak guard): 9
