@@ -104,3 +104,29 @@ return [self.generate(patient_msg, n=1, temp=_T_SINGLE)[0] for _ in range(n)]
 **Why:** Without a length constraint, the LLMs were generating massive walls of text during the simulated conversations, constantly hitting the 800-token `max_tokens` cap. This caused 429 TPM rate limit errors and made the simulation unrealistic.
 
 **For final submission:** Keep this change. It ensures realistic chat lengths and prevents API token waste.
+
+---
+
+## Change 6: Switched to Gemini API Endpoint
+
+**File:** `.env`
+
+**What was changed:** 
+`DEEPSEEK_BASE_URL` was changed to `https://generativelanguage.googleapis.com/v1beta/openai/`
+`DEEPSEEK_MODEL` was changed to `gemini-1.5-flash`
+
+**Why:** Groq's free tier has a hard Tokens-Per-Day (TPD) limit of 200,000 tokens which was entirely exhausted by a single run of the pipeline. Switched to Google's Gemini API which has a significantly higher free-tier limit.
+
+**For final submission:** This can be kept or reverted depending on which API provider you prefer to use for the final evaluation run.
+
+---
+
+## Change 7: Limited Pipeline to 1 Scenario
+
+**File:** `psyparse/pipeline/run_full.py`
+
+**What was changed:** The main loop was changed from `for idx, scenario in enumerate(scenarios):` to `for idx, scenario in enumerate(scenarios[:1]):`
+
+**Why:** To save time and API costs while debugging. Running all 4 scenarios takes nearly an hour and consumes ~600+ API calls. Slicing to `[:1]` allows us to verify the pipeline works end-to-end on just the first scenario.
+
+**For final submission:** REVERT THIS CHANGE. Change it back to `enumerate(scenarios)` so that the final evaluation runs on all test cases!

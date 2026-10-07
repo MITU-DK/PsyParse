@@ -169,4 +169,7 @@ def run_eval(n_scenarios=None):
 
 
 if __name__ == "__main__":
-    run_eval()
+    n = None
+    if len(sys.argv) > 1:
+        n = int(sys.argv[1])
+    run_eval(n_scenarios=n)

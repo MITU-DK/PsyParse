@@ -55,6 +55,11 @@ def main():
     if skip_stage3:
         print("[info] --skip-stage3 active: running Stage 1+2 only")
 
+    if len(sys.argv) > 1 and sys.argv[-1].isdigit():
+        n = int(sys.argv[-1])
+        scenarios = scenarios[:n]
+        print(f"limiting to first {n} scenarios")
+
     for idx, scenario in enumerate(scenarios):
         topic = scenario.get("topic", "unknown")
         sid = scenario.get("dialog_id", f"scenario_{idx}")
