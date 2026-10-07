@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
 
-root = Path(__file__).resolve().parent.parent
+root = Path(__file__).resolve().parent.parent.parent
 dataDir = root / "data"
 fields = ["core_problems", "emotional_states", "symptoms"]
 defAlpha = 0.5
@@ -82,7 +82,7 @@ def build():
     sessions = loadJson("db_sessions.json")
     ids = [c["dialog_id"] for c in db]
 
-    # step 1.1
+    # extract embeddings
     tok = getattr(getModel(), "tokenizer", None)
     if tok is not None:
         longOnes = sum(1 for c in db if len(tok(" ".join(c["case_profile"][f] for f in fields))["input_ids"]) > 256)
@@ -105,14 +105,14 @@ def build():
     with open(dataDir / "therapy_types.json", "w", encoding="utf-8") as f:
         json.dump(types, f)
 
-    # step 1.2
+    # build faiss index
     index = faiss.IndexFlatIP(emb.shape[1])
     index.add(emb)
     faiss.write_index(index, str(dataDir / "therapy_faiss.index"))
     D, I = index.search(emb[:5], 1)
     print("quick self check, top1 ids:", I[:, 0].tolist())
 
-    # step 1.3
+    # build bm25 index
     docs = []
     for c in db:
         tag = c["therapy_tag"]
