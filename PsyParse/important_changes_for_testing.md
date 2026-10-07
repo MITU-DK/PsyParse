@@ -45,3 +45,62 @@ and meaningful therapy recommendations.
 ---
 
 *Before final submission: restore `_QUESTION_AREAS` to all 5 entries listed above.*
+
+---
+
+## Change 2: Sequential Candidate Generation (Stage 3b)
+
+**File:** `psyparse/agents/therapist_agent.py` — `generate_candidates()`
+
+**What was changed:** Parallel `ThreadPoolExecutor` with `n=4` threads replaced by a sequential loop (`n=1` called 4 times).
+
+**Original (for final submission):**
+```python
+return self.generate(patient_msg, n=n, temp=_T_SINGLE)
+```
+
+**Current (testing only):**
+```python
+return [self.generate(patient_msg, n=1, temp=_T_SINGLE)[0] for _ in range(n)]
+```
+
+**Why:** On Groq's free tier (8,000 TPM), firing 4 concurrent requests per turn causes an immediate 429 rate limit spike. Sequential calls avoid the parallel burst.
+
+**Note:** Revert to `generate(n=4)` when using a paid API (OpenAI, Anthropic) with high TPM limits.
+
+---
+
+## Change 3: `max_tokens` Made Per-Caller (base_agent + therapist_agent)
+
+**File:** `psyparse/agents/base_agent.py` — `_call_api()` and `generate_from()`
+**File:** `psyparse/agents/therapist_agent.py` — `synthesize_guidance()`
+
+**What was changed:** `_call_api` now accepts a `max_tokens` parameter (default=800). `synthesize_guidance` explicitly passes `max_tokens=2000`.
+
+**Why:** Global `max_tokens=800` was truncating the Stage 2 JSON framework synthesis (which needs ~1200+ tokens). This caused `[error] could not parse guidance framework JSON` and `0 frameworks` for every run. Conversational calls (Stage 1/3 chat turns) still use the default 800 which safely fits within Groq's 8k TPM limit.
+
+**For final submission:** Keep this change — it is correct behaviour. On a paid API simply raise the `max_tokens` ceiling further if needed.
+
+---
+
+## Change 4: EvaluationAgent Retry Delay Fixed
+
+**File:** `psyparse/agents/evaluation_agent.py` — `_call_api()`
+
+**What was changed:** `delay = 1.0` → `delay = 10.0`
+
+**Why:** The EvaluationAgent overrode `_call_api` with a 1-second initial delay. After 3 retries (1s+2s+4s = 7s total), it raised `RuntimeError` and crashed the pipeline. Groq's rate limit window resets every ~60s. 10s initial delay (→ 10+20+40=70s total) gives the bucket time to refill.
+
+**For final submission:** Keep this change — it is a bug fix.
+
+---
+
+## Change 5: Conciseness Constraints Added to Agent Prompts
+
+**File:** `psyparse/agents/therapist_agent.py` and `psyparse/agents/patient_agent.py`
+
+**What was changed:** Added `"Keep your response conversational and concise (1-3 sentences)."` to `_ROLLOUT_SYS`, `_BASELINE_SYS`, and `_SEED_TMPL`.
+
+**Why:** Without a length constraint, the LLMs were generating massive walls of text during the simulated conversations, constantly hitting the 800-token `max_tokens` cap. This caused 429 TPM rate limit errors and made the simulation unrealistic.
+
+**For final submission:** Keep this change. It ensures realistic chat lengths and prevents API token waste.

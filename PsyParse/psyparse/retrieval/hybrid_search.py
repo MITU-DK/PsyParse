@@ -48,6 +48,11 @@ def embedFields(items):
             if t and t.strip():
                 flat.append(t)
                 owner.append(i)
+    
+    if not flat:
+        # if the profile is completely empty (e.g. JSON extraction failed), abort to save tokens
+        raise ValueError("Patient profile extraction failed (empty JSON). Skipping scenario.")
+        
     vecs = model.encode(flat, batch_size=32, show_progress_bar=False, convert_to_numpy=True)
     out = np.zeros((len(items), vecs.shape[1]), dtype="float32")
     cnt = np.zeros(len(items))

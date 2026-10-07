@@ -6,7 +6,7 @@ _SEED_TMPL = (
     "You are a person experiencing {topic}. "
     "Your background: {background}. "
     "Opening turn: {opening_turn}. "
-    "Respond naturally as this person would. "
+    "Respond naturally as this person would. Keep your response conversational and concise (1-3 sentences). "
     "If you feel the session has reached a natural conclusion and your issue is "
     "resolved, append the exact string [SESSION_END] to your response."
 )

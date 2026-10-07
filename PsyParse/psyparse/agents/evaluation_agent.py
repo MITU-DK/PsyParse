@@ -44,7 +44,12 @@ _PROFILE_SYS = (
 
 
 def _strip_md(text):
-    # strip markdown ```json ... ``` wrapper before parsing
+    # strip markdown and conversational text by finding the outermost {}
+    start = text.find('{')
+    end = text.rfind('}')
+    if start != -1 and end != -1 and end >= start:
+        return text[start:end+1]
+    # fallback to old stripping method if brackets not found
     text = re.sub(r"```(?:json)?\s*", "", text)
     text = re.sub(r"```", "", text)
     return text.strip()
@@ -64,7 +69,7 @@ class EvaluationAgent(BaseAgent):
         # temperature = 0.0 for deterministic, reproducible scoring
         super().__init__(_SUITABILITY_SYS, temp=0.0)
 
-    def _call_api(self, messages, temp, max_retries=3):
+    def _call_api(self, messages, temp, max_retries=3, max_tokens=1500):
         # critical api fix: enforce JSON mode for all evaluation calls
         from openai import OpenAI
         import os, time
@@ -73,7 +78,7 @@ class EvaluationAgent(BaseAgent):
             api_key=DEEPSEEK_API_KEY,
             base_url=DEEPSEEK_BASE_URL,
         )
-        delay = 1.0
+        delay = 10.0  # match base_agent delay - 1.0 was too short for Groq rate limit window
         last_err = None
         from .base_agent import SafetyFilterError
         for attempt in range(max_retries):
@@ -82,6 +87,7 @@ class EvaluationAgent(BaseAgent):
                     model=self.model,
                     messages=messages,
                     temperature=temp,
+                    max_tokens=max_tokens,
                     response_format={"type": "json_object"},
                     # removed extra_body thinking param - not supported by Groq/Gemini
                 )
