@@ -198,6 +198,9 @@ def scoreTherapies(p, cands, w1=0.5, w2=0.5, retriever=None):
     ret = retriever or getRetriever()
     q = ret.embedProfile(p)
     # live patient gets the majority topic of the retrieved cases (ties go to the better ranked one)
+    if not cands:
+        print("[warn] scoreTherapies received 0 candidates - hybrid retrieval returned empty, skipping scoring")
+        return []
     topic = Counter(c["topic"] for c in cands).most_common(1)[0][0]
     appRow = ret.appTable["app"].get(topic) or ret.appTable["app"].get("Unknown") or {}
     res = []

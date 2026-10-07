@@ -8,8 +8,8 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 # ---- api ----
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
-DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "gemini-3.8-flash")
+DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.groq.com/openai/v1")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "openai/gpt-oss-20b")
 
 # ---- PUBLISHED_PARAMS: do NOT change, from paper Table V ----
 ROLLOUT_ROUNDS = 3

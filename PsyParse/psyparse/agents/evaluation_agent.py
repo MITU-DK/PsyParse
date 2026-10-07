@@ -68,9 +68,10 @@ class EvaluationAgent(BaseAgent):
         # critical api fix: enforce JSON mode for all evaluation calls
         from openai import OpenAI
         import os, time
+        from config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL
         client = OpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY", ""),
-            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+            api_key=DEEPSEEK_API_KEY,
+            base_url=DEEPSEEK_BASE_URL,
         )
         delay = 1.0
         last_err = None
@@ -82,7 +83,7 @@ class EvaluationAgent(BaseAgent):
                     messages=messages,
                     temperature=temp,
                     response_format={"type": "json_object"},
-                    extra_body={"thinking": {"type": "disabled"}},
+                    # removed extra_body thinking param - not supported by Groq/Gemini
                 )
                 tok = resp.usage
                 print(

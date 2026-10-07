@@ -14,3 +14,5 @@ __pycache__/
 
 .agent/
 .pyparse_implementation_plan.md
+PsyParse/changes_due_to_api-limit.md
+PsyParse/important_changes_for_testing.md
