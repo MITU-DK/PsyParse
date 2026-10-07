@@ -58,9 +58,9 @@ class BaseAgent:
 
     # ----- core API call -----
 
-    def _call_api(self, messages, temp, max_retries=3):
+    def _call_api(self, messages, temp, max_retries=3, max_tokens=800):
         client = _get_client()
-        delay = 1.0
+        delay = 10.0
         last_err = None
         for attempt in range(max_retries):
             try:
@@ -68,7 +68,7 @@ class BaseAgent:
                     model=self.model,
                     messages=messages,
                     temperature=temp,
-                    # extra_body={"thinking": {"type": "disabled"}}, # Removed for Gemini compatibility
+                    max_tokens=max_tokens,  # ponytail: caller controls budget; default 800 fits Groq 8k TPM
                 )
                 tok = resp.usage
                 if tok:
@@ -132,9 +132,9 @@ class BaseAgent:
 
     # ----- stateless single call with a one-off messages list -----
 
-    def generate_from(self, messages, temp=None):
+    def generate_from(self, messages, temp=None, max_tokens=800):
         t = temp if temp is not None else self.temp
-        return self._call_api(messages, t)
+        return self._call_api(messages, t, max_tokens=max_tokens)
 
 
 class SafetyFilterError(Exception):

@@ -48,6 +48,11 @@ def embedFields(items):
             if t and t.strip():
                 flat.append(t)
                 owner.append(i)
+    
+    if not flat:
+        # if the profile is completely empty (e.g. JSON extraction failed), abort to save tokens
+        raise ValueError("Patient profile extraction failed (empty JSON). Skipping scenario.")
+        
     vecs = model.encode(flat, batch_size=32, show_progress_bar=False, convert_to_numpy=True)
     out = np.zeros((len(items), vecs.shape[1]), dtype="float32")
     cnt = np.zeros(len(items))
@@ -198,6 +203,9 @@ def scoreTherapies(p, cands, w1=0.5, w2=0.5, retriever=None):
     ret = retriever or getRetriever()
     q = ret.embedProfile(p)
     # live patient gets the majority topic of the retrieved cases (ties go to the better ranked one)
+    if not cands:
+        print("[warn] scoreTherapies received 0 candidates - hybrid retrieval returned empty, skipping scoring")
+        return []
     topic = Counter(c["topic"] for c in cands).most_common(1)[0][0]
     appRow = ret.appTable["app"].get(topic) or ret.appTable["app"].get("Unknown") or {}
     res = []

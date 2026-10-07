@@ -14,9 +14,10 @@ _QUESTION_MATRIX = (
 
 # stage 1 interview mode
 _INTERVIEW_SYS = (
-    "You are a psychological counselor. Ask the following questions systematically:\n"
-    f"{_QUESTION_MATRIX}\n"
-    "Target question to incorporate naturally: {target_q}"
+    "You are a compassionate psychological counselor conducting an intake interview. "
+    "Ask EXACTLY ONE  question to understand the patient's {target_q}. "
+    "Do NOT ask multiple questions in the same message. "
+    "Be warm and conversational, not clinical."
 )
 
 # stage 2 guidance synthesis (one-shot, not stateful)
@@ -27,14 +28,15 @@ _SYNTHESIS_SYS = (
     "You must rely on your internal clinical knowledge to actively generate step-by-step "
     "procedural_steps for how to apply these techniques. "
     "You MUST integrate techniques from at least two distinct therapies from the provided list "
-    "into your final framework. Do not rely solely on the first therapy."
+    "into your final framework. Do not rely solely on the first therapy. "
+    "You must respond ONLY with a valid JSON object, with no conversational text or markdown wrappers."
 )
 
-# stage 3a rollout mode - receives ONLY one therapy's slice
 _ROLLOUT_SYS = (
     "You are a psychological counselor. Using {therapy_type} techniques, specifically "
     "{techniques}, following these procedural steps: {procedural_steps}, and keeping in "
-    "mind the patient's profile: {patient_profile}, respond to the patient."
+    "mind the patient's profile: {patient_profile}, respond to the patient. "
+    "Keep your response conversational, empathetic, and concise (1-3 sentences)."
 )
 
 # stage 3b pruning - same template as rollout but called at T_single=0.7
@@ -44,7 +46,7 @@ _PRUNING_SYS = _ROLLOUT_SYS
 _BASELINE_SYS = (
     "You are a psychological counselor utilizing standard evidence-based counseling "
     "techniques. The patient is dealing with {topic}. Their background is: {background}. "
-    "Provide empathetic and helpful responses."
+    "Provide empathetic and helpful responses. Keep your response conversational and concise (1-3 sentences)."
 )
 
 # T_single for candidate generation (stage 3b)
@@ -79,7 +81,7 @@ class TherapistAgent(BaseAgent):
             {"role": "user", "content": therapy_text},
         ]
         # temp=0.0 not specified for synthesis explicitly, use interview temp
-        return self.generate_from(msgs, temp=self.temp)
+        return self.generate_from(msgs, temp=self.temp, max_tokens=2000)
 
     # ----- stage 3a: rollout -----
     # receives ONLY one therapy slice - do not pass full guidance framework
@@ -107,8 +109,9 @@ class TherapistAgent(BaseAgent):
             patient_profile=patient_profile,
         )
         self.swap_prompt(sys)
-        # parallel n=4 at T_single=0.7 (high temp for diversity)
-        return self.generate(patient_msg, n=n, temp=_T_SINGLE)
+        # sequential loop instead of parallel threads - prevents TPM spike on Groq free tier
+        # ponytail: switch back to generate(n=4) if using a paid API with high TPM limits
+        return [self.generate(patient_msg, n=1, temp=_T_SINGLE)[0] for _ in range(n)]
 
     # ----- baseline mode (no RAG) -----
 

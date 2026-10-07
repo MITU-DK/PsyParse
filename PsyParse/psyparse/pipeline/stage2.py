@@ -20,6 +20,10 @@ def run_stage2(embed_profile, keywords, full_profile):
     # score candidates (M_s + App) entirely in python, no LLM
     scored = scoreTherapies(embed_profile, cands, retriever=ret)
 
+    if not scored:
+        print("[warn] stage2 got 0 scored candidates - patient profile too sparse for retrieval, skipping scenario")
+        raise RuntimeError("stage2 failed: no candidates retrieved - patient profile returned empty embedding match")
+
     # apply tie-breakers before selecting top-k2
     scored.sort(key=_tiebreak_key)
 

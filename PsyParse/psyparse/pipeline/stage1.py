@@ -15,8 +15,8 @@ _QUESTION_AREAS = [
     "emotional triggers",
     "cognitive distortions",
     "behavioral patterns",
-    "interpersonal issues",
-    "therapeutic goals",
+    # "interpersonal issues",  # removed for testing - restore before submission
+    # "therapeutic goals",     # removed for testing - restore before submission
 ]
 
 # required 6-field keys
