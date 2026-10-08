@@ -1,0 +1,151 @@
+{
+  "scenario_id": "000949",
+  "topic": "Job Crisis",
+  "profile": {
+    "core_problems": [
+      "chronic illness and disability",
+      "part-time employment",
+      "financial insecurity",
+      "loneliness",
+      "work-related stress",
+      "physical pain"
+    ],
+    "emotional_states": [
+      "dread",
+      "shame",
+      "loneliness",
+      "crisis",
+      "inadequacy",
+      "frustration",
+      "anxiety",
+      "low self-worth"
+    ],
+    "symptoms": [
+      "fatigue",
+      "joint ache",
+      "migraine",
+      "back ache",
+      "arthritis flare",
+      "physical limitations",
+      "possible depressive symptoms"
+    ],
+    "cognitive_distortions": [
+      "catastrophizing",
+      "all-or-nothing thinking",
+      "overgeneralization",
+      "self-blame",
+      "negative self-talk",
+      "mind reading",
+      "labeling"
+    ],
+    "interpersonal_issues": [
+      "feeling undervalued by coworkers",
+      "feeling burdened by small requests",
+      "isolation after hours",
+      "lack of support"
+    ],
+    "therapeutic_goals": [
+      "reduce anxiety and dread",
+      "challenge and reframe negative thoughts",
+      "develop assertiveness and boundary setting",
+      "improve coping with pain",
+      "build social support network",
+      "enhance self-compassion",
+      "improve work-life balance",
+      "address financial concerns"
+    ]
+  },
+  "keywords": [
+    "feel",
+    "shift",
+    "like",
+    "favor",
+    "physical",
+    "time",
+    "self",
+    "feels",
+    "small",
+    "pain"
+  ],
+  "top_k2": [
+    {
+      "case_id": "000735",
+      "score": 0.6310597050349693,
+      "cos": 0.4873519837856293,
+      "bm25": 0.7747674262843093,
+      "therapy_type": "Psychoanalytic",
+      "techniques": [
+        "respecting parents' viewpoints while counseling adolescents to avoid taking sides and gain favor in therapy",
+        "It is crucial not to side with an adolescent against their parents in an attempt to gain favor. Respect for the parents' viewpoint is essential, even if the adolescent may not appreciate it at the moment",
+        "Depression is characterized by a sense of meaninglessness and loss of direction in life, rather than just sadness. Symptom removal should not be the primary goal; instead, the focus should be on helping the patient engage in self-constructive behaviors. In cases like George's, where the depression is reactive to recent experiences of loss, medication may not be immediately necessary. Regular therapy sessions aim to establish a supportive relationship and aid the patient in exploring and addressing the underlying issues causing distress",
+        "Information",
+        "Reflection of Feelings",
+        "Question",
+        "Providing Suggestions"
+      ],
+      "applicable_conditions": [
+        "Ongoing Depression",
+        "depression",
+        "loneliness",
+        "relationship issues",
+        "fear"
+      ],
+      "topic": "Ongoing Depression",
+      "m_s": 0.4963926672935486,
+      "app": 0.3119406967685835,
+      "s_th": 0.40416668203106604
+    },
+    {
+      "case_id": "000903",
+      "score": 0.7510358095169067,
+      "cos": 0.5020716190338135,
+      "bm25": 1.0,
+      "therapy_type": "SFBT",
+      "techniques": [
+        "the friendly stomach discussion",
+        "This seems to be a very nice example of an indirect compliment that the client takes in by virtue of answering the question",
+        "Normally, in we look for external indicators, external reinforcers of the exception. We ask who would notice. But Robert’s description of things being better is linked to a state that he literally feels inside his stomach. Oftentimes the problem with exceptions like this that are essentially feeling states, is that they are internal, not external. As Robert says here, his friends would not notice. Fortunately, Mom would notice. How do you decide what to do next in situations such as this where the client answers “I don’t know” and both client and observer have described the solution as “feeling better”? Usually feeling state questions do not lead to anything that is externally reinforceable, so I hesitated to focus on feeling better. In the early part of the session it came up as feeling “less” pain and then it came up as “not feeling pain,” and the session began to shift. “It doesn’t ache” is a very different statement than “It would ache less.” After questions following up on what would be happening when it doesn’t ache, the client became more animated and intrigued. The description of the absence of pain made room for the therapist to ask what would be happening instead—the presence of something else instead of the pain— and thereby a description of the solution. Then it follows that the Mother and brothers would notice this, and so you do have some external indicators, reinforcers",
+        "Affirmation and Reassurance",
+        "Question",
+        "Self-disclosure",
+        "Reflection of Feelings"
+      ],
+      "applicable_conditions": [
+        "Ongoing Depression",
+        "depression"
+      ],
+      "topic": "Ongoing Depression",
+      "m_s": 0.525466799736023,
+      "app": 0.261236238228173,
+      "s_th": 0.39335151898209797
+    }
+  ],
+  "framework": {
+    "frameworks": [
+      {
+        "therapy": "Integrated Psychoanalytic & Solution‑Focused Brief Therapy (SFBT)",
+        "techniques": [
+          "Respecting parents' viewpoint while counseling adolescents",
+          "Reflection of feelings",
+          "Questioning (open‑ended)",
+          "Providing suggestions",
+          "Affirmation and reassurance",
+          "Self‑disclosure",
+          "The friendly stomach discussion"
+        ],
+        "procedural_steps": [
+          "1. **Initial Alliance & Family Context** – Begin each session by acknowledging the adolescent’s perspective and simultaneously affirming the parents’ viewpoint. Use a neutral stance to avoid taking sides, thereby building trust with both parties.",
+          "2. **Emotion Exploration** – Invite the adolescent to describe how they feel about recent events. Use reflection of feelings to validate and clarify their emotional state, ensuring they feel heard.",
+          "3. **Identify Exceptions with SFBT Questions** – Ask open‑ended questions such as, “When did you notice that things felt a little better?” or “Who would notice if you felt less pain?” to surface moments when the problem is less intense or absent.",
+          "4. **The Friendly Stomach Discussion** – Explore the internal bodily sensations associated with the exception. Prompt the adolescent to describe what changes in their stomach or body when they feel better, linking internal states to observable changes.",
+          "5. **Affirmation & Reassurance** – Provide positive feedback on the adolescent’s ability to recognize and articulate these exceptions. Reinforce their strengths and resilience.",
+          "6. **Self‑Disclosure (Therapist Modeling)** – Share a brief, relevant personal experience that illustrates how you have navigated similar feelings. This models vulnerability and normalizes the process.",
+          "7. **Constructive Behavior Suggestions** – Offer concrete, self‑constructive actions (e.g., journaling, setting small goals, engaging in a hobby) that the adolescent can try before the next session. Emphasize meaning‑making over symptom removal.",
+          "8. **Collaborative Goal Setting** – Together with the adolescent and, when appropriate, the parents, set one or two achievable goals that reflect the identified exceptions and the suggested behaviors.",
+          "9. **Session Closure & Homework** – Summarize the key insights, confirm the next session’s focus, and assign a brief homework task (e.g., keep a “good day” log). Encourage the adolescent to note any new exceptions or shifts in bodily sensations.",
+          "10. **Follow‑Up & Adjustment** – In the next session, review homework, reinforce progress, and adjust goals or techniques as needed, maintaining the integrated psychoanalytic‑SFBT stance."
+        ]
+      }
+    ]
+  }
+}

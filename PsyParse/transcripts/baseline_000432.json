@@ -1,0 +1,52 @@
+[
+  {
+    "turn": 1,
+    "therapist": "I’m really sorry to hear that you’re feeling this way. It’s tough to feel like you’re being judged, and it’s completely understandable to want to avoid those situations. Let’s explore what’s behind those feelings and find some strategies to help you feel more at ease when you’re out in public.",
+    "patient": "Thanks for understanding. It just feels so overwhelming sometimes. I keep thinking about how I look, and it’s like I can’t shake off the feeling that people are criticizing me. I really want to feel more confident when I’m out, but it’s hard to imagine that right now."
+  },
+  {
+    "turn": 2,
+    "therapist": "It’s completely normal to feel overwhelmed, especially when those thoughts are so persistent. Building confidence takes time, but we can work together on small steps to help shift your focus away from those self-critical thoughts. Let’s talk about some techniques that might help you feel more grounded and confident when you’re out in public.",
+    "patient": "That sounds good, but I’m not sure where to start. Even the thought of trying to focus on anything else feels challenging. I just keep imagining everyone looking at my flaws instead of seeing me as a person."
+  },
+  {
+    "turn": 3,
+    "therapist": "I understand how daunting that can feel, especially when those thoughts are so strong. A good starting point might be to practice grounding techniques, like focusing on your surroundings or your breathing, to help bring your attention back to the present moment. We can also explore ways to challenge those negative thoughts and replace them with more balanced perspectives about yourself. Would you be open to trying some of these techniques together?",
+    "patient": "I guess I could try that, but it feels really hard to believe anything positive about myself right now. When I’m out, my mind just fixates on what I think are my flaws. It’s like a loop that I can’t escape."
+  },
+  {
+    "turn": 4,
+    "therapist": "It’s completely understandable to feel stuck in that loop, especially when negative thoughts seem so powerful. One approach we can try is to identify those specific thoughts and gently challenge them—asking yourself if they’re really true or if there’s another way to view the situation. It might also help to focus on one positive quality or strength you have, no matter how small, and remind yourself of that when those critical thoughts arise. Would you like to explore some of those strengths together?",
+    "patient": "I can try to think of a positive quality, but it feels tough. I usually just focus on what I don’t like about myself. Even if I think of something, it’s hard to hold onto it when I’m feeling so anxious. I just wish I could walk down the street without feeling like everyone is judging me."
+  },
+  {
+    "turn": 5,
+    "therapist": "I hear you, and it’s really challenging to hold onto positive thoughts when anxiety takes over. It might help to start with very small, specific qualities or achievements—like being a good friend or having a unique sense of style. We can also practice some affirmations together that you can repeat to yourself when you’re feeling anxious, to help reinforce those positive thoughts. Remember, it’s okay to take this one step at a time. Would you like to try creating a simple affirmation together?",
+    "patient": "Creating an affirmation sounds like it could help, but I’m worried I’ll just feel silly saying it. I can’t shake the feeling that it won’t make a difference when I’m out there. It’s just so hard to believe anything good about myself when I feel like everyone is focused on my appearance."
+  },
+  {
+    "turn": 6,
+    "therapist": "It’s completely normal to feel a bit silly at first, but affirmations can be powerful tools for shifting your mindset over time. They’re meant to be personal and can be as simple as “I am enough” or “I am more than my appearance.” The key is to practice them regularly, so they start to feel more natural. Let’s work on finding an affirmation that resonates with you, and remember, it’s okay to take small steps—every bit of progress counts! Would you like to brainstorm some together?",
+    "patient": "I guess I can try that, but it feels like a stretch. My mind keeps going back to all the things I don’t like about myself. Maybe something like “I am worthy” could work, but I’m just not sure I believe it. It feels so far from how I see myself when I’m out in public."
+  },
+  {
+    "turn": 7,
+    "therapist": "“I am worthy” is a great start, and it’s okay to feel unsure about it right now. Remember, affirmations are a practice, and it’s normal for them to feel distant at first. You can start by simply repeating it to yourself, even if you don’t fully believe it yet. Over time, as you reinforce that message, it can help shift your perspective. Let’s also think about ways to remind yourself of your worth outside of affirmations—like reflecting on moments when you felt proud or appreciated. Would that be something you’d like to explore?",
+    "patient": "I think reflecting on those moments could be helpful, but it feels hard to remember the last time I felt really good about myself. When I’m out, I just focus on the negative. I want to believe I’m worthy, but it’s tough to shake off those thoughts of judgment from others."
+  },
+  {
+    "turn": 8,
+    "therapist": "It’s understandable to struggle with recalling those positive moments, especially when negative thoughts are so loud. Let’s try to break it down into smaller pieces—think about a time, no matter how small, when you felt even a little bit proud or happy about something you did or how you interacted with someone. It could be as simple as a compliment you received or a task you accomplished. Focusing on these small victories can help create a foundation for building your self-worth. Would you like to share any moments that come to mind, even if they feel minor?",
+    "patient": "I guess there was a time when a friend told me I have a nice smile, but I brushed it off at the time. It felt nice to hear, but I quickly forgot about it because I was so focused on my insecurities. It’s hard to hold onto those moments when my mind is clouded with anxiety."
+  },
+  {
+    "turn": 9,
+    "therapist": "That’s a lovely moment to hold onto, and it’s completely understandable that it got overshadowed by your insecurities. It’s important to acknowledge those compliments, even if they feel small. You might try writing it down and keeping it somewhere visible, so you can remind yourself of it when those anxious thoughts arise. Over time, recognizing and valuing these positive moments can help create a more balanced view of yourself. Would you like to think of other moments or qualities to add to that list?",
+    "patient": "I’ll try to write it down, but it feels like it won’t change how I feel when I’m out. I just keep thinking that no one really sees me for who I am; they only notice what I don’t like about myself. It’s frustrating because I want to believe those positive moments matter, but it’s hard to shake the feeling of judgment when I’m walking around."
+  },
+  {
+    "turn": 10,
+    "therapist": "It’s completely valid to feel frustrated, especially when those feelings of judgment seem so overwhelming. Remember, it takes time to shift those ingrained thoughts, and it’s okay to feel conflicted about it. Writing down positive moments is a step in the right direction, and it can serve as a reminder that there are people who see and appreciate you beyond your appearance. We can also explore techniques to help manage those feelings of judgment when you’re out, like focusing on your breathing or finding a mantra to repeat in those moments. Would you be open to trying some of those techniques together?",
+    "patient": "I guess I could try some techniques, but it still feels hard to imagine they would really help. When I’m out, everything just feels so intense, and I can’t seem to pull myself out of that anxious mindset. It’s frustrating because I want to enjoy being out, but those feelings just take over."
+  }
+]

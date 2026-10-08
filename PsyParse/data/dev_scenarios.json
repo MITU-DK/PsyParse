@@ -1,0 +1,522 @@
+[
+  {
+    "dialog_id": "000469",
+    "theme": "investigating marked mood variations",
+    "psychotherapy": "Cognitive Behaviour Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "The client struggles with feelings of despair and self-perceived failure when faced with challenges.",
+    "reasoning": "Padesky and Greenberger emphasize the significance of identifying key experiences that support new schemas, rather than overwhelming clients with numerous examples. Clients often hold global negative self-perceptions, failing to recognize the complexity and totality of the self. Self-acceptance involves acknowledging both positive and negative qualities without equating them to self-worth. By fostering self-acceptance, clients can reduce negative emotions and self-criticism, leading to improved emotional well-being.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "You generally see yourself as what you call a ‘can-do guy’.",
+        "id": "39-0",
+        "reasoning": "The therapist is reflecting the client's self-perception as a capable individual, setting the stage for exploring how this belief interacts with moments of perceived failure.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yes, I get things done. When I put my mind to it I usually see it through but then I come up against something I can’t seem to deal with and … I don’t know. I just seem to get all despairing and end up seeing myself as a failure.",
+        "id": "39-1",
+        "observation": "The client expresses a pattern of success followed by feelings of despair and self-perceived failure when faced with challenges, indicating a struggle with maintaining a positive self-view in difficult situations.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How would you like to cope when you come up against something you can’t seem to deal with?",
+        "id": "39-2",
+        "reasoning": "The therapist is prompting the client to consider alternative coping strategies for situations where their usual 'can-do' approach may not yield the desired outcome, encouraging adaptive responses to challenges.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, accept that this is one nut I can’t crack no matter how hard I try and not get all upset about it.",
+        "id": "39-3",
+        "observation": "The client suggests a shift towards acceptance of limitations and refraining from self-blame when faced with insurmountable challenges, indicating a willingness to adopt a more self-compassionate approach.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Would you also like to accept yourself for not being able to crack this particular nut or any other uncrackable nuts that may lie in the future?",
+        "id": "39-4",
+        "reasoning": "The therapist is guiding the client towards extending self-acceptance beyond specific instances of failure, promoting a more general attitude of self-compassion and understanding in the face of challenges.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "That seems much more preferable than calling myself a failure and all that goes with it.",
+        "id": "39-5",
+        "observation": "The client acknowledges the benefits of self-acceptance over self-criticism, indicating a shift towards a more positive and compassionate self-view.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Okay, what would you need to add to your belief ‘I’m a can-do guy’ in order to remind yourself of that?",
+        "id": "39-6",
+        "reasoning": "The therapist is prompting the client to enhance their existing positive belief by incorporating a nuanced perspective that allows for imperfection and self-compassion, fostering a more balanced self-view.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Hmm … Something like ‘I’m a can-do guy but not always’. That seems all right, that might work.",
+        "id": "39-7",
+        "observation": "The client proposes a modified belief that integrates the 'can-do' attitude with acknowledgment of limitations, indicating a willingness to embrace a more realistic and self-compassionate self-concept.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How might you strengthen that belief in your mind?",
+        "id": "39-8",
+        "reasoning": "The therapist is encouraging the client to actively reinforce the revised belief through consistent self-affirmation and reflection, promoting the internalization of a more balanced and self-accepting mindset.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Keep on going over it so when I do come up against the next difficulty it will be my safety net, so to speak.",
+        "id": "39-9",
+        "observation": "The client plans to reinforce the revised belief through regular reflection, aiming to make it a reliable source of self-support during future challenges, indicating a proactive approach to maintaining a positive self-view.",
+        "emotional label": [
+          "Neutral"
+        ]
+      }
+    ],
+    "summary": "The client maintained a 'can-do but not always' diary to track achievements and challenges without self-condemnation. This addition to the client's belief system led to reduced dwelling on failures and setbacks post-therapy. Unlike self-esteem, self-acceptance does not hinge on external validations or global ratings, preserving a stable sense of self across life's circumstances. Therapists play a crucial role in guiding clients towards self-acceptance as a lifelong project, distinct from self-esteem.",
+    "chain_id": 17
+  },
+  {
+    "dialog_id": "000484",
+    "theme": "the ‘tug of war’ exercise",
+    "psychotherapy": "Acceptance Commitment Therapy",
+    "topic": "Partner Relationship Issues",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Client and therapist engage in a tug of war exercise to illustrate a point.",
+    "reasoning": "The client pulls, and the practitioner pulls back equally.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And what do you notice here?",
+        "id": "56-0",
+        "reasoning": "Therapist prompts client to observe the situation.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Every time I pull, you pull back.",
+        "id": "56-1",
+        "observation": "Client notices the pattern of interaction.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Exactly. We could probably do this for some time without much progress. What’s an alternative?",
+        "id": "56-2",
+        "reasoning": "Therapist encourages client to consider alternative approaches.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I could pull harder.",
+        "id": "56-3",
+        "observation": "Client suggests a more forceful approach.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Ok, give that a go. But don’t forget this monster is pretty strong.",
+        "id": "56-4",
+        "reference_labels": "Client pulls harder and the practitioner matches.",
+        "reasoning": "Therapist warns client about potential challenges.",
+        "strategy": [
+          "Providing Suggestions"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What do you notice about pulling harder?",
+        "id": "56-5",
+        "reasoning": "Therapist prompts client to reflect on the effects of their actions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "This is exhausting…",
+        "id": "56-6",
+        "observation": "Client expresses exhaustion.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "I agree. Any other alternatives?",
+        "id": "56-7",
+        "reasoning": "Therapist encourages client to explore further options.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I could drop the rope I guess.",
+        "id": "56-8",
+        "observation": "Client suggests a counter-intuitive move.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Ok, give that a go. And notice I’m still here of course to remind you of everything you would rather forget. What do you notice having dropped the rope?",
+        "id": "56-9",
+        "reasoning": "Therapist guides client through a different approach.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, I’m not in a battle with you.",
+        "id": "56-10",
+        "observation": "Client experiences a shift in perspective.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "True. Notice that you can now move with more freedom. You could focus on other things than just the monster.",
+        "id": "56-11",
+        "reasoning": "Therapist highlights the benefits of the new approach.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      }
+    ],
+    "summary": "While talking, the practitioner fixes the rope – a few times if necessary, until the client picks it up again. The practitioner starts the tug of war again.",
+    "chain_id": 26
+  },
+  {
+    "dialog_id": "000717",
+    "theme": "psychoanalytic therapy: supervisory session 14",
+    "psychotherapy": "Psychoanalytic Therapy",
+    "topic": "Job Crisis",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 1,
+    "background": "A resident therapist felt bored and disconnected during a session with Mr. Clark.",
+    "reasoning": "Supervisory Session 14",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Well, what happened?",
+        "id": "302-0",
+        "reasoning": "The therapist initiates a discussion to understand the resident's experience with Mr. Clark, aiming to uncover the reasons behind the resident therapist's feelings of boredom and disconnection.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "It was very instructive. Mr. Clark came in just as he usually does and told me all the things that had happened to him. It should have been interesting because he had an altercation with a supplier in which he managed to acquit himself very well, but I found myself bored by what he was saying.",
+        "id": "302-1",
+        "observation": "The resident describes feeling bored despite an interesting topic, indicating a lack of engagement and suggesting a disconnect between the resident therapist and Mr. Clark.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That is indeed instructive. What do you make of your mood?",
+        "id": "302-2",
+        "reasoning": "The therapist prompts the resident to reflect on their emotional response to the session, encouraging self-awareness and insight into their feelings of boredom.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "I felt he had left me somehow, and maybe this was his response to being hurt and/or misunderstood last time by me.",
+        "id": "302-3",
+        "observation": "The resident links their feelings of boredom to a perceived emotional distance from Mr. Clark, suggesting a potential underlying issue affecting the therapeutic relationship.",
+        "emotional label": [
+          "Sadness",
+          "Guilty"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Exactly. When you are bored by a patient, it is usually not the content of the session per se that is responsible...",
+        "id": "302-4",
+        "reasoning": "The therapist explains the impact of affective contact on engagement in therapy sessions, highlighting the importance of emotional connection in therapeutic interactions.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "How do you handle a situation like that?",
+        "id": "302-5",
+        "observation": "***",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Don't permit yourself to sink into sullen passivity...",
+        "id": "302-6",
+        "reasoning": "The therapist advises the resident therapist to remain actively engaged and to explore the underlying reasons for the patient's behavior.",
+        "strategy": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "What if your inattentiveness is due to your being tired, or occupied with some problem of your own...",
+        "id": "302-7",
+        "observation": "The resident therapist speculates on potential reasons for the therapist's inattentiveness, suggesting personal issues or fatigue as contributing factors.",
+        "emotional label": [
+          "Anxiety",
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "I have found that the best antidote for preoccupation with myself is a patient who engages me in the therapeutic task...",
+        "id": "302-8",
+        "reasoning": "The therapist shares personal insight on how engaging with patients in therapy can help shift focus away from self-preoccupation, highlighting the therapeutic benefits of patient interaction.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "It could of course be that a patient comes in, sees you looking preoccupied, pale, or pained...",
+        "id": "302-9",
+        "observation": "The resident therapist suggests a scenario where the patient perceives the therapist as preoccupied or distressed, indicating the potential impact of the therapist's demeanor on patient engagement.",
+        "emotional label": [
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Perfectly possible, and that possibility needs to be investigated...",
+        "id": "302-10",
+        "reasoning": "The therapist acknowledges the validity of the resident therapist's scenario and stresses the importance of exploring how patient perceptions can influence the therapeutic relationship and outcomes.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "Anyway, you were bored with Mr. Clark, and you had a pretty good idea why the patient was shutting you out. What did you do?",
+    "chain_id": 136
+  },
+  {
+    "dialog_id": "000949",
+    "theme": "rational emotive behavior therapy: significance of meaningful disputing in rational emotive behavior therapy for client empowerment and growth.",
+    "psychotherapy": "Rational Emotive Behavior Therapy",
+    "topic": "Job Crisis",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A man with a disability struggles with self-depreciation for working part-time.",
+    "reasoning": "Meaningful disputing is crucial in Rational Emotive Behavior Therapy. Howard Young's work with a disabled man who felt inadequate for working part-time demonstrates the effectiveness of making disputes meaningful for clients.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Who’s your favourite baseball player?",
+        "id": "560-0",
+        "reasoning": "The therapist initiates a non-threatening conversation to build rapport and create a comfortable atmosphere for the client to engage in the therapy session.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Pete Rose! He’s number one!",
+        "id": "560-1",
+        "observation": "The client's enthusiastic response indicates a positive emotional connection to the topic, which can be used to explore deeper feelings and beliefs.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Why?",
+        "id": "560-2",
+        "reasoning": "The therapist prompts the client to elaborate on their choice, encouraging self-reflection and providing insight into the client's values and beliefs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "He’s Charlie Hustle. He gives it all and never quits. You can depend on him when the chips are down.",
+        "id": "560-3",
+        "observation": "The client's description of Pete Rose reveals qualities that resonate with the client's values of perseverance and dependability, offering a window into the client's own self-perception.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Let me ask you something – suppose Pete Rose, while sliding into third base, hurt his back so bad he could never play full-time again. He stays in baseball, but only as a pinch hitter. He never plays complete game innings. Would you think less of him and consider him a weakling?",
+        "id": "560-4",
+        "reference_labels": [
+          "[replacement]"
+        ],
+        "reasoning": "The therapist introduces a hypothetical scenario to challenge the client's beliefs about success and worth, aiming to provoke critical thinking and potentially uncover irrational beliefs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "No! He’d be doing what you’d expect: playing until they rip his uniform off.",
+        "id": "560-5",
+        "observation": "The client's response indicates a resilient and accepting attitude towards Pete Rose's hypothetical situation, reflecting a potential shift in the client's perspective on limitations and self-worth.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "But not full-time – he’d be a part-time player, right?",
+        "id": "560-6",
+        "reasoning": "The therapist is using a sports analogy to challenge the client's belief that being part-time diminishes one's value, aiming to provoke critical thinking and dispute irrational beliefs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah.",
+        "id": "560-7",
+        "observation": "The client's agreement indicates a potential openness to considering alternative perspectives and challenging his self-depreciating thoughts.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And you’d still respect him as a man even though he was part-time?",
+        "id": "560-8",
+        "reasoning": "The therapist is prompting the client to reflect on how he views others in similar situations, encouraging empathy and self-reflection to challenge negative self-perceptions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, he’d still be valuable and important to his team but in a different way.",
+        "id": "560-9",
+        "observation": "The client's response demonstrates a shift in perspective, acknowledging the value and importance of individuals regardless of their work status, indicating progress in disputing irrational beliefs.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So why can’t you see yourself in the same way? You were once a full-time worker, but now, because of an injury, you gotta pinch hit – you’re still pretty valuable, or the company wouldn’t want you around – so why consider yourself a weakling?",
+        "id": "560-10",
+        "reasoning": "The therapist is directly challenging the client's self-depreciating beliefs by highlighting his value and contributions, encouraging him to reevaluate his self-perception and recognize his worth despite changes in his work status.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, I see what you mean – that’s a good way to look at it. I’m still in the game, only now it’s as a pinch hitter. I never thought of it in that way, comparing myself to Pete Rose and baseball. When you put it that way, it seems kind of silly to get down on myself.",
+        "id": "560-11",
+        "observation": "The client demonstrates a shift in perspective and a reduction in self-depreciation after engaging in a rational discussion with the therapist, highlighting the effectiveness of Rational Emotive Behavior Therapy in challenging and changing irrational beliefs.",
+        "emotional label": [
+          "Happiness"
+        ]
+      }
+    ],
+    "summary": "Vigorous disputing of irrational beliefs is essential in Rational Emotive Behavior Therapy. Ellis emphasizes the need to confront clients' irrational beliefs with energy and forcefulness to effectively challenge and change these beliefs. The 'friend dispute' technique helps clients recognize their double standards and encourages self-compassion, serving as a model for clients to adopt a vigorous self-disputing style.",
+    "chain_id": 257
+  }
+]

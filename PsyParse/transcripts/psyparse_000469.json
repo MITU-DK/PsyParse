@@ -1,0 +1,27 @@
+[
+  {
+    "turn": 1,
+    "therapist": "I appreciate you sharing that with me. It sounds like those negative thoughts can be really overwhelming, almost like they take control and lead you into that sense of despair. Let’s explore times when you felt differently, maybe even powerful, to help us find ways to challenge those thoughts together.",
+    "patient": "I wish I could say I have a lot of those times, but they feel pretty rare. I can remember a few moments when I felt accomplished, like when I finished a project or received some praise, but they seem to fade quickly once I face a challenge again. It’s hard to hold onto that feeling when the negative thoughts start creeping back in."
+  },
+  {
+    "turn": 2,
+    "therapist": "It's completely understandable that those positive moments can feel fleeting, especially when faced with new challenges. Let's take a closer look at those instances of accomplishment; they are important reminders of your capabilities. We can use those experiences to help you create a stronger sense of self—maybe even practice 'acting as if' you felt that sense of accomplishment in your current challenges. How might you approach your next task with that mindset?",
+    "patient": "I really want to believe that could help, but it feels so hard to tap into that sense of accomplishment when I'm already feeling down. I guess I could try to remember those moments, but it’s like they don’t stick with me when I need them the most. I worry I’ll just end up feeling disappointed again."
+  },
+  {
+    "turn": 3,
+    "therapist": "I hear you, and it’s completely normal to feel hesitant about tapping into those positive memories when you're feeling down. Let's take this one step at a time—what if you started by simply reminding yourself of those accomplishments without the pressure of having to feel the same way? Maybe jotting them down could help them feel more tangible. This way, when negative thoughts creep in, you can refer back to that list as a reminder of your strengths. How does that sound?",
+    "patient": "That sounds like it could be helpful, but I worry that I won't be able to see those accomplishments as anything special when I write them down. It feels like I might just dismiss them and go back to feeling like a failure anyway. I guess I just struggle to believe I can hold onto anything positive for long."
+  },
+  {
+    "turn": 4,
+    "therapist": "It's completely valid to feel that way, especially when you’re in a tough spot. Let’s approach this gently; instead of focusing on the significance of each accomplishment, how about simply acknowledging them as facts? Writing them down doesn’t have to be about judging their worth, but rather recognizing that they exist and that you achieved them. Over time, as you revisit this list, it may help you build a more balanced view of yourself. Remember, it’s okay to take small steps; reinforcing that sense of achievement can happen at your own pace. How would you feel about starting with just one accomplishment?",
+    "patient": "I guess starting with one might not feel as overwhelming. I just worry that even if I write it down, it won’t change how I feel right now. It’s hard to see myself as someone who can achieve things when I feel so stuck. But maybe if I just try to write one down without overthinking it, I could at least give it a shot."
+  },
+  {
+    "turn": 5,
+    "therapist": "That sounds like a great plan! Just focusing on one accomplishment, without the pressure to feel a certain way about it, is a positive step forward. Remember, this is all about practice—each small effort can help shift your perspective over time. Allow yourself the space to feel stuck right now while also recognizing that you have achieved things in the past. You’re taking action by considering this exercise, and that itself is a step towards feeling more empowered. Let’s check in about how that feels for you in our next session, okay?",
+    "patient": "That sounds okay. I’ll try to write down just one accomplishment and see how it goes. I appreciate you being patient with me through this. It feels a bit daunting, but I’ll do my best to give it a shot. Thanks for the support. [SESSION_END]"
+  }
+]

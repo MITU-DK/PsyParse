@@ -3,11 +3,7 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 .env.env
-*.json
 data/raw/
-*.index
-*.pkl
-*.npy
 logs/
 __pycache__/
 .env

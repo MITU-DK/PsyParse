@@ -1,0 +1,22 @@
+[
+  {
+    "turn": 1,
+    "therapist": "I often let them take over; it feels overwhelming, and I struggle to challenge them. It’s like I can’t see any positives when I’m in that headspace.",
+    "patient": "I understand. It can feel like a fog that makes it hard to see anything else. Sometimes, when you're in that space, it’s tough to even remember the positives that might exist. Have you ever tried writing down any small positives, even if they seem insignificant?"
+  },
+  {
+    "turn": 2,
+    "therapist": "No, I haven't really tried that. It feels like there's so much heaviness that even small positives wouldn’t matter much.",
+    "patient": "I get that; it can feel like those small positives aren’t worth acknowledging when everything feels so heavy. But sometimes, even the tiniest things can be a flicker of light in a dark moment. It might be worth a shot, but I totally understand if it feels too difficult right now."
+  },
+  {
+    "turn": 3,
+    "therapist": "I appreciate that perspective. Maybe I can start by jotting down just one small thing each day, even if it feels insignificant. It could be a helpful way to shift my focus, right?",
+    "patient": "That sounds like a solid plan. Just starting with one small thing each day might help you slowly shift your focus, even if it feels challenging. It’s okay if it takes time; small steps can eventually lead to bigger changes. Just be gentle with yourself through the process."
+  },
+  {
+    "turn": 4,
+    "therapist": "Thank you, that makes sense. I’ll try to be patient with myself and see how it goes. I really appreciate your support.",
+    "patient": "You're welcome. It’s great to hear you're willing to give it a try. Just remember, it’s okay to have ups and downs along the way. I’m here if you want to talk more about it anytime. [SESSION_END]"
+  }
+]
