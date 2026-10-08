@@ -93,3 +93,42 @@ class EvaluatorHarness:
             "delta": {k: round(psyparse_scores[k] - baseline_scores[k], 2) for k in baseline_scores},
             "best_therapy": psyparse_result["best_therapy"]
         }
+def main():
+    import sys
+    n_scenarios = int(sys.argv[1]) if len(sys.argv) > 1 else None
+    
+    try:
+        with open("data/eval_scenarios.json", "r", encoding="utf-8") as f:
+            scenarios = json.load(f)
+    except FileNotFoundError:
+        print("Error: data/eval_scenarios.json not found. Did you run data_prep.py or pull the data?")
+        return
+
+    if n_scenarios:
+        scenarios = scenarios[:n_scenarios]
+        
+    print(f"Initializing HybridRetriever...")
+    retriever = HybridRetriever(
+        faiss_path="data/therapy_faiss.index",
+        bm25_path="data/therapy_bm25.pkl",
+        db_path="data/therapy_database.json"
+    )
+    
+    print(f"Initializing EvaluatorHarness...")
+    harness = EvaluatorHarness(retriever=retriever, model=os.getenv("DEEPSEEK_MODEL", "qwen2.5:14b"))
+    
+    results = []
+    os.makedirs("results", exist_ok=True)
+    
+    for i, scenario in enumerate(scenarios):
+        print(f"\nEvaluating scenario {i+1}/{len(scenarios)}...")
+        res = harness.evaluate_scenario(scenario)
+        results.append(res)
+        
+        with open("results/eval_results.json", "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=2)
+            
+    print("\nEvaluation complete! Results saved to results/eval_results.json")
+    
+if __name__ == "__main__":
+    main()
