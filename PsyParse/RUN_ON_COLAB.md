@@ -43,16 +43,14 @@ print("Setup Complete! Ready for evaluation.")
 ---
 
 ## 2. Run the Evaluation
-Once that first cell finishes and prints "Setup Complete!", create a second code cell below it and run your data prep and evaluation:
+Once that first cell finishes and prints "Setup Complete!", create a second code cell below it and run your evaluation:
 
 ```python
 %cd /kaggle/working/PsyParse/PsyParse
-!PYTHONPATH=. python scripts/data_prep.py
 !PYTHONPATH=. python evaluation/run_eval.py 1
-
 ```
 
 ---
 
 
-**Downloading results**: When it finishes, click the little **Folder icon** on the far left sidebar of Colab. Open `PsyParse` -> `PsyParse` -> `results`, hover over `eval_results.json` or `eval_summary.md`, click the three dots, and select **Download**.
+**Downloading results**: When it finishes, click the little **Folder icon** on the far left sidebar of Kaggle/Colab. Navigate to `results`, hover over `eval_results.json` or `eval_summary.md`, click the three dots, and select **Download**.

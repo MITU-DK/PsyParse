@@ -41,15 +41,7 @@ DEEPSEEK_MODEL=qwen2.5:14b
 ```
 *(If you pulled a different model, make sure to change `DEEPSEEK_MODEL` to match, e.g., `qwen2.5:32b`).*
 
-## 5. Run the Data Preparation
-Before running the evaluation, you must prepare the therapeutic vector database:
-
-```bash
-PYTHONPATH=. python scripts/data_prep.py
-```
-This will build the `therapy_vectors.index` needed for the RAG component.
-
-## 6. Run the Evaluation
+## 5. Run the Evaluation
 With everything set up, run the pipeline (e.g., for 6 scenarios):
 
 ```bash
