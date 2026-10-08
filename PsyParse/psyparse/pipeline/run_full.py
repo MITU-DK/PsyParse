@@ -24,13 +24,17 @@ def run_psyparse_pipeline(
     evaluator = EvaluationAgent(model=model)
 
     # Stage 1: Assessment Interview & Profile Extraction
+    print("\n--- Starting PsyParse Pipeline ---")
+    print("Running Stage 1: Patient Interview & Profile Extraction...")
     profile, keywords, intake_history, patient_agent = run_stage_1(
         scenario=scenario,
         patient_model=model,
         therapist_model=model,
     )
+    print("Stage 1 Complete.")
 
     # Stage 2: Multi-Therapy RAG & Framework Synthesis
+    print("Running Stage 2: Multi-Therapy RAG & Guidance Synthesis...")
     therapist_agent = TherapistAgent(mode="interview", model=model)
     selected_therapies, guidance = run_stage_2(
         patient_profile=profile,
@@ -38,8 +42,10 @@ def run_psyparse_pipeline(
         retriever=retriever,
         therapist=therapist_agent,
     )
+    print("Stage 2 Complete.")
 
     # Stage 3a: Multi-Turn Rollout & Selection of T*
+    print(f"Running Stage 3a: Multi-Turn Rollout & Selection (Trying {len(selected_therapies)} candidates)...")
     best_slice, rollout_logs, traj_score = run_stage_3a(
         selected_therapies=selected_therapies,
         guidance_framework=guidance,
@@ -47,8 +53,10 @@ def run_psyparse_pipeline(
         patient=patient_agent,
         evaluator=evaluator,
     )
+    print("Stage 3a Complete.")
 
     # Stage 3b: Pruned Therapy Dialogue
+    print(f"Running Stage 3b: Pruned Therapy Dialogue (Using {best_slice.get('therapy', 'selected therapy')})...")
     full_transcript = run_stage_3b(
         best_therapy_slice=best_slice,
         patient_profile=profile,
@@ -57,6 +65,7 @@ def run_psyparse_pipeline(
         max_turns=max_therapy_turns,
         min_turns=6,
     )
+    print("Stage 3b Complete. Pipeline Finished!\n")
 
     return {
         "scenario_id": scenario.get("dialog_id", "unknown"),
