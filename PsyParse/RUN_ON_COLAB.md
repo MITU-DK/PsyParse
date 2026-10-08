@@ -22,24 +22,22 @@ import subprocess, time, os
 subprocess.Popen(["ollama", "serve"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(3)
 
-# 1. Pull the model
+# Pull the model (change to qwen2.5:32b if on Colab Pro)
 !ollama pull qwen2.5:14b
 
-# 2. Clone the repository
 !rm -rf PsyParse
 !git clone https://github.com/manishsn7340/PsyParse.git
 
-# 3. CRITICAL FIX: Use the double folder path to install requirements!
+# THE FIX: The true path is the double folder!
 !pip install -r PsyParse/PsyParse/requirements.txt
 
-# 4. Create .env inside the nested folder
+# Create .env in the nested folder
 with open('PsyParse/PsyParse/.env', 'w') as f:
     f.write('DEEPSEEK_API_KEY=ollama\n')
     f.write('DEEPSEEK_BASE_URL=http://localhost:11434/v1\n')
     f.write('DEEPSEEK_MODEL=qwen2.5:14b\n')
 
 print("Setup Complete! Ready for evaluation.")
-
 ```
 
 ---
@@ -48,9 +46,9 @@ print("Setup Complete! Ready for evaluation.")
 Once that first cell finishes and prints "Setup Complete!", create a second code cell below it and run your data prep and evaluation:
 
 ```python
-%cd /content/PsyParse/PsyParse
+%cd /kaggle/working/PsyParse/PsyParse
 !PYTHONPATH=. python scripts/data_prep.py
-!PYTHONPATH=. python evaluation/run_eval.py 6
+!PYTHONPATH=. python evaluation/run_eval.py 1
 
 ```
 
