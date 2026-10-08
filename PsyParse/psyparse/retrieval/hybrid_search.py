@@ -28,7 +28,11 @@ class HybridRetriever:
 
         self.faiss_index = faiss.read_index(faiss_path)
         with open(bm25_path, "rb") as f:
-            self.bm25: BM25Okapi = pickle.load(f)
+            bm25_data = pickle.load(f)
+            if isinstance(bm25_data, dict) and "bm25" in bm25_data:
+                self.bm25: BM25Okapi = bm25_data["bm25"]
+            else:
+                self.bm25: BM25Okapi = bm25_data
 
         self.app_table: Dict[str, Dict[str, float]] = {}
         if os.path.exists(app_table_path):
