@@ -2,15 +2,216 @@
   {
     "scenario_id": "000432",
     "topic": "Appearance Anxiety",
-    "baseline_scores": null,
-    "psyparse_scores": null,
-    "delta": null
+    "baseline_scores": {
+      "coherence": 95,
+      "completeness": 90,
+      "humaneness": 98,
+      "technique": 92,
+      "structure": 95,
+      "context_retention": 98
+    },
+    "baseline_turns": 9,
+    "psyparse_scores": {
+      "coherence": 90,
+      "completeness": 85,
+      "humaneness": 95,
+      "technique": 92,
+      "structure": 88,
+      "context_retention": 92
+    },
+    "psyparse_turns": 10,
+    "best_therapy": "Integrated CBT and SFBT",
+    "top_k2": [
+      "CBT",
+      "PCT",
+      "SFBT"
+    ],
+    "delta": {
+      "coherence": -5,
+      "completeness": -5,
+      "humaneness": -3,
+      "technique": 0,
+      "structure": -7,
+      "context_retention": -6
+    }
   },
   {
     "scenario_id": "000443",
     "topic": "Ongoing Depression",
-    "baseline_scores": null,
-    "psyparse_scores": null,
-    "delta": null
+    "baseline_scores": {
+      "coherence": 90,
+      "completeness": 80,
+      "humaneness": 95,
+      "technique": 85,
+      "structure": 92,
+      "context_retention": 88
+    },
+    "baseline_turns": 10,
+    "psyparse_scores": {
+      "coherence": 95,
+      "completeness": 90,
+      "humaneness": 98,
+      "technique": 92,
+      "structure": 95,
+      "context_retention": 98
+    },
+    "psyparse_turns": 10,
+    "best_therapy": "CBT",
+    "top_k2": [
+      "CBT",
+      "SFBT",
+      "Psychoanalytic"
+    ],
+    "delta": {
+      "coherence": 5,
+      "completeness": 10,
+      "humaneness": 3,
+      "technique": 7,
+      "structure": 3,
+      "context_retention": 10
+    }
+  },
+  {
+    "scenario_id": "000459",
+    "topic": "Ongoing Depression",
+    "baseline_scores": {
+      "coherence": 90,
+      "completeness": 80,
+      "humaneness": 95,
+      "technique": 85,
+      "structure": 92,
+      "context_retention": 88
+    },
+    "baseline_turns": 10,
+    "psyparse_scores": {
+      "coherence": 90,
+      "completeness": 85,
+      "humaneness": 95,
+      "technique": 92,
+      "structure": 88,
+      "context_retention": 92
+    },
+    "psyparse_turns": 10,
+    "best_therapy": "CBT + SFBT",
+    "top_k2": [
+      "CBT",
+      "SFBT"
+    ],
+    "delta": {
+      "coherence": 0,
+      "completeness": 5,
+      "humaneness": 0,
+      "technique": 7,
+      "structure": -4,
+      "context_retention": 4
+    }
+  },
+  {
+    "scenario_id": "000468",
+    "topic": "Ongoing Depression",
+    "baseline_scores": {
+      "coherence": 95,
+      "completeness": 90,
+      "humaneness": 98,
+      "technique": 92,
+      "structure": 88,
+      "context_retention": 95
+    },
+    "baseline_turns": 10,
+    "psyparse_scores": {
+      "coherence": 90,
+      "completeness": 80,
+      "humaneness": 95,
+      "technique": 85,
+      "structure": 92,
+      "context_retention": 88
+    },
+    "psyparse_turns": 10,
+    "best_therapy": "CBT",
+    "top_k2": [
+      "CBT",
+      "SFBT",
+      "Psychoanalytic"
+    ],
+    "delta": {
+      "coherence": -5,
+      "completeness": -10,
+      "humaneness": -3,
+      "technique": -7,
+      "structure": 4,
+      "context_retention": -7
+    }
+  },
+  {
+    "scenario_id": "000482",
+    "topic": "Appearance Anxiety",
+    "baseline_scores": {
+      "coherence": 90,
+      "completeness": 85,
+      "humaneness": 95,
+      "technique": 92,
+      "structure": 88,
+      "context_retention": 95
+    },
+    "baseline_turns": 10,
+    "psyparse_scores": {
+      "coherence": 95,
+      "completeness": 90,
+      "humaneness": 98,
+      "technique": 92,
+      "structure": 95,
+      "context_retention": 98
+    },
+    "psyparse_turns": 8,
+    "best_therapy": "PCT + CBT",
+    "top_k2": [
+      "PCT",
+      "CBT",
+      "SFBT"
+    ],
+    "delta": {
+      "coherence": 5,
+      "completeness": 5,
+      "humaneness": 3,
+      "technique": 0,
+      "structure": 7,
+      "context_retention": 3
+    }
+  },
+  {
+    "scenario_id": "000488",
+    "topic": "Ongoing Depression",
+    "baseline_scores": {
+      "coherence": 90,
+      "completeness": 80,
+      "humaneness": 95,
+      "technique": 85,
+      "structure": 92,
+      "context_retention": 88
+    },
+    "baseline_turns": 10,
+    "psyparse_scores": {
+      "coherence": 90,
+      "completeness": 80,
+      "humaneness": 95,
+      "technique": 85,
+      "structure": 92,
+      "context_retention": 88
+    },
+    "psyparse_turns": 10,
+    "best_therapy": "CBT and SFBT Integrated",
+    "top_k2": [
+      "CBT",
+      "SFBT",
+      "Psychoanalytic"
+    ],
+    "delta": {
+      "coherence": 0,
+      "completeness": 0,
+      "humaneness": 0,
+      "technique": 0,
+      "structure": 0,
+      "context_retention": 0
+    }
   }
 ]

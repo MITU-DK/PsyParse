@@ -1,11 +1,8 @@
 import json
-import statistics
-import sys
-from pathlib import Path
+import numpy as np
+from typing import List, Dict, Any
 
-RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
-_METRICS = ["coherence", "completeness", "humaneness", "technique", "structure", "context_retention"]
-_METRIC_LABELS = {
+METRIC_MAP = {
     "coherence": "Coh.",
     "completeness": "Cpl.",
     "humaneness": "Hum.",
@@ -14,73 +11,50 @@ _METRIC_LABELS = {
     "context_retention": "Ctx.",
 }
 
+def aggregate_eval_results(results_path: str = "eval_results.json") -> str:
+    with open(results_path, "r", encoding="utf-8") as f:
+        results: List[Dict[str, Any]] = json.load(f)
 
-def aggregate(results_path=None):
-    path = Path(results_path) if results_path else RESULTS_DIR / "eval_results.json"
-    if not path.exists():
-        sys.exit(f"[error] {path} not found - run run_eval.py first")
+    if not results:
+        return "No evaluation results available."
 
-    with open(path, encoding="utf-8") as f:
-        results = json.load(f)
+    lines = [
+        f"# PsyPARSE Evaluation Summary Across N={len(results)} Scenarios\n",
+        "| Metric | Baseline Mean | PsyPARSE Mean | Mean Δ | StdDev Δ | Target Status |",
+        "| :--- | :---: | :---: | :---: | :---: | :---: |",
+    ]
 
-    # collect deltas per metric, skip failed scenarios
-    deltas = {m: [] for m in _METRICS}
-    baseline_avgs = {m: [] for m in _METRICS}
-    psyparse_avgs = {m: [] for m in _METRICS}
-    valid_count = 0
+    targets = {
+        "coherence": 5.0,
+        "completeness": 8.0,
+        "humaneness": 5.0,
+        "technique": 10.0,
+        "structure": 8.0,
+        "context_retention": 10.0,
+    }
 
-    for r in results:
-        if r.get("delta") is None:
-            continue
-        valid_count += 1
-        for m in _METRICS:
-            deltas[m].append(r["delta"].get(m, 0))
-            if r.get("baseline_scores"):
-                baseline_avgs[m].append(r["baseline_scores"].get(m, 0))
-            if r.get("psyparse_scores"):
-                psyparse_avgs[m].append(r["psyparse_scores"].get(m, 0))
+    for key, abbr in METRIC_MAP.items():
+        base_vals = [r["baseline_scores"][key] for r in results]
+        psy_vals = [r["psyparse_scores"][key] for r in results]
+        deltas = [r["delta"][key] for r in results]
 
-    print(f"\nAggregated over {valid_count}/{len(results)} valid scenarios\n")
+        b_mean = np.mean(base_vals)
+        p_mean = np.mean(psy_vals)
+        d_mean = np.mean(deltas)
+        d_std = np.std(deltas)
 
-    # build summary table
-    lines = []
-    lines.append(f"{'Metric':<14} {'Baseline':>10} {'PsyPARSE':>10} {'Δ Mean':>10} {'Δ StdDev':>10}")
-    lines.append("-" * 58)
+        tgt = targets[key]
+        status = "PASSED" if d_mean >= tgt else "BELOW TARGET"
 
-    for m in _METRICS:
-        label = _METRIC_LABELS[m]
-        b_mean = statistics.mean(baseline_avgs[m]) if baseline_avgs[m] else 0
-        p_mean = statistics.mean(psyparse_avgs[m]) if psyparse_avgs[m] else 0
-        d_mean = statistics.mean(deltas[m]) if deltas[m] else 0
-        d_std = statistics.stdev(deltas[m]) if len(deltas[m]) > 1 else 0
-        lines.append(
-            f"{label:<14} {b_mean:>10.2f} {p_mean:>10.2f} {d_mean:>+10.2f} {d_std:>10.2f}"
-        )
+        lines.append(f"| {abbr} | {b_mean:.2f} | {p_mean:.2f} | {d_mean:+.2f} | {d_std:.2f} | {status} |")
 
-    table = "\n".join(lines)
-    print(table)
+    table_md = "\n".join(lines)
+    import os
+    os.makedirs("results", exist_ok=True)
+    with open("results/summary_table.md", "w", encoding="utf-8") as f:
+        f.write(table_md)
 
-    # save to file
-    summary_path = RESULTS_DIR / "summary_table.md"
-    with open(summary_path, "w", encoding="utf-8") as f:
-        f.write(f"# PsyPARSE Evaluation Summary\n\n")
-        f.write(f"Valid scenarios: {valid_count}/{len(results)}\n\n")
-        f.write("```\n")
-        f.write(table)
-        f.write("\n```\n")
-
-    print(f"\nsummary saved -> {summary_path}")
-
-    # also print per-scenario delta summary
-    print("\nPer-scenario best_therapy selections:")
-    for r in results:
-        sid = r.get("scenario_id", "?")
-        therapy = r.get("best_therapy", "N/A")
-        status = "ok" if r.get("delta") else "FAILED"
-        print(f"  {sid}: {therapy} [{status}]")
-
-    return deltas
-
+    return table_md
 
 if __name__ == "__main__":
-    aggregate()
+    print(aggregate_eval_results())

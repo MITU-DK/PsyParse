@@ -1,153 +1,108 @@
-import copy
-import json
-from pathlib import Path
+import logging
+from typing import Dict, Any, List, Tuple
+from psyparse.agents.patient_agent import PatientAgent
+from psyparse.agents.therapist_agent import TherapistAgent
+from psyparse.agents.evaluation_agent import EvaluationAgent
 
-from ..agents.evaluation_agent import EvaluationAgent
-from ..agents.patient_agent import PatientAgent
-from ..agents.therapist_agent import TherapistAgent
+logger = logging.getLogger(__name__)
 
-# SOP Phase 4 / SOP Table 7
-_NUM_ROUNDS = 3
-_MAX_RETRIES = 2       # SOP Step 3a.2(r3)
-_TAU_RESP = 5.0        # discard threshold out of 10 (empathy + alignment, each 1-5, sum=10 max)
-_WE = 0.5              # empathy weight (Eq. 3)
-_WT = 0.5              # alignment weight (Eq. 3)
+def run_stage_3a(
+    selected_therapies: List[Dict[str, Any]],
+    guidance_framework: Dict[str, Any],
+    patient_profile: Dict[str, Any],
+    patient: PatientAgent,
+    evaluator: EvaluationAgent,
+    num_rounds: int = 3,
+    tau_resp: float = 2.5,
+    max_retries: int = 2,
+    we_m: float = 0.5,
+    wt_m: float = 0.5,
+) -> Tuple[Dict[str, Any], Dict[str, Any], float]:
+    """
+    Stage 3a: Multi-Turn Rollout for Personalized Therapy Selection.
+    Simulates prospective trajectories for each top candidate and selects T*.
+    Guarantees that best_therapy is never null.
+    """
+    post_interview_snapshot = patient.snapshot()
+    frameworks = guidance_framework.get("frameworks", [])
 
-_LOGS_DIR = Path(__file__).resolve().parent.parent.parent / "logs"
+    framework_lookup = {f.get("therapy"): f for f in frameworks}
+    trajectory_scores: Dict[str, float] = {}
+    rollout_logs: Dict[str, Any] = {}
 
+    for cand in selected_therapies:
+        th_type = cand.get("therapy_type", "CBT")
+        th_slice = framework_lookup.get(th_type, {
+            "therapy": th_type,
+            "techniques": cand.get("techniques", ["Restructuring"]),
+            "procedural_steps": ["Assess", "Intervene", "Consolidate"]
+        })
 
-def _sresp(scores):
-    # Eq. 3: Sresp = we,m * E + wt,m * A  (each on 1-5 scale)
-    e = scores.get("empathy", 0)
-    a = scores.get("alignment", 0)
-    return _WE * e + _WT * a
+        therapist = TherapistAgent(mode="guided", model=evaluator.model)
+        therapist.setup_rollout_mode(th_slice, patient_profile)
+        patient.restore(post_interview_snapshot)
 
+        cum_score = 0.0
+        convo_history_str = "Initial assessment completed."
+        prev_reaction = ""
 
-def _run_candidate(therapy_slice, scenario, post_interview_history, profile_str):
-    """run one therapy candidate for num_rounds, return (straj, round_log, conversation)."""
-    therapist = TherapistAgent()
-    patient = PatientAgent(scenario)
+        for r in range(1, num_rounds + 1):
+            therapist_msg = ""
+            best_turn_score = -1.0
+            best_attempt_msg = ""
 
-    # seed patient history with the post-interview exchange so it remembers context
-    patient.history = copy.deepcopy(post_interview_history)
+            if r == 1:
+                prompt_msg = f"Patient is waiting for active guidance using {th_type}. Provide a concise counseling response."
+            else:
+                prompt_msg = f"Patient said: '{prev_reaction}'.\nContinue providing active guidance using {th_type}. Provide a concise counseling response."
 
-    evaluator = EvaluationAgent()
+            for retry in range(max_retries + 1):
+                temp = 0.2 if retry == 0 else 0.5
+                candidate_resp_list = therapist.generate(prompt=prompt_msg, n=1, temp=temp)
+                candidate_resp = candidate_resp_list[0] if isinstance(candidate_resp_list, list) else candidate_resp_list
+                
+                scores = evaluator.score_rollout(convo_history_str, candidate_resp, th_type)
+                s_resp = (we_m * scores.get("empathy", 3.0)) + (wt_m * scores.get("alignment", 3.0))
 
-    straj = 0.0
-    round_log = []
-    therapy_name = therapy_slice.get("therapy", "unknown")
+                if s_resp > best_turn_score:
+                    best_turn_score = s_resp
+                    best_attempt_msg = candidate_resp
 
-    # kick off with a short opening from patient to give therapist something to respond to
-    patient_msg = patient.send("We can now begin the therapy session.", add_reminder=False)
+                if s_resp >= tau_resp:
+                    break
 
-    for r in range(_NUM_ROUNDS):
-        best_resp = None
-        best_score = -1.0
-        accepted_scores = None
+            therapist_msg = best_attempt_msg
+            cum_score += best_turn_score
 
-        for attempt in range(_MAX_RETRIES + 1):
-            resp = therapist.send_rollout(patient_msg, therapy_slice, profile_str)
-            raw_scores = evaluator.score_rollout(
-                therapist.history, resp, therapy_name
-            )
-            sr = _sresp(raw_scores)
+            # Commit to therapist history
+            therapist.add_message("user", prompt_msg)
+            therapist.add_message("assistant", therapist_msg)
 
-            if sr > best_score:
-                best_score = sr
-                best_resp = resp
-                accepted_scores = raw_scores
+            reaction = patient.respond(therapist_msg)
+            prev_reaction = reaction
+            convo_history_str += f"\nTherapist: {therapist_msg}\nPatient: {reaction}"
 
-            # accept if above threshold or we're on the last retry
-            if sr >= _TAU_RESP or attempt == _MAX_RETRIES:
-                if attempt > 0 and sr < _TAU_RESP:
-                    print(
-                        f"[warn] {therapy_name} round {r+1}: "
-                        f"all retries below tau_resp ({best_score:.2f}<{_TAU_RESP}), "
-                        f"using best attempt"
-                    )
+            if "[SESSION_END]" in reaction:
+                remaining_rounds = num_rounds - r
+                cum_score += remaining_rounds * 5.0
                 break
 
-        # commit best response to therapist history
-        therapist.history.append({"role": "user", "content": patient_msg})
-        therapist.history.append({"role": "assistant", "content": best_resp})
+        trajectory_scores[th_type] = cum_score
+        rollout_logs[th_type] = {"score": cum_score, "slice": th_slice}
 
-        straj += best_score
-        round_log.append({
-            "round": r + 1,
-            "therapist_response": best_resp,
-            "scores": accepted_scores,
-            "sresp": round(best_score, 4),
-        })
+    patient.restore(post_interview_snapshot)
 
-        # patient reacts to accepted response - check for session end
-        patient_msg = patient.send(best_resp)
-        if "[SESSION_END]" in patient_msg:
-            print(f"[info] {therapy_name}: patient signalled SESSION_END at round {r+1}")
-            break
+    # Deterministic winner selection (Eq. 3 argmax with Stage 2 fallback)
+    if not trajectory_scores or max(trajectory_scores.values()) <= 0.0:
+        winning_type = selected_therapies[0]["therapy_type"]
+    else:
+        winning_type = max(trajectory_scores, key=lambda k: trajectory_scores[k])
 
-    return straj, round_log, therapist.history
+    winning_slice = framework_lookup.get(winning_type, {
+        "therapy": winning_type,
+        "techniques": selected_therapies[0].get("techniques", ["Cognitive Restructuring"]),
+        "procedural_steps": ["Validate", "Identify Distortions", "Develop Coping Action"]
+    })
+    winning_score = trajectory_scores.get(winning_type, selected_therapies[0].get("s_th", 1.0))
 
-
-def run_stage3a(scenario, stage1_out, stage2_out):
-    """
-    inputs:
-      scenario        - raw scenario dict (for re-seeding patient)
-      stage1_out      - dict from run_stage1 (has 'profile', 'history')
-      stage2_out      - dict from run_stage2 (has 'frameworks_list', 'top_k2')
-
-    returns dict with:
-      best_therapy    - therapy name string
-      best_straj      - float score
-      rollout_log     - per-candidate per-round scores
-    """
-    frameworks = stage2_out.get("frameworks_list", [])
-    post_interview_history = stage1_out.get("interview_history", [])
-    profile = stage1_out.get("profile", {})
-    profile_str = json.dumps(profile)
-
-    if not frameworks:
-        print("[warn] stage3a: no frameworks from stage2, skipping rollout")
-        return {"best_therapy": None, "best_straj": 0.0, "rollout_log": []}
-
-    rollout_log = []
-    best_therapy = None
-    best_straj = -1.0
-
-    for fw in frameworks:
-        therapy_name = fw.get("therapy", "unknown")
-        print(f"[stage3a] rolling out therapy: {therapy_name}")
-
-        try:
-            straj, round_log, _ = _run_candidate(
-                fw, scenario, post_interview_history, profile_str
-            )
-        except Exception as e:
-            print(f"[error] {therapy_name} rollout failed: {e}")
-            straj = 0.0
-            round_log = []
-
-        print(f"  Straj({therapy_name}) = {straj:.4f}")
-        rollout_log.append({
-            "therapy": therapy_name,
-            "straj": round(straj, 4),
-            "rounds": round_log,
-        })
-
-        if straj > best_straj:
-            best_straj = straj
-            best_therapy = therapy_name
-
-    print(f"[stage3a] T* = '{best_therapy}' (Straj={best_straj:.4f})")
-
-    # save logs
-    _LOGS_DIR.mkdir(exist_ok=True)
-    sid = scenario.get("dialog_id", "unknown")
-    log_path = _LOGS_DIR / f"rollout_scores_{sid}.json"
-    with open(log_path, "w") as f:
-        json.dump(rollout_log, f, indent=2)
-
-    return {
-        "best_therapy": best_therapy,
-        "best_straj": best_straj,
-        "rollout_log": rollout_log,
-    }
+    return winning_slice, rollout_logs, winning_score

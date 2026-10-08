@@ -1,121 +1,144 @@
-from .base_agent import BaseAgent
+import json
+import logging
+from typing import List, Dict, Any, Optional
+from psyparse.agents.base_agent import BaseAgent
 
-# ---- prompt templates ----
-
-# 5-area question matrix: emotional triggers, cognitive distortions, behavioral patterns,
-# interpersonal issues, therapeutic goals
-_QUESTION_MATRIX = (
-    "1. What situations or events tend to trigger or worsen how you've been feeling?\n"
-    "2. When you're feeling this way, what kinds of thoughts tend to run through your mind?\n"
-    "3. How has this been affecting your daily routines and activities?\n"
-    "4. How has this been impacting your relationships with others?\n"
-    "5. What would you like to feel or be able to do differently by the end of our work together?"
-)
-
-# stage 1 interview mode
-_INTERVIEW_SYS = (
-    "You are a compassionate psychological counselor conducting an intake interview. "
-    "Ask EXACTLY ONE  question to understand the patient's {target_q}. "
-    "Do NOT ask multiple questions in the same message. "
-    "Be warm and conversational, not clinical."
-)
-
-# stage 2 guidance synthesis (one-shot, not stateful)
-_SYNTHESIS_SYS = (
-    "You are a psychological counselor. Given these retrieved therapies, output a structured "
-    "framework: {\"frameworks\": [{\"therapy\": \"...\", \"techniques\": [...], "
-    "\"procedural_steps\": [...]}]}. "
-    "You must rely on your internal clinical knowledge to actively generate step-by-step "
-    "procedural_steps for how to apply these techniques. "
-    "You MUST integrate techniques from at least two distinct therapies from the provided list "
-    "into your final framework. Do not rely solely on the first therapy. "
-    "You must respond ONLY with a valid JSON object, with no conversational text or markdown wrappers."
-)
-
-_ROLLOUT_SYS = (
-    "You are a psychological counselor. Using {therapy_type} techniques, specifically "
-    "{techniques}, following these procedural steps: {procedural_steps}, and keeping in "
-    "mind the patient's profile: {patient_profile}, respond to the patient. "
-    "Keep your response conversational, empathetic, and concise (1-3 sentences)."
-)
-
-# stage 3b pruning - same template as rollout but called at T_single=0.7
-_PRUNING_SYS = _ROLLOUT_SYS
-
-# baseline counselor - no RAG, no therapy label
-_BASELINE_SYS = (
-    "You are a psychological counselor utilizing standard evidence-based counseling "
-    "techniques. The patient is dealing with {topic}. Their background is: {background}. "
-    "Provide empathetic and helpful responses. Keep your response conversational and concise (1-3 sentences)."
-)
-
-# T_single for candidate generation (stage 3b)
-_T_SINGLE = 0.7
-
+logger = logging.getLogger(__name__)
 
 class TherapistAgent(BaseAgent):
-    def __init__(self):
-        # start in interview mode with temp=0.2
-        sys_prompt = _INTERVIEW_SYS.format(target_q="emotional triggers")
-        super().__init__(sys_prompt, temp=0.2)
+    """
+    Therapist Agent orchestrating:
+      1) Stage 1: Structured Diagnostic Interview via Question Matrix.
+      2) Stage 2: Synthesis of a Multi-Therapy Guidance Framework.
+      3) Stage 3a: Technique-Guided Multi-Turn Rollout.
+      4) Stage 3b: Response Branch Generation.
+    """
+    def __init__(
+        self,
+        mode: str = "interview",
+        model: Optional[str] = None,
+        temperature: float = 0.2,
+    ):
+        system_prompt = self._get_interview_prompt() if mode == "interview" else "You are an expert psychological counselor."
+        super().__init__(system_prompt=system_prompt, model=model, temperature=temperature)
 
-    # ----- stage 1: interview -----
-    # caller updates target_q each turn to cycle through the 5 question areas
-
-    def send_interview(self, patient_msg, target_q):
-        self.swap_prompt(_INTERVIEW_SYS.format(target_q=target_q))
-        return self.send(patient_msg)
-
-    # ----- stage 2: guidance synthesis -----
-    # stateless - does not touch history
-
-    def synthesize_guidance(self, therapies):
-        # therapies: list of dicts with therapy_type, techniques, applicable_conditions
-        therapy_text = "\n".join(
-            f"- {t['therapy_type']}: techniques={t.get('techniques', [])}, "
-            f"conditions={t.get('applicable_conditions', [])}"
-            for t in therapies
+    def _get_interview_prompt(self) -> str:
+        return (
+            "You are a professional psychological counselor conducting an initial structured intake assessment. "
+            "Your objective is to explore the patient's core problems, emotional states, symptoms, cognitive distortions, "
+            "interpersonal issues, and therapeutic goals with warmth, validation, and active listening. "
+            "Ask exactly ONE clear, empathetic, and open-ended target question per turn."
         )
-        msgs = [
-            {"role": "system", "content": _SYNTHESIS_SYS},
-            {"role": "user", "content": therapy_text},
+
+    def conduct_interview_turn(self, target_question: str, patient_last_response: Optional[str] = None) -> str:
+        instruction = (
+            f"Target assessment focus for this turn: '{target_question}'.\n"
+            "Acknowledge and empathize with what the patient just shared, then naturally incorporate the target question. "
+            "Do NOT ask multiple questions. Focus solely on this single question."
+        )
+        if patient_last_response:
+            return self.send(f"{patient_last_response}\n\n[Instruction: {instruction}]")
+        return self.send(f"[Instruction: {instruction}]")
+
+    def synthesize_guidance(self, top_therapies: List[Dict[str, Any]], patient_profile: Dict[str, Any]) -> Dict[str, Any]:
+        prompt = (
+            "You are a master clinical supervisor. Synthesize a unified, multi-therapy counseling guidance framework "
+            "tailored to the following patient profile:\n"
+            f"{json.dumps(patient_profile, indent=2)}\n\n"
+            f"Candidate therapies retrieved: {json.dumps(top_therapies, indent=2)}\n\n"
+            "Requirements:\n"
+            "1. You MUST integrate techniques from at least two distinct therapies.\n"
+            "2. Provide explicit step-by-step 'procedural_steps' for the therapist to apply.\n"
+            "3. Output strictly valid JSON with this exact schema:\n"
+            "{\n"
+            '  "frameworks": [\n'
+            '    {\n'
+            '      "therapy": "Therapy Name",\n'
+            '      "techniques": ["Technique 1", "Technique 2"],\n'
+            '      "procedural_steps": ["Step 1: ...", "Step 2: ..."]\n'
+            "    }\n"
+            "  ]\n"
+            "}\n"
+            "Respond ONLY with valid JSON."
+        )
+        raw = self.generate(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            response_format={"type": "json_object"}
+        )
+        try:
+            cleaned = self._clean_json(raw)
+            data = json.loads(cleaned)
+            if "frameworks" in data and len(data["frameworks"]) >= 1:
+                return data
+        except Exception as e:
+            logger.error("Failed to parse guidance JSON: %s. Using deterministic fallback.", e)
+
+        return {
+            "frameworks": [
+                {
+                    "therapy": th.get("therapy_type", "CBT"),
+                    "techniques": th.get("techniques", ["Cognitive Restructuring"]),
+                    "procedural_steps": [
+                        "Validate the client's emotional distress",
+                        "Explore underlying belief patterns",
+                        "Collaboratively identify actionable coping mechanisms"
+                    ]
+                }
+                for th in top_therapies[:2]
+            ]
+        }
+
+    def setup_rollout_mode(self, therapy_slice: Dict[str, Any], patient_profile: Dict[str, Any]) -> None:
+        th_name = therapy_slice.get("therapy", "CBT")
+        techs = ", ".join(therapy_slice.get("techniques", []))
+        steps = " -> ".join(therapy_slice.get("procedural_steps", []))
+        guided_prompt = (
+            f"You are a professional counselor conducting an active therapy session using {th_name}.\n"
+            f"Target Techniques: {techs}\n"
+            f"Procedural Plan: {steps}\n"
+            f"Patient Context: {json.dumps(patient_profile)}\n\n"
+            "Apply these therapy techniques explicitly and concretely. Validate emotional distress, "
+            "maintain steady therapeutic direction, and avoid generic conversational small talk."
+        )
+        self.swap_system_prompt(guided_prompt)
+
+    def generate_diverse_branches(
+        self,
+        therapy_slice: Dict[str, Any],
+        patient_profile: Dict[str, Any],
+        n: int = 4,
+        temperature: float = 0.7,
+    ) -> List[str]:
+        # CRITICAL FIX: Force semantic diversity across the 4 branches
+        clinical_angles = [
+            "Cognitive Angle: Challenge a distorted thought or reframe a perspective.",
+            "Emotional Angle: Provide deep, compassionate validation of the underlying affect.",
+            "Behavioral Angle: Propose a concrete action, grounding exercise, or experiment.",
+            "Socratic Angle: Ask a penetrating, reflective question to foster insight."
         ]
-        # temp=0.0 not specified for synthesis explicitly, use interview temp
-        return self.generate_from(msgs, temp=self.temp, max_tokens=2000)
+        history_msgs = self.get_history()
+        branches = []
 
-    # ----- stage 3a: rollout -----
-    # receives ONLY one therapy slice - do not pass full guidance framework
-    # critical: prevents blending of all three therapies
+        for i in range(n):
+            strategy_directive = clinical_angles[i % len(clinical_angles)]
+            prompt = (
+                f"[Mandatory Clinical Angle: {strategy_directive}]\n"
+                f"Using {therapy_slice.get('therapy', 'CBT')}, generate the next counselor utterance. "
+                "Output ONLY the counselor's direct spoken response."
+            )
+            resp = self.generate(
+                messages=history_msgs + [{"role": "user", "content": prompt}],
+                temperature=temperature,
+            )
+            cleaned = resp.replace("Counselor:", "").replace("Therapist:", "").strip()
+            branches.append(cleaned)
 
-    def send_rollout(self, patient_msg, therapy_slice, patient_profile):
-        sys = _ROLLOUT_SYS.format(
-            therapy_type=therapy_slice.get("therapy", ""),
-            techniques=", ".join(str(x) for x in therapy_slice.get("techniques", [])),
-            procedural_steps="; ".join(str(x) for x in therapy_slice.get("procedural_steps", [])),
-            patient_profile=patient_profile,
-        )
-        self.swap_prompt(sys)
-        # temp stays 0.2 for rollout
-        return self.send(patient_msg)
+        return branches
 
-    # ----- stage 3b: pruning candidate generation -----
-    # generates n=4 diverse candidates at T_single, stateless
-
-    def generate_candidates(self, patient_msg, therapy_slice, patient_profile, n=4):
-        sys = _PRUNING_SYS.format(
-            therapy_type=therapy_slice.get("therapy", ""),
-            techniques=", ".join(str(x) for x in therapy_slice.get("techniques", [])),
-            procedural_steps="; ".join(str(x) for x in therapy_slice.get("procedural_steps", [])),
-            patient_profile=patient_profile,
-        )
-        self.swap_prompt(sys)
-        # sequential loop instead of parallel threads - prevents TPM spike on Groq free tier
-        # ponytail: switch back to generate(n=4) if using a paid API with high TPM limits
-        return [self.generate(patient_msg, n=1, temp=_T_SINGLE)[0] for _ in range(n)]
-
-    # ----- baseline mode (no RAG) -----
-
-    def setup_baseline(self, topic, background):
-        sys = _BASELINE_SYS.format(topic=topic, background=background)
-        self.swap_prompt(sys)
-        self.history = []
+    @staticmethod
+    def _clean_json(text: str) -> str:
+        text = re.sub(r"^```(?:json)?", "", text.strip(), flags=re.MULTILINE)
+        text = re.sub(r"```$", "", text.strip(), flags=re.MULTILINE)
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        return match.group(0) if match else text

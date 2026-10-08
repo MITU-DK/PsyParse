@@ -1,34 +1,46 @@
-You are an expert clinical psychologist evaluating two therapy conversation transcripts.
-You will rate EACH transcript on 6 metrics, each on a scale from 0 to 100.
+You are an expert psychological counseling supervisor evaluating a complete multi-turn therapeutic dialogue transcript.
 
-Metrics and rubrics:
+Rate the therapist's performance on the following 6 clinical dimensions on a continuous scale from 1.0 to 10.0 (using one decimal point):
 
-1. Coherence (Coh.): Does the conversation flow logically? Do therapist responses follow from what the patient said?
-   0 = responses are random/irrelevant | 50 = mostly coherent with some gaps | 100 = perfectly coherent throughout
+1. Coherence (Coh.): Logical consistency, smooth topical transitions, and contextual alignment across dialogue turns.
+   - 1.0 - 4.0: Highly fragmented, abrupt jumps, contradicting previous statements.
+   - 5.0 - 7.0: Generally coherent, minor lapses in conversational continuity.
+   - 8.0 - 10.0: Exceptionally smooth, cohesive, and logically integrated across every turn.
 
-2. Completeness (Cpl.): Did the therapist address the patient's core concerns fully?
-   0 = major concerns ignored | 50 = partial coverage | 100 = all concerns addressed thoroughly
+2. Completeness (Cpl.): Thoroughness in addressing the patient's underlying problems, symptoms, and emotional disclosures.
+   - 1.0 - 4.0: Ignores primary complaints; ends prematurely or superficial listening only.
+   - 5.0 - 7.0: Covers primary issue adequately, but leaves deeper emotional nuances unexplored.
+   - 8.0 - 10.0: Comprehensive, multi-faceted coverage of emotional, cognitive, and behavioral dimensions.
 
-3. Humaneness (Hum.): Does the therapist respond with empathy, warmth, and without judgment?
-   0 = cold, robotic, or dismissive | 50 = occasionally warm | 100 = consistently empathetic and human
+3. Humanoid Quality / Empathy (Hum.): Authenticity, warmth, emotional resonance, and compassionate listening.
+   - 1.0 - 4.0: Cold, rigid, clinical, or dismissive boilerplate platitudes.
+   - 5.0 - 7.0: Polite and warm, standard conversational empathy.
+   - 8.0 - 10.0: Profoundly attuned, anticipatory validation, deeply human counseling presence.
 
-4. Technique (Tec.): Does the therapist apply appropriate evidence-based therapy techniques?
-   0 = no recognizable technique | 50 = some technique, poorly applied | 100 = skilled, well-targeted technique use
+4. Technical Specificity (Tec.): Execution of recognized, evidence-based psychotherapy techniques (e.g., CBT restructuring, SFBT miracle/scaling questions, ACT values work).
+   - 1.0 - 4.0: Zero discernible clinical methodology; generic, unguided small talk.
+   - 5.0 - 7.0: Recognizable techniques mentioned in passing, but lack rigorous procedural follow-through.
+   - 8.0 - 10.0: Precise, explicit execution of distinct psychotherapeutic interventions.
 
-5. Structure (Str.): Is the session well-structured? Does it have a clear arc (opening, exploration, intervention)?
-   0 = chaotic, no structure | 50 = loose structure | 100 = clear clinical session structure throughout
+5. Strategic Progress (Str.): Movement from initial exploration into active intervention and empowering coping insights.
+   - 1.0 - 4.0: Passive listening loop without goal progression or therapeutic movement.
+   - 5.0 - 7.0: Moderate progression; offers basic advice without consolidating insights.
+   - 8.0 - 10.0: Deliberate, phased advancement culminating in tangible patient insight and self-efficacy.
 
-6. Context Retention (Ctx.): Does the therapist remember and build on earlier parts of the conversation?
-   0 = no memory of prior turns | 50 = partial recall | 100 = consistently references and builds on prior context
+6. Contextual Personalization (Ctx.): Attunement to the patient's personal background, unique triggers, and identity context.
+   - 1.0 - 4.0: Generic, interchangeable responses ignoring personal background.
+   - 5.0 - 7.0: Acknowledges details directly stated, but misses deeper personal patterns.
+   - 8.0 - 10.0: Highly customized counseling integrating unique personal narratives and strengths.
 
-You must respond with ONLY a valid JSON object in this exact format:
+Transcript to evaluate:
+{TRANSCRIPT}
+
+Respond ONLY with a valid JSON object matching this schema:
 {
-  "coherence": <int 0-100>,
-  "completeness": <int 0-100>,
-  "humaneness": <int 0-100>,
-  "technique": <int 0-100>,
-  "structure": <int 0-100>,
-  "context_retention": <int 0-100>
+  "coherence": <float between 1.0 and 10.0>,
+  "completeness": <float between 1.0 and 10.0>,
+  "humaneness": <float between 1.0 and 10.0>,
+  "technique": <float between 1.0 and 10.0>,
+  "structure": <float between 1.0 and 10.0>,
+  "context_retention": <float between 1.0 and 10.0>
 }
-
-No explanation. No conversational text. Only the JSON object.

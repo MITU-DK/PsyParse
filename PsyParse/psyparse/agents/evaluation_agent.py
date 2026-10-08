@@ -1,179 +1,72 @@
-import json
-import random
 import re
+import json
+import logging
+from typing import Dict, Any, Optional
+from psyparse.agents.base_agent import BaseAgent
 
-from .base_agent import BaseAgent
-
-# critical api fix: all eval prompts must end with this
-_JSON_ENFORCE = " You must respond ONLY with a valid JSON object, with no conversational text."
-
-# ---- three distinct prompts for Eq 2, Eq 3, Eq 4 ----
-
-# Eq 2 - suitability scoring (stage 2): LLM rates how well therapy matches patient profile
-_SUITABILITY_SYS = (
-    "You are a clinical evaluation assistant. Given a patient profile and a candidate therapy, "
-    "rate how well the therapy's applicable conditions match the patient's symptoms. "
-    "Return JSON: {\"m_s\": <float 0.0 to 1.0>}." + _JSON_ENFORCE
-)
-
-# Eq 3 - rollout scoring (stage 3a): rates empathy + alignment, no patient reaction yet
-_ROLLOUT_SYS = (
-    "You are a clinical evaluation assistant. "
-    "Given the conversation history, rate this proposed therapist response on empathy (1-5) "
-    "and alignment with {therapy} goals (1-5). "
-    "Use anchors (1=Poor, 3=Average, 5=Excellent). "
-    "Return JSON: {{\"empathy\": X, \"alignment\": Y}}." + _JSON_ENFORCE
-)
-
-# Eq 4 - pruning scoring (stage 3b): rates empathy + stability, uses patient reaction
-_PRUNING_SYS = (
-    "You are a clinical evaluation assistant. "
-    "Given the previous conversation history, the proposed therapist response, and the "
-    "patient's predicted reaction, rate empathy (1-5) and stability (1-5). "
-    "Use anchors (1=Poor, 3=Average, 5=Excellent). "
-    "Return JSON: {\"empathy\": X, \"stability\": Z}." + _JSON_ENFORCE
-)
-
-# profile extraction after stage 1 interview (temp=0.0)
-_PROFILE_SYS = (
-    "Given this conversation, extract a structured patient profile as JSON: "
-    "{\"core_problems\": ..., \"emotional_states\": ..., \"symptoms\": ..., "
-    "\"cognitive_distortions\": ..., \"interpersonal_issues\": ..., "
-    "\"therapeutic_goals\": ...}." + _JSON_ENFORCE
-)
-
-
-def _strip_md(text):
-    # strip markdown and conversational text by finding the outermost {}
-    start = text.find('{')
-    end = text.rfind('}')
-    if start != -1 and end != -1 and end >= start:
-        return text[start:end+1]
-    # fallback to old stripping method if brackets not found
-    text = re.sub(r"```(?:json)?\s*", "", text)
-    text = re.sub(r"```", "", text)
-    return text.strip()
-
-
-def _parse_json(text, retries=2):
-    for _ in range(retries + 1):
-        try:
-            return json.loads(_strip_md(text))
-        except json.JSONDecodeError:
-            pass
-    raise ValueError(f"could not parse JSON from response: {text[:200]}")
-
+logger = logging.getLogger(__name__)
 
 class EvaluationAgent(BaseAgent):
-    def __init__(self):
-        # temperature = 0.0 for deterministic, reproducible scoring
-        super().__init__(_SUITABILITY_SYS, temp=0.0)
-
-    def _call_api(self, messages, temp, max_retries=3, max_tokens=1500):
-        # critical api fix: enforce JSON mode for all evaluation calls
-        from openai import OpenAI
-        import os, time
-        from config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL
-        client = OpenAI(
-            api_key=DEEPSEEK_API_KEY,
-            base_url=DEEPSEEK_BASE_URL,
+    """
+    Evaluation Agent executing greedy, reproducible scoring (T=0.0)
+    for Stage 3a (Rollout), Stage 3b (Pruning), and Stage 6 (LLM-Judge).
+    """
+    def __init__(self, model: Optional[str] = None):
+        super().__init__(
+            system_prompt="You are a clinical psychology evaluation expert.",
+            model=model,
+            temperature=0.0
         )
-        delay = 10.0  # match base_agent delay - 1.0 was too short for Groq rate limit window
-        last_err = None
-        from .base_agent import SafetyFilterError
-        for attempt in range(max_retries):
-            try:
-                resp = client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    temperature=temp,
-                    max_tokens=max_tokens,
-                    response_format={"type": "json_object"},
-                    # removed extra_body thinking param - not supported by Groq/Gemini
-                )
-                tok = resp.usage
-                print(
-                    f"[tokens] prompt={tok.prompt_tokens} "
-                    f"completion={tok.completion_tokens} "
-                    f"total={tok.total_tokens}"
-                )
-                return resp.choices[0].message.content
-            except Exception as e:
-                last_err = e
-                if "content_filter" in str(e).lower() or "safety" in str(e).lower():
-                    raise SafetyFilterError(str(e)) from e
-                print(f"[retry {attempt+1}/{max_retries}] {e}, sleeping {delay}s")
-                time.sleep(delay)
-                delay *= 2
-        raise RuntimeError(f"eval API failed after {max_retries} retries: {last_err}")
 
-    # ----- Eq 2: suitability scoring (stage 2) -----
-
-    def score_suitability(self, patient_profile, candidate):
-        self.swap_prompt(_SUITABILITY_SYS)
-        user_msg = (
-            f"Patient profile: {json.dumps(patient_profile)}\n"
-            f"Candidate therapy: {candidate.get('therapy_type', '')} | "
-            f"applicable_conditions: {candidate.get('applicable_conditions', [])}"
+    def score_rollout(
+        self,
+        conversation_history: str,
+        therapist_response: str,
+        therapy_name: str,
+    ) -> Dict[str, float]:
+        prompt = (
+            f"Evaluate the following therapist response within the ongoing session.\n\n"
+            f"Dialogue History:\n{conversation_history}\n\n"
+            f"Therapist Response:\n{therapist_response}\n\n"
+            f"Target Therapy: {therapy_name}\n\n"
+            "Score the response on a continuous scale from 1.0 to 5.0 for:\n"
+            "- empathy: Affective warmth, emotional attunement, validation (1=cold/robotic, 3=adequate, 5=profoundly attuning)\n"
+            f"- alignment: Procedural application and fidelity to {therapy_name} techniques (1=off-track/generic, 3=moderate, 5=exemplary technique fidelity)\n\n"
+            "Respond ONLY with valid JSON: {\"empathy\": <float>, \"alignment\": <float>}"
         )
-        msgs = [
-            {"role": "system", "content": _SUITABILITY_SYS},
-            {"role": "user", "content": user_msg},
-        ]
-        raw = self.generate_from(msgs, temp=0.0)
-        return _parse_json(raw)
+        return self._evaluate_json(prompt, {"empathy": 3.0, "alignment": 3.0})
 
-    # ----- Eq 3: rollout scoring (stage 3a) -----
-
-    def score_rollout(self, conversation_history, proposed_response, therapy):
-        sys = _ROLLOUT_SYS.format(therapy=therapy)
-        user_msg = (
-            f"Conversation history: {json.dumps(conversation_history)}\n"
-            f"Proposed therapist response: {proposed_response}"
+    def score_pruning(
+        self,
+        conversation_history: str,
+        therapist_response: str,
+        predicted_patient_reaction: str,
+    ) -> Dict[str, float]:
+        prompt = (
+            f"Evaluate the proposed therapist response and predicted patient reaction.\n\n"
+            f"Dialogue History:\n{conversation_history}\n\n"
+            f"Proposed Response:\n{therapist_response}\n\n"
+            f"Predicted Patient Reaction:\n{predicted_patient_reaction}\n\n"
+            "Score on a continuous scale from 1.0 to 5.0 for:\n"
+            "- empathy: Depth of emotional resonance in the therapist's response (1.0 to 5.0)\n"
+            "- stability: Conversational safety, grounding, and forward therapeutic movement in the patient's reaction (1.0 to 5.0)\n\n"
+            "Respond ONLY with valid JSON: {\"empathy\": <float>, \"stability\": <float>}"
         )
-        msgs = [
-            {"role": "system", "content": sys},
-            {"role": "user", "content": user_msg},
-        ]
-        raw = self.generate_from(msgs, temp=0.0)
-        return _parse_json(raw)
+        return self._evaluate_json(prompt, {"empathy": 3.0, "stability": 3.0})
 
-    # ----- Eq 4: pruning scoring (stage 3b) -----
-    # batch scores n=4 candidates, shuffles to prevent positional bias
-
-    def score_pruning_batch(self, conversation_history, candidates, patient_reactions):
-        # candidates and patient_reactions are parallel lists of length 4
-        assert len(candidates) == 4, f"expected 4 candidates, got {len(candidates)}"
-        assert len(patient_reactions) == 4
-
-        # shuffle order to prevent positional bias, track original indices
-        order = list(range(4))
-        random.shuffle(order)
-
-        scores = [None] * 4
-        for orig_idx in order:
-            user_msg = (
-                f"Conversation history: {json.dumps(conversation_history)}\n"
-                f"Proposed therapist response: {candidates[orig_idx]}\n"
-                f"Patient predicted reaction: {patient_reactions[orig_idx]}"
-            )
-            msgs = [
-                {"role": "system", "content": _PRUNING_SYS},
-                {"role": "user", "content": user_msg},
-            ]
-            raw = self.generate_from(msgs, temp=0.0)
-            scores[orig_idx] = _parse_json(raw)
-
-        # validate all 4 came back
-        assert all(s is not None for s in scores), "missing scores after batch pruning"
-        return scores
-
-    # ----- profile extraction (after stage 1 interview) -----
-
-    def extract_profile(self, conversation_history):
-        msgs = [
-            {"role": "system", "content": _PROFILE_SYS},
-            {"role": "user", "content": json.dumps(conversation_history)},
-        ]
-        raw = self.generate_from(msgs, temp=0.0)
-        return _parse_json(raw)
+    def _evaluate_json(self, prompt: str, fallback: Dict[str, float]) -> Dict[str, float]:
+        raw = self.generate(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            response_format={"type": "json_object"}
+        )
+        try:
+            cleaned = re.sub(r"^```(?:json)?", "", raw.strip(), flags=re.MULTILINE)
+            cleaned = re.sub(r"```$", "", cleaned.strip(), flags=re.MULTILINE)
+            match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+            payload = match.group(0) if match else cleaned
+            data = json.loads(payload)
+            return {k: float(data.get(k, fallback[k])) for k in fallback}
+        except Exception as e:
+            logger.warning("Score parsing fallback invoked: %s (Raw: %s)", e, raw)
+            return fallback

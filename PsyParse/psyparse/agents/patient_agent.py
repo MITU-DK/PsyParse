@@ -1,62 +1,60 @@
-from .base_agent import BaseAgent
-
-# seed prompt uses topic, background, opening_turn
-# do NOT use theme - it leaks the therapy label (critical leakage fix)
-_SEED_TMPL = (
-    "You are a person experiencing {topic}. "
-    "Your background: {background}. "
-    "Opening turn: {opening_turn}. "
-    "You are currently highly resistant to therapy, deeply skeptical, and often defensive or combative. "
-    "You do not easily accept generic advice, platitudes, or simple reassurance. You want concrete help, but you push back. "
-    "Respond naturally as this difficult person would. Keep your response conversational and concise (1-3 sentences). "
-    "If you feel the session has reached a natural conclusion and your issue is "
-    "resolved, append the exact string [SESSION_END] to your response."
-)
-
-# reinforcement reminder - injected per turn, never stored in history
-_REMINDER_TMPL = "Reminder: Maintain your resistant, skeptical persona based on {topic}. Push back if the therapist sounds generic."
-
+import re
+from typing import Dict, Any, Optional
+from psyparse.agents.base_agent import BaseAgent
 
 class PatientAgent(BaseAgent):
-    def __init__(self, scenario):
-        # scenario is one session from dev_scenarios.json / eval_scenarios.json
-        topic = str(scenario.get("topic") or "").strip()
-        background = str(scenario.get("background") or "").strip()
+    """
+    Patient Agent representing an individual exhibiting specified clinical symptoms.
+    Guards against premature termination by preventing early [SESSION_END] leaks.
+    """
+    def __init__(
+        self,
+        scenario: Dict[str, Any],
+        model: Optional[str] = None,
+        temperature: float = 0.7,
+        min_turns: int = 6,
+    ):
+        self.scenario = scenario
+        self.topic = scenario.get("topic", "Mental Health Difficulties")
+        self.background = scenario.get("background", "Experiencing emotional and psychological distress.")
+        self.min_turns = min_turns
+        self.current_turn = 0
 
-        # first client utterance from dialog
-        opening_turn = ""
-        for turn in scenario.get("dialog", []):
-            sp = str(turn.get("speaker", "")).lower()
-            # skip therapist turns
-            if any(h in sp for h in ("therap", "counsel", "doctor", "assistant", "supporter")):
-                continue
-            if any(h in sp for h in ("client", "patient", "visitor", "seeker", "user")):
-                opening_turn = str(turn.get("content") or "").strip()
-                if opening_turn:
-                    break
-
-        sys_prompt = _SEED_TMPL.format(
-            topic=topic,
-            background=background,
-            opening_turn=opening_turn,
+        system_prompt = (
+            f"You are roleplaying as a real, human counseling client experiencing {self.topic}.\n"
+            f"Background Context: {self.background}\n\n"
+            "Guidelines:\n"
+            "- Speak naturally, emotionally, and authentically from your personal background.\n"
+            "- Do not use clinical jargon, diagnose yourself, or offer therapeutic solutions.\n"
+            "- Express your authentic struggles, hesitations, emotions, and thoughts.\n"
+            "- Do not resolve your problems immediately. Building therapeutic progress takes time.\n"
+            "- Only if you feel genuine, deep resolution and the counselor has properly guided you through an entire session, "
+            "append the token [SESSION_END] at the very end of your response."
         )
-        # temperature policy: patient = 0.7
-        super().__init__(sys_prompt, temp=0.7)
-        self.topic = topic
+        super().__init__(system_prompt=system_prompt, model=model, temperature=temperature)
 
-    def send(self, therapist_msg, add_reminder=True):
-        # inject reminder into user message, do NOT store it in history
-        if add_reminder and self.topic:
-            reminder = _REMINDER_TMPL.format(topic=self.topic)
-            msg_with_reminder = f"{therapist_msg}\n\n{reminder}"
-        else:
-            msg_with_reminder = therapist_msg
+    def respond(self, therapist_message: str) -> str:
+        self.current_turn += 1
+        raw_response = self.send(therapist_message)
 
-        # build messages manually so we can inject reminder without polluting history
-        msgs = self._build_messages(msg_with_reminder)
-        reply = self._call_api(msgs, self.temp)
+        if "[SESSION_END]" in raw_response:
+            if self.current_turn < self.min_turns:
+                cleaned = raw_response.replace("[SESSION_END]", "").strip()
+                if self.history and self.history[-1]["role"] == "assistant":
+                    self.history[-1]["content"] = cleaned
+                return cleaned
 
-        # store only the raw therapist message (no reminder) in history
-        self.history.append({"role": "user", "content": therapist_msg})
-        self.history.append({"role": "assistant", "content": reply})
-        return reply
+        return raw_response
+
+    def simulate_reaction(self, proposed_response: str) -> str:
+        """
+        Stateless lookahead simulation: predicts the patient's reaction
+        to a prospective therapist response without modifying the active history.
+        """
+        temp_messages = self.get_history() + [{"role": "user", "content": proposed_response}]
+        reaction = self.generate(
+            messages=temp_messages,
+            temperature=self.temperature,
+            ephemeral_system=self.system_prompt + "\n[Predict your authentic, immediate reaction to the counselor's utterance.]"
+        )
+        return reaction.replace("[SESSION_END]", "").strip()
