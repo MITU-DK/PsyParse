@@ -11,7 +11,7 @@ METRIC_MAP = {
     "context_retention": "Ctx.",
 }
 
-def aggregate_eval_results(results_path: str = "eval_results.json") -> str:
+def aggregate_eval_results(results_path: str = "results/eval_results.json") -> str:
     with open(results_path, "r", encoding="utf-8") as f:
         results: List[Dict[str, Any]] = json.load(f)
 
