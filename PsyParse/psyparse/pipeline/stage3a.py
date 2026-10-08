@@ -58,8 +58,7 @@ def run_stage_3a(
 
             for retry in range(max_retries + 1):
                 temp = 0.2 if retry == 0 else 0.5
-                candidate_resp_list = therapist.generate(prompt=prompt_msg, n=1, temp=temp)
-                candidate_resp = candidate_resp_list[0] if isinstance(candidate_resp_list, list) else candidate_resp_list
+                candidate_resp = therapist.generate(messages=therapist.get_history() + [{"role": "user", "content": prompt_msg}], temperature=temp)
                 
                 scores = evaluator.score_rollout(convo_history_str, candidate_resp, th_type)
                 s_resp = (we_m * scores.get("empathy", 3.0)) + (wt_m * scores.get("alignment", 3.0))
