@@ -1,0 +1,38 @@
+[
+  {
+    "scenario_id": "000432",
+    "topic": "Appearance Anxiety",
+    "baseline_scores": {
+      "coherence": 80,
+      "completeness": 60,
+      "humaneness": 70,
+      "technique": 65,
+      "structure": 55,
+      "context_retention": 85
+    },
+    "baseline_turns": 8,
+    "psyparse_scores": {
+      "coherence": 90,
+      "completeness": 60,
+      "humaneness": 80,
+      "technique": 70,
+      "structure": 75,
+      "context_retention": 90
+    },
+    "psyparse_turns": 2,
+    "best_therapy": "Integrated CBT and SFBT Approach",
+    "top_k2": [
+      "CBT",
+      "SFBT",
+      "PCT"
+    ],
+    "delta": {
+      "coherence": 10,
+      "completeness": 0,
+      "humaneness": 10,
+      "technique": 5,
+      "structure": 20,
+      "context_retention": 5
+    }
+  }
+]

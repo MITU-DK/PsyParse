@@ -11,7 +11,7 @@ Open your terminal and run these commands to clone the code and install dependen
 
 ```bash
 git clone https://github.com/manishsn7340/PsyParse.git
-cd PsyParse
+cd PsyParse/PsyParse
 
 # Create and activate a virtual environment (Recommended)
 python3 -m venv venv
@@ -32,7 +32,7 @@ ollama pull qwen2.5:14b
 ```
 
 ## 4. Configure Environment Variables
-Create a file named `.env` in the `PsyParse` folder and add these exactly 3 lines to it:
+Create a file named `.env` in the inner `PsyParse/PsyParse` folder and add these exactly 3 lines to it:
 
 ```env
 DEEPSEEK_API_KEY=ollama
