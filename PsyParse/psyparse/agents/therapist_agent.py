@@ -90,8 +90,8 @@ class TherapistAgent(BaseAgent):
     def send_rollout(self, patient_msg, therapy_slice, patient_profile):
         sys = _ROLLOUT_SYS.format(
             therapy_type=therapy_slice.get("therapy", ""),
-            techniques=", ".join(therapy_slice.get("techniques", [])),
-            procedural_steps="; ".join(therapy_slice.get("procedural_steps", [])),
+            techniques=", ".join(str(x) for x in therapy_slice.get("techniques", [])),
+            procedural_steps="; ".join(str(x) for x in therapy_slice.get("procedural_steps", [])),
             patient_profile=patient_profile,
         )
         self.swap_prompt(sys)
@@ -104,8 +104,8 @@ class TherapistAgent(BaseAgent):
     def generate_candidates(self, patient_msg, therapy_slice, patient_profile, n=4):
         sys = _PRUNING_SYS.format(
             therapy_type=therapy_slice.get("therapy", ""),
-            techniques=", ".join(therapy_slice.get("techniques", [])),
-            procedural_steps="; ".join(therapy_slice.get("procedural_steps", [])),
+            techniques=", ".join(str(x) for x in therapy_slice.get("techniques", [])),
+            procedural_steps="; ".join(str(x) for x in therapy_slice.get("procedural_steps", [])),
             patient_profile=patient_profile,
         )
         self.swap_prompt(sys)
