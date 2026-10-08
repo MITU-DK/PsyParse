@@ -1,0 +1,145 @@
+{
+  "scenario_id": "000469",
+  "topic": "Ongoing Depression",
+  "profile": {
+    "core_problems": [
+      "Difficulty handling roadblocks in work or personal projects",
+      "Discounting past achievements and successes"
+    ],
+    "emotional_states": [
+      "Exhausted",
+      "Upset",
+      "Overwhelmed by heavy pressure"
+    ],
+    "symptoms": [
+      "Feeling stuck when facing obstacles",
+      "Blindness to positive past experiences during moments of failure"
+    ],
+    "cognitive_distortions": [
+      "All-or-nothing thinking (if I can't fix it right away, I'm completely useless)",
+      "Discounting the positive (all past successes feel like luck or flukes)",
+      "Labeling (convinced that one failure is the real truth about who I am)"
+    ],
+    "interpersonal_issues": [],
+    "therapeutic_goals": [
+      "Learn to cope with roadblocks and setbacks without intense self-criticism",
+      "Develop a balanced view of past efforts and successes",
+      "Reduce cognitive distortions related to failure and self-worth"
+    ]
+  },
+  "keywords": [
+    "completely",
+    "fix",
+    "point",
+    "just",
+    "usually",
+    "staring",
+    "projects",
+    "stupid",
+    "useless",
+    "hide"
+  ],
+  "top_k2": [
+    {
+      "case_id": "000445",
+      "score": 0.4803966280550407,
+      "cos": 0.538396954536438,
+      "bm25": 0.42239630157364344,
+      "therapy_type": "CBT",
+      "techniques": [
+        "exploring self-perception, performance evaluation, and challenging cognitive distortions in therapy sessions",
+        "The client chose ‘a good performance and I suppose that’s why it was reasonably successful’; however, she still wondered if there were some ‘fluky elements’ involved in the success of the workshop and therefore the therapist suggested she run several more workshops over the next several months in order to collect data on her performance to resolve this issue: ‘Do I have real skill or was the success of that first workshop sheer luck?’ This process concentrates clients’ minds on the imprecision of their language in describing themselves or their problems. For example, a client whose manuscript was rejected by a publisher stated: ‘Because they didn’t want it, this makes me a failure.’",
+        "Some clients might complain that defining terms is just semantic games but, in fact, it has a very serious purpose. Using words like ‘failure’, ‘useless’, ‘worthless’ or ‘no good’ to define oneself are not only dangerous overgeneralizations but are hopelessly inadequate and inaccurate in capturing the complexity and uniqueness of the self. Semantic precision helps clients to be clear and accurate about events and what can be done about them instead of focusing on what they believe they are which will prevent them learning from their mistakes and restricting their self-development. The therapist needs to keep clients on their toes by asking them to define their terms instead of letting them assume the meaning of the terms is mutually understood and agreed. However, it is important that therapists do not become ‘meaning maniacs’, i.e. asking their clients what they mean by the terms that they use and then asking for the meaning of the new terms that the clients use to explain the old terms … and so on as this will develop into an infinite regress of meaning about meaning. This process will exhaust both therapist and client without reaching any helpful conclusions about which terms are meaningful in discussing problems and which are meaningless. Defining terms is not an end in itself: it is a means of establishing semantic clarity so that a more informed discussion of these terms can be undertaken",
+        "Question"
+      ],
+      "applicable_conditions": [
+        "Job Crisis"
+      ],
+      "topic": "Job Crisis",
+      "m_s": 0.35678815841674805,
+      "app": 0.4960827894157667,
+      "s_th": 0.42643547391625736
+    },
+    {
+      "case_id": "000609",
+      "score": 0.35599054277729036,
+      "cos": 0.4778243899345398,
+      "bm25": 0.2341566956200409,
+      "therapy_type": "SFBT",
+      "techniques": [
+        "six conducting subsequent sessions",
+        "Clients returning for second or subsequent interviews already have been assigned to continue doing things that are working or to notice what’s better in their lives. Follow-up meetings begin with the premise that clients have continued this focus between sessions and have observed improvements. I have found that most clients report positive changes, and those who report that no progress occurred do, with further exploration, identify at least minimal change. Because the SFBC approach emphasizes assets, clients are more likely to report that things are better since the previous meeting.This chapter provides a detailed description of how to conduct second and subsequent sessions. The sequence of interventions described in this chapter is used for all second and subsequent sessions, whether the session follows an initial session that used the full SFBC format described in Chapters 1 and 2 or the abbreviated SFBC format described in Chapter 5. Topics include a recommendation for how to start the session, the EARS process (Elicit, Amplify, Reinforce, Start over), tips for using scaling in subsequent sessions, suggestions for assessing further need for counseling, a flow chart and note sheet for use with subsequent meetings, and summaries of subsequent sessions with an actual case.Subsequent Sessions: Getting StartedAfter you have greeted the client, begin the second or subsequent session by explaining that you will spend some time talking about how things are going, and that you will end the session with writing messages to each other. Then open the discussion with a review of the client’s goal.Components of Second and Subsequent SessionsFollowing a well-organized process is just as important for subsequent meetings as it is for the first meeting. This section of the chapter describes the step-by-step process and recommended interventions for second and subsequent meetings with clients. Many of the interventions, such as detailing, cheerleading, mindmapping, microscoping, reciprocal relationship questions, what else questions, and writing a message, will be familiar because they are the same or variations of the techniques used in the initial session.Subsequent sessions—whether the second session or later meetings—comprise these components: Asking what is better or different; using the EARS process to solicit and reinforce what is better; scaling; assessing, if appropriate, whether additional sessions are needed; and writing a message.Ask “What’s Better?”After you have greeted the client, restated the goal for counseling, and introduced what will occur in the session, ask this simple question: “What’s better since we last met?” Typically clients will respond in one of four ways: (1) things are better; (2) things are the same; (3) things are worse; or (4) things are different but not better. There is overlap among the interventions you can use for these four categories; however, to provide a “how-to” guide for handling each type of response, each is covered in a separate section.When Clients Report Things Are BetterIn my experience, the most common response is that things are better. Just as in the initial session, your role then is to elicit details about how the client brought about the positive change and reinforce or cheerlead these productive thoughts or behaviors. For second and subsequence sessions, the SFBC model accomplishes this using a sequence known as EARS (Berg, 1994), which is an acronym for the following series of steps:Elicit the details of what’s better.Amplify the effects of what’s better using reciprocal relationship questions.Reinforce how the client made things better, andStart the sequence over again to see what else is better.This resembles the initial session when you detail instances of success in relation to the client’s goal. After clients tell you what is better since the last meeting, elicit details by asking, “How are things better?” or “What have you done to make things better.”The amplifying component of EARS investigates the ripple effect as changes in the client’s behavior prompt others to respond more positively to the client. Elaborating on the reciprocity evoked by clients’ efforts empowers them to recognize the impact of their actions, which in turn reinforces clients to take on further challenges they may not have attempted otherwise. This component uses reciprocal relationship questions as described in Chapter 2. At the close of the second counseling session, a fifth-grade boy in a behavior disorder class made the following comment that highlights the powerful impact of amplifying success:I like coming here because everywhere else I don’t get a chance to talk to anyone about all the good things I do and how my friends and teacher act with me when I do these good things. That helps me even do more good stuff.Reinforcing or cheerleading, which is the third step in the sequence, is already familiar to most counselors. As noted in earlier chapters, as clients discover and are supported in their efforts to achieve positive change in their lives, mindmaps form to guide them in future situations. Because this part of the interview resembles the instances of success and cheerleading sections in Chapter 3, those techniques are not reviewed again here.Start the sequence again:Repeat the process several times by asking what else is better and using EARS to elicit details, amplify reciprocal relationships, and reinforce positive steps the client has taken.If clients have difficulty recalling a time when things were a little bit better, microscoping can be useful. As described in Chapter 3, with this technique you inquire about segments of time (for example, the past several days, yesterday, today, or in the past hour) when things may have been a little better. This often helps clients recall moments of success",
+        "When Clients Report Things Are WorseClients may indicate that things are worse than they reported in the previous meeting. When this occurs, ask, “How come things aren’t worse than they are?” Clients’ responses help determine how they prevented things from falling apart completely. During this exchange, “listen for better.” In other words, listen for any indication that things are better, even if just slightly. Use interventions that help clients recognize the coping skills they have used to keep their situations from deteriorating even further. Identifying how clients are coping suggests solutions. Capitalizing on instances of success—no matter how slight—in the midst of slippages can turn unpleasant experiences into moments of hope. Once instances of success or coping skills have been identified, proceed with the EARS process described previously. The following sequence of questions can be used when clients report that things are worse:“Were things bad every minute of every day all week?”“Tell me about a time when things were not quite as bad as other times.”“What was going on with you when things weren’t quite as bad?”“How were you different when it wasn’t quite as bad?”The following example is taken from an actual case of a 12-year-old girl referred to counseling for problems controlling her temper. This excerpt shows how “listening for better” led the client to recognize a tool she could use to help her reach her goal (C= Counselor; Cl= Client)",
+        "Question",
+        "Reflection of Feelings"
+      ],
+      "applicable_conditions": [
+        "Ongoing Depression",
+        "depression"
+      ],
+      "topic": "Ongoing Depression",
+      "m_s": 0.3390277028083801,
+      "app": 0.16278774588444697,
+      "s_th": 0.25090772434641356
+    },
+    {
+      "case_id": "000757",
+      "score": 0.3583564792490604,
+      "cos": 0.46779629588127136,
+      "bm25": 0.24891666261684942,
+      "therapy_type": "Psychoanalytic",
+      "techniques": [
+        "exploring suppressed memories, unresolved grief, childhood trauma, and displaced emotions in therapy",
+        "George's suppressed memories of his grandmother reveal a significant emotional bond that turned into unresolved grief after her stroke. The therapist helps George connect his current anger issues to his childhood feelings of abandonment and loss. The therapist's upcoming vacation triggers George's unconscious emotions, leading to displaced anger and irritability",
+        "[At the end of the session, just as the patient gets to the door, he stops, slaps his pocket]",
+        "Reflection of Feelings",
+        "Information"
+      ],
+      "applicable_conditions": [
+        "Job Crisis",
+        "stress",
+        "anger",
+        "relationship issues"
+      ],
+      "topic": "Job Crisis",
+      "m_s": 0.2350410670042038,
+      "app": 0.2009661409510598,
+      "s_th": 0.2180036039776318
+    }
+  ],
+  "framework": {
+    "frameworks": [
+      {
+        "therapy": "CBT",
+        "techniques": [
+          "exploring self-perception, performance evaluation, and challenging cognitive distortions in therapy sessions",
+          "semantic precision and defining terms"
+        ],
+        "procedural_steps": [
+          "Establish collaborative relationship to explore the client's self-perception and performance evaluations regarding their job crisis.",
+          "Identify cognitive distortions and vague, overgeneralized self-labels (e.g., 'failure', 'useless', 'worthless') used by the client.",
+          "Guide the client in defining their terms to achieve semantic clarity, avoiding infinite regress while uncovering inaccurate assumptions.",
+          "Assign behavioral experiments or data collection tasks (such as running multiple workshops or tracking professional tasks) to test the validity of negative self-beliefs and gather objective performance data."
+        ]
+      },
+      {
+        "therapy": "SFBT",
+        "techniques": [
+          "Asking 'What's Better?'",
+          "EARS process (Elicit, Amplify, Reinforce, Start over)",
+          "scaling",
+          "microscoping"
+        ],
+        "procedural_steps": [
+          "Greet the client and review the overarching counseling goals at the start of the follow-up session.",
+          "Ask the opening question: 'What's better since we last met?' to identify any positive changes or moments of progress.",
+          "Apply the EARS process: elicit details of what is working, amplify the effects using reciprocal relationship questions, reinforce and cheerlead client successes, and start the sequence over to find additional improvements.",
+          "Utilize microscoping and scaling techniques to uncover minute instances of success or coping strategies, especially if the client reports that things are the same or worse."
+        ]
+      }
+    ]
+  },
+  "best_therapy": "CBT",
+  "best_straj": 15.0,
+  "pruning_turns": 5
+}

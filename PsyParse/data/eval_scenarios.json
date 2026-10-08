@@ -1,0 +1,3418 @@
+[
+  {
+    "dialog_id": "000432",
+    "theme": "cognitive behaviour therapy: exploring cognition through images and thoughts in therapy to uncover emotionally charged thoughts and beliefs.",
+    "psychotherapy": "Cognitive Behaviour Therapy",
+    "topic": "Appearance Anxiety",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client experiences anxiety while walking down the high street due to negative self-perceptions.",
+    "reasoning": "The term ‘cognition’ includes images as well as thoughts. Some clients might find it difficult to pinpoint their NATs in a specific situation, but the therapist can ask such clients if they had any pictures or images in their minds in that situation which might be more retrievable. Using imagery can help clients to relive past situations in order to uncover the hot (emotionally charged) thoughts associated with these situations.",
+    "dialog": [
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I’m walking down the high street. I feel very uncomfortable. I think everyone is looking at me, so I keep my head down.",
+        "id": "0-0",
+        "observation": "The client describes feeling uncomfortable and believing others are observing them, leading to a self-protective behavior of avoiding eye contact.",
+        "emotional label": [
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would you be seeing if you put your head up?",
+        "id": "0-1",
+        "reasoning": "Encouraging the client to challenge their negative self-perceptions by considering an alternative perspective.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I always keep it down and just rush about to get my shopping over with as quickly as possible.",
+        "id": "0-2",
+        "observation": "The client admits to avoiding eye contact and rushing through tasks, indicating a pattern of behavior driven by anxiety.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "But imagine putting your head up and looking around. What do you see?",
+        "id": "0-3",
+        "reasoning": "Guiding the client to explore different viewpoints and challenge their automatic responses.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I see them staring at me, judging me. I hate it.",
+        "id": "0-4",
+        "reference_labels": "[becoming visibly tense]",
+        "observation": "The client expresses discomfort and tension when perceiving judgment from others.",
+        "emotional label": [
+          "Anxiety",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is it that they are judging?",
+        "id": "0-5",
+        "reasoning": "Delving deeper into the client's negative self-perceptions to uncover underlying beliefs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "My looks.",
+        "id": "0-6",
+        "reference_labels": "[becoming tearful]",
+        "observation": "The client becomes emotional when disclosing personal insecurities related to appearance.",
+        "emotional label": [
+          "Shame"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "In what way?",
+        "id": "0-7",
+        "reasoning": "Further exploring the client's self-image and the specific aspects causing distress.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "They think I’m ugly, hideous. I look like the elephant woman. They probably make jokes about me and have a good laugh. I can’t bear it.",
+        "id": "0-8",
+        "observation": "The client expresses extreme negative self-perceptions and anticipates ridicule from others, contributing to their anxiety.",
+        "emotional label": [
+          "Anxiety",
+          "Shame"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Are those the thoughts that make you so anxious when you go into the high street?",
+        "id": "0-9",
+        "reasoning": "Connecting the client's negative thoughts about their appearance to the anxiety experienced in public settings.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yes.",
+        "id": "0-10",
+        "reference_labels": "[quietly]",
+        "observation": "The client quietly confirms that their negative self-perceptions are indeed the source of their anxiety in public situations.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      }
+    ],
+    "summary": "Lazarus states that an ‘understanding of the role that imagery plays in our daily lives provides a clue to unraveling otherwise insoluble puzzles’. Using the step-up technique, the therapist can help clients visualize future scenarios to uncover underlying worries. When clients reach a cognitive block and respond with ‘I don’t know’, therapists can provide suggestions based on case conceptualization or clinical experience to address the issue.",
+    "chain_id": 1
+  },
+  {
+    "dialog_id": "000443",
+    "theme": "cognitive behaviour therapy: differentiating interpretations from actual thoughts in cognitive behavior therapy for effective cognitive restructuring.",
+    "psychotherapy": "Cognitive Behaviour Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Therapist guides client to differentiate interpretations from actual thoughts to facilitate cognitive restructuring in cognitive behavior therapy.",
+    "reasoning": "In cognitive behavior therapy, clients often provide interpretations of their thoughts rather than the actual thoughts. Therapists need to guide clients to uncover their underlying automatic thoughts by encouraging them to answer their own questions. It's crucial to help clients differentiate between interpretations and actual thoughts to facilitate cognitive restructuring.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "You said you’ve moved house recently. How did that go?",
+        "id": "12-0",
+        "reasoning": "The therapist initiates a discussion about a recent life event to explore the client's perspective and thought patterns, aiming to uncover underlying automatic thoughts related to the house move.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "It was all right.",
+        "id": "12-1",
+        "observation": "The client expresses a neutral sentiment about the recent house move, indicating a potential emotional detachment or reserved response.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So did the house move go right for you?",
+        "id": "12-2",
+        "reasoning": "The therapist probes further to understand the client's perception of the success of the house move, encouraging the client to reflect on their experience and interpretation of the event.",
+        "strategy": [
+          "Restatement or Paraphrasing"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yes, I suppose so.",
+        "id": "12-3",
+        "observation": "The client confirms that the house move was successful from their perspective, indicating a tentative acknowledgment of a positive outcome.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How long have you been married?",
+        "id": "12-4",
+        "reasoning": "The therapist transitions to exploring another aspect of the client's life, potentially aiming to uncover automatic thoughts or emotional responses related to the client's marital relationship.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Fourteen years.",
+        "id": "12-5",
+        "observation": "The client provides a factual response regarding the duration of their marriage, offering insight into a significant aspect of their personal history.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How would you describe those fourteen years?",
+        "id": "12-6",
+        "reasoning": "The therapist prompts the client to reflect on their long-term relationship, potentially aiming to uncover underlying automatic thoughts or emotional patterns related to their marital experiences.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "They’ve been happy most of the time. Okay, so you’ve found two things that have gone right for me and maybe there are other things I can’t see at the present time. Am I supposed to suddenly become a positive thinker then?",
+        "id": "12-7",
+        "observation": "The client reflects on the positive aspects of their marital relationship, highlighting a shift towards recognizing positive experiences and questioning the expectation of immediate positive thinking.",
+        "emotional label": [
+          "Anger",
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Positive thinking doesn’t usually consider evidence but realistic thinking does. I want you to try and stand back from your thought, ‘nothing ever goes right for me’, and consider all the evidence, not just part of it. How might you respond now to that thought?",
+        "id": "12-8",
+        "reference_labels": "[the therapist helps the client to uncover further evidence against the thought]",
+        "reasoning": "The therapist guides the client to challenge and reevaluate their negative automatic thought by considering all evidence and adopting a more realistic perspective, promoting cognitive restructuring and balanced thinking.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, I suppose it would be more accurate to say that ‘Sometimes things go right for me and sometimes they don’t and, therefore, it’s important for me to keep things in perspective.’ I’d feel a bit better if I can remember that. Looking for evidence is a strain on the brain!",
+        "id": "12-9",
+        "observation": "The client acknowledges a shift in perspective towards a more balanced view, recognizing the importance of maintaining perspective and the cognitive effort required to challenge automatic negative thoughts.",
+        "emotional label": [
+          "Happiness"
+        ]
+      }
+    ],
+    "summary": "In cognitive behavior therapy, therapists aim to help clients differentiate between confirmational, observational, and conjectural data to challenge and modify their automatic thoughts effectively. By encouraging clients to weigh evidence and consider alternative interpretations, therapists facilitate cognitive restructuring and promote more realistic thinking patterns. This approach helps clients to align their thoughts with external events and experience better mental health by reducing distorted thinking and associated emotional distress.",
+    "chain_id": 5
+  },
+  {
+    "dialog_id": "000459",
+    "theme": "investigating marked mood variations",
+    "psychotherapy": "Cognitive Behaviour Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 1,
+    "is_same_session": 0,
+    "background": "Client struggles with maintaining high standards and fears mediocrity.",
+    "reasoning": "Beck emphasizes the importance of uncovering core beliefs through questioning the meaning of thoughts to the patient. Maladaptive assumptions are often rigid and extreme, leading to negative emotions. The client's fear of dropping high standards is rooted in a belief that success is tied to maintaining these standards.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Your modified assumption would aim to keep the success and motivation but give up the self-downing and thereby avoid experiencing the depression that flows from it.",
+        "id": "28-0",
+        "reasoning": "Encouraging client to maintain motivation while avoiding self-criticism.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "It sounds good put like that but how do I actually change it?",
+        "id": "28-1",
+        "observation": "Client seeks guidance on practical steps.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Well, look at the ‘If …’ part of your assumption, what’s the troublesome word there?",
+        "id": "28-2",
+        "reasoning": "Prompting client to identify problematic elements in their assumptions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "‘Always’. There’s no leeway for allowing myself to fall below my high standards because I do sometimes.",
+        "id": "28-3",
+        "observation": "Client acknowledges lack of flexibility in standards.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And no compassion or understanding when you do. Look at the ‘then …’ part of your assumption.",
+        "id": "28-4",
+        "reasoning": "Encouraging client to consider the consequences of their assumptions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I worry that if I drop the ‘always’, then my standards will collapse into mediocrity.",
+        "id": "28-5",
+        "observation": "Client expresses fear of standards dropping.",
+        "emotional label": [
+          "Anxiety",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "You’ve just stated another assumption and you need to put that to the test as well. You’re investing the word ‘always’ with an almost mystical power. It has no power independently of you. You can deprive it of power if you stop believing in it and think of a non-extreme alternative that will lead to a different and compassionate conclusion when you fall below your standards. What sounds like a reasonable alternative to you?",
+        "id": "28-6",
+        "reasoning": "Challenging client's beliefs and encouraging alternative perspectives.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Okay. I really do want to maintain my high standards but … hmm.",
+        "id": "28-7",
+        "observation": "Client shows willingness to work on maintaining high standards.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s a start.",
+        "id": "28-8",
+        "reasoning": "Acknowledging client's progress in addressing their assumptions.",
+        "strategy": [
+          "Affirmation and Reassurance"
+        ]
+      }
+    ],
+    "summary": "Through therapy, the client developed a new assumption that allowed for maintaining high standards while being compassionate towards oneself. This shift in thinking led to productive problem-solving and reduced self-condemnation. The therapist's guidance helped the client challenge and modify their maladaptive assumptions, leading to positive outcomes.",
+    "chain_id": 12
+  },
+  {
+    "dialog_id": "000468",
+    "theme": "investigating marked mood variations",
+    "psychotherapy": "Cognitive Behaviour Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 1,
+    "is_same_session": 0,
+    "background": "A client is exploring her core beliefs and past experiences.",
+    "reasoning": "When clients struggle to believe in their new adaptive beliefs, the therapist plays a crucial role in helping them identify schema-supporting information. It is essential for clients to remain open-minded in processing information that aligns with their new beliefs. Maladaptive core beliefs, often rooted in childhood, can be reinforced by biased evidence. Reflecting on past experiences through the lens of new beliefs can be both productive and unfamiliar for clients.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Can you think of any evidence that supports your new core belief ‘I am a reasonably likeable person’ in this period of your life?",
+        "id": "38-0",
+        "reasoning": "Therapist prompts the client to identify supportive evidence for her new core belief.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "It’s hard to think of any. I was generally lonely and miserable.",
+        "id": "38-1",
+        "observation": "Client expresses feelings of loneliness and misery during the specified period.",
+        "emotional label": [
+          "Depression",
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Was that because you were off school for considerable periods with all the illnesses you had?",
+        "id": "38-2",
+        "reasoning": "Therapist explores potential reasons for the client's feelings of loneliness.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "That didn’t help, that’s for sure.",
+        "id": "38-3",
+        "observation": "Client acknowledges the impact of frequent illnesses on her well-being.",
+        "emotional label": [
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Did anyone from school come to see you at home when you were ill?",
+        "id": "38-4",
+        "reasoning": "Therapist investigates the client's social interactions during illness.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "A few girls from my class came to see me.",
+        "id": "38-5",
+        "observation": "Client recalls classmates visiting her during illness.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Was that because they liked you or were they just doing their duty for the school, so to speak?",
+        "id": "38-6",
+        "reasoning": "Therapist delves into the motives behind the classmates' visits.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, if they were doing their duty for the school they would have been polite and not stayed long. No, they were friendly towards me. We chatted and laughed for a few hours. Sometimes they stayed quite late in the evening.",
+        "id": "38-7",
+        "observation": "Client describes positive interactions with classmates during visits.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So they came more than once then? What do you think might have happened if you had not been off school for long periods with your ill health?",
+        "id": "38-8",
+        "reasoning": "Therapist encourages the client to consider alternative outcomes if her health had been better.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "There’s a good chance I would have had more friends. I never thought of that.",
+        "id": "38-9",
+        "observation": "Client reflects on the potential for increased social connections without prolonged illness.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Something else to think about too: having frequent illnesses and being off school for considerable periods led to a lot of social isolation. These were facts of your teenage years. Did you turn these facts against yourself to prove you were unlikeable?",
+        "id": "38-10",
+        "reasoning": "Therapist guides the client to consider how she may have internalized negative experiences to reinforce her core belief.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "Padesky and Greenberger emphasize that even a few experiences supporting the new schema can be meaningful to clients. Clients often describe themselves in global, negative terms, which may not capture the complexity of their identity. Self-acceptance involves acknowledging positive qualities and shortcomings without equating them to self-worth. This approach can reduce negative emotions by preventing self-criticism, a common cognitive trigger for such emotions.In therapy, promoting self-acceptance alongside positive core beliefs can enhance emotional well-being and self-perception.",
+    "chain_id": 16
+  },
+  {
+    "dialog_id": "000482",
+    "theme": "mindfulness with a small ‘m",
+    "psychotherapy": "Acceptance Commitment Therapy",
+    "topic": "Appearance Anxiety",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Client is encouraged to engage in present moment awareness and value authentic actions.",
+    "reasoning": "The practitioner guides the client to focus on present moment awareness of emotions and valued actions. The client is encouraged to contact the physical experience of emotions and discriminate between behavior guided by values and actions driven by aversive thoughts or emotions.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Opening up to others and being authentic is purposeful for you … and I notice you just did that now.",
+        "id": "52-0",
+        "reference_labels": "[following a disclosure by the client of something meaningful]",
+        "reasoning": "The therapist acknowledges the client's authentic action and encourages further exploration.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, I guess I did. I was building up to that for a while.",
+        "id": "52-1",
+        "observation": "The client reflects on their recent authentic action, indicating a gradual buildup towards openness and authenticity.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Ok, cool, nice work, I really appreciate what you did there. Can I also ask what emotions are showing up?",
+        "id": "52-2",
+        "reasoning": "The therapist praises the client's behavior and seeks to explore the emotions accompanying the authentic action, promoting emotional awareness and self-reflection.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Ha, lots of anxiety, I notice I’m sweating! Therapist: Ok, so anxiety is here. What else?",
+        "id": "52-3",
+        "observation": "The client identifies feelings of anxiety and physical sensations, demonstrating an increased awareness of their emotional state.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, oddly enough I also feel sort of settled. Like in my chest, I feel warm.",
+        "id": "52-4",
+        "observation": "The client describes a contrasting feeling of calmness and warmth alongside anxiety, indicating a complex emotional experience.",
+        "emotional label": [
+          "Neutral",
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And what are these feelings saying about the action you took?",
+        "id": "52-5",
+        "reasoning": "The therapist prompts the client to reflect on the emotional significance of their actions, encouraging insight into the connection between emotions and behaviors.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, it’s definitely saying ‘more’, this is good. It’s scary but I want to do more of this.",
+        "id": "52-6",
+        "observation": "The client recognizes the positive impact of their authentic action despite feeling anxiety, expressing a desire to continue engaging in similar behaviors.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Imagine that for a moment, this struggle you’re engaged in is like a tug of war with a big, strong ugly monster. And to add a bit of drama into the situation, it’s a tug of war to the death! In between you and the monster is a bottomless pit. For this exercise, I’m going to pretend that I’m made up of all your worries, fears, and unwanted thoughts.",
+        "id": "53-0",
+        "reasoning": "The therapist uses vivid imagery to help the client visualize their internal struggles and fears.",
+        "strategy": [
+          "Role-play"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So here I am, your worry/sadness/anger monster in front of you with a rope and I want to play tug of war with you.",
+        "id": "54-0",
+        "reasoning": "The therapist introduces a metaphorical exercise to engage the client in exploring their emotions.",
+        "strategy": [
+          "Role-play"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Imagine that for a moment, this struggle you’re engaged in is like a tug of war with a big, strong ugly monster. And to add a bit of drama into the situation, it’s a tug of war to the death! In between you and the monster is a bottomless pit. For this exercise, I’m going to pretend that I’m made up of all your worries, fears, and unwanted thoughts.",
+        "id": "53-0",
+        "reasoning": "The therapist uses vivid imagery to help the client visualize their internal struggles and fears.",
+        "strategy": [
+          "Role-play"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So here I am, your worry/sadness/anger monster in front of you with a rope and I want to play tug of war with you.",
+        "id": "54-0",
+        "reasoning": "The therapist introduces a metaphorical exercise to engage the client in exploring their emotions.",
+        "strategy": [
+          "Role-play"
+        ]
+      }
+    ],
+    "summary": "The therapist helps the client connect emotions and experiences with the actions taken, fostering curiosity and understanding. By using ongoing present moment awareness, the therapist assists the client in recognizing the value of being authentic and embracing emotions like anxiety and warmth.The tug of war exercise is a metaphor that lends itself well to being physically acted out with the client. The metaphor seeks to highlight how struggling with thoughts and feelings can have unintended consequences, including paradoxical increases and life costs. It suggests acceptance as a viable alternative that can facilitate valued action. For the exercise, the practitioner needs a piece of rope to play ‘tug of war’ with.In the 'Tug of War' exercise, the practitioner collaborates with the client to write down specific emotions on sticky labels and attach them to themselves.The tug of war exercise is a metaphor that lends itself well to being physically acted out with the client. The metaphor seeks to highlight how struggling with thoughts and feelings can have unintended consequences, including paradoxical increases and life costs. It suggests acceptance as a viable alternative that can facilitate valued action. For the exercise, the practitioner needs a piece of rope to play ‘tug of war’ with.In the 'Tug of War' exercise, the practitioner collaborates with the client to write down specific emotions on sticky labels and attach them to themselves.",
+    "chain_id": 24
+  },
+  {
+    "dialog_id": "000488",
+    "theme": "the ‘on track, off track",
+    "psychotherapy": "Acceptance Commitment Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "The client struggles with negative thoughts and self-doubt.",
+    "reasoning": "The therapist engages in a brainstorming activity with the client to identify common negative thoughts, aiming to create psychological distance. By recognizing and labeling these thoughts, the therapist prepares the client to monitor them during the session.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "OK, let’s do a brief mindfulness exercise, but as we do it, I’m going to ask you to watch your mind and see if any of these thoughts arrive.",
+        "id": "60-0",
+        "reasoning": "Therapist encourages client to be aware of negative thoughts.",
+        "strategy": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I mean, even as you say we should do the exercise, I notice one.",
+        "id": "60-1",
+        "observation": "Client acknowledges the presence of a negative thought.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Oh, great, which one?",
+        "id": "60-2",
+        "reasoning": "Therapist prompts client to specify the negative thought.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "It was a version of why bother. My mind literally said, ‘What’s the point of doing this exercise?’",
+        "id": "60-3",
+        "observation": "Client shares a thought related to questioning the exercise's purpose.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "OK, good spotting. Let me mark an X next to that. Any others?",
+        "id": "60-4",
+        "reasoning": "Therapist acknowledges the identified thought and encourages further exploration.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I thought I’m going to fail, just like I have before.",
+        "id": "60-5",
+        "observation": "Client expresses fear of failure based on past experiences.",
+        "emotional label": [
+          "Anxiety",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Right. Your mind said, ‘You’re going to fail’. So as we continue, I’m going to ask you to keep track for the rest of the session of any thoughts your mind throws out to try to knock us off track.",
+        "id": "60-6",
+        "reasoning": "Therapist guides the client to monitor and address negative thoughts throughout the session.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      }
+    ],
+    "summary": "After identifying common negative thoughts, it can be beneficial to categorize them into a functional class and assign a name that reflects their purpose, such as 'the critical protector' or 'the worrier'. These names help the client recognize the underlying functions of their negative thoughts and work towards addressing them.",
+    "chain_id": 28
+  },
+  {
+    "dialog_id": "000511",
+    "theme": "solution-focused brief therapy: solution-focused therapy: focusing on preferred future, exceptions, progress, and goal-oriented tasks in family therapy.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Child-Parent Relationship Issues",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A family is working on improving communication and conflict resolution.",
+    "reasoning": "The therapist focuses on Brad's preferred future to understand his goals. The emphasis is on discovering what the client wants rather than a specific method of achieving it. Scaling can be used to track progress.Therapy progresses by highlighting exceptions, maintaining a future-oriented approach, and utilizing scaling to align with the family's goals.Instead of dwelling on the presenting problem, the therapist acknowledges the family's progress, reinforces effective behaviors, and assigns tasks that support their goals.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How did the homework go? [to family]",
+        "id": "83-0",
+        "reasoning": "The therapist initiates a discussion about the homework to assess the family's progress and engagement in improving communication and conflict resolution.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "I think it went fairly well. Sherri mouthed off a couple times and I was able to calmly ask her to talk with me about it.",
+        "id": "83-1",
+        "observation": "The mother reflects on the positive aspects of the homework, highlighting her ability to address conflicts calmly and encourage open communication with her daughter.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Father",
+        "content": "I knew it was happening, so Geri and I went into another room so I wouldn’t interfere.",
+        "id": "83-2",
+        "observation": "The father demonstrates his awareness of the situation and his proactive approach to avoid escalating conflicts, showing progress in managing family dynamics.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "Yeah, he did stay out of it pretty good. He came into the kitchen once but left when he saw that we were talking in loud voices but not as loud or as intense as usual.",
+        "id": "83-3",
+        "observation": "The mother acknowledges the father's positive behavior of not getting involved in the conflict, indicating improved conflict resolution strategies within the family.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s impressive. Dad, how did you manage to stay out of it? Mom, how did he do that? [exception]",
+        "id": "83-4",
+        "reasoning": "The therapist praises the father's behavior and encourages discussion about the successful strategies employed by the family members to handle conflicts effectively.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Father",
+        "content": "I just remembered what you said, and I knew I needed to not get into it, to let them deal with it. I stayed in the other room.",
+        "id": "83-5",
+        "observation": "The father attributes his success in staying out of the conflict to following the therapist's advice, demonstrating a positive response to therapeutic guidance.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "I’m really impressed. Mom, on a scale of 1–10, where do you put yourself?",
+        "id": "83-6",
+        "reasoning": "The therapist uses scaling to assess the mother's self-perceived emotional intensity during the conflict, encouraging self-reflection and awareness of her responses.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "5. I was pretty upset, especially the first time, so I think I was louder than I needed to be.",
+        "id": "83-7",
+        "observation": "The mother rates herself a 5, indicating her emotional intensity during the conflict and recognizing areas for improvement in managing her reactions.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Sherri",
+        "content": "Yeah. And I tried to keep it going, but when I saw that you weren’t going to give in, I got mad. But I didn’t leave. I stayed and tried to talk with you.",
+        "id": "83-8",
+        "observation": "Sherri reflects on her behavior during the conflict, acknowledging her attempt to communicate despite feeling frustrated, showing progress in conflict resolution skills.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "And I think I listened fairly well.",
+        "id": "83-9",
+        "observation": "The mother recognizes her active listening during the conflict, indicating an improvement in her communication skills and willingness to engage in constructive dialogue.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Sherri",
+        "content": "Yeah.",
+        "id": "83-10",
+        "observation": "Sherri acknowledges her mother's efforts to listen, indicating mutual recognition of positive communication behaviors within the family.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And the second time, when you were less upset, where were you on the scale?",
+        "id": "83-11",
+        "reasoning": "The therapist uses scaling to assess the mother's emotional state and progress in handling conflicts.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "Oh, well, I guess I was at 6.",
+        "id": "83-12",
+        "observation": "The mother rates her emotional intensity at a 6 during the second conflict situation, indicating a moderate level of upset.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "6. How did you do that? How did you get there or what was different?",
+        "id": "83-13",
+        "reasoning": "The therapist explores the factors that contributed to the mother's reduced emotional intensity, encouraging reflection on successful coping strategies.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "Well, I think I must have remembered from the first time that I didn’t give in, so I wasn’t as scared about it.",
+        "id": "83-14",
+        "observation": "The mother attributes her improved response to recalling her previous successful handling of the conflict, leading to decreased fear and increased confidence.",
+        "emotional label": [
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s impressive. And it sounds like Sherri figured that out, too.",
+        "id": "83-15",
+        "reasoning": "The therapist acknowledges the mother's insight and highlights the daughter's ability to learn from past experiences, fostering a sense of empowerment and growth.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mother",
+        "content": "Yes. I think she did. Then, the next time, she wasn’t as loud and didn’t stomp out when I held firm.",
+        "id": "83-16",
+        "observation": "The mother recognizes her daughter's improved behavior in subsequent conflicts, indicating progress in communication and conflict resolution within the family.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, Sherri, scale of 1–10, where do you think you and your mom were on that one, the better one?",
+        "id": "83-17",
+        "reasoning": "The therapist engages Sherri in scaling to assess the quality of the interaction between her and her mother during a more positive conflict resolution instance.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Sherri",
+        "content": "Ummm . . . Maybe 4. I think we can do better.",
+        "id": "83-18",
+        "observation": "Sherri rates the interaction with her mother at a 4, indicating room for improvement and a desire to enhance their communication further.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "4? Hm. Not 3?",
+        "id": "83-19",
+        "reasoning": "The therapist prompts Sherri to clarify her rating, encouraging her to reflect on the nuances of the interaction and her perception of the conflict resolution process.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Sherri",
+        "content": "No, 3 would be my staying in the room, but Mom getting worked up.",
+        "id": "83-20",
+        "observation": "Sherri explains her rating by contrasting it with a hypothetical scenario where she remains in the room but her mother becomes agitated, highlighting the importance of both parties' responses in conflict situations.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And what does 5 look like for you?",
+        "id": "83-21",
+        "reasoning": "The therapist prompts Sherri to envision what achieving a 5 on the scale would entail, encouraging her to describe her desired outcome.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Sherri",
+        "content": "Getting what I want without having to yell!",
+        "id": "83-22",
+        "observation": "Sherri expresses her goal of achieving her desires without resorting to yelling, indicating a positive shift in her communication approach.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "OK. Do you want to show me? Dad, you and Geri can sit over there. Sherri and mom, show us what 5 or 6 looks like. [laughs]",
+        "id": "83-23",
+        "reasoning": "The therapist encourages a playful role-play exercise to visualize and practice the desired communication style, promoting active engagement and experiential learning within the family dynamics.",
+        "strategy": [
+          "Role-play"
+        ]
+      }
+    ],
+    "summary": "In Solution-Focused Brief Therapy, the focus is on achieving goals rather than symptom elimination. The therapist may recommend continuing therapy until significant changes in family dynamics are observed. By using scaling techniques, therapists can assess progress and encourage further growth. For instance, even when a family rates themselves at 8 towards their goals, the therapist may prompt them to envision what reaching a 9 entails. This approach facilitates ongoing improvement and skill application in various family interactions.",
+    "chain_id": 40
+  },
+  {
+    "dialog_id": "000522",
+    "theme": "solution-focused brief therapy: sfbt techniques for finding solutions in family therapy with shantel.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "School Bullying",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Shantel Thomas, a seventh-grade African American, recently moved back to Forest Side to live with her mother and stepfather after living with her father in Chicago. She is facing behavioral and academic challenges at school, feeling isolated from other girls in the lunchroom.",
+    "reasoning": "In Solution-Focused Brief Therapy, the therapist uses scaling questions and the miracle question to facilitate new solutions for the family's and Shantel's struggles.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Hello and welcome back to school! I hope you were able to get to my office with no hassle. Mr. Daniels: Sure, the school secretary buzzed us in and pointed us up here.",
+        "id": "94-0",
+        "reasoning": "The therapist initiates the conversation in a welcoming manner, setting a positive tone for the session and acknowledging Shantel's arrival with her parents.",
+        "strategy": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "And I knew where it was, so I could show them!",
+        "id": "94-1",
+        "observation": "Shantel expresses a sense of independence and confidence by guiding her parents to the therapist's office, indicating a potential strength in her character.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s great, you could be the tour guide for your parents. Did you show them anything else on your way up here, maybe like where your classroom is?",
+        "id": "94-2",
+        "reasoning": "The therapist acknowledges Shantel's initiative and encourages her to share more about her school environment, aiming to build rapport and gather information about her daily experiences.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "No, I just came here. They can find Ms. Frederick’s room on their own time—ooh, I hate her!",
+        "id": "94-3",
+        "observation": "Shantel's negative feelings towards her teacher, Ms. Frederick, are revealed, indicating a potential source of conflict or distress in her school life.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mrs. Daniels",
+        "content": "Shantel! Don’t let me hear you talking about your teacher that way. It’s only been a month since you started here and already you’re talking badly about your teacher.",
+        "id": "94-4",
+        "observation": "Mrs. Daniels reprimands Shantel for speaking negatively about her teacher, showing a concern for respectful behavior and discipline.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "I’m wondering about that, too, Shantel. If you had to say on a scale of 1 to 5, with 1 being not at all comfortable here in your new school and 5 saying that you were totally comfortable here, what would you say your rating is for being at our school?",
+        "id": "94-5",
+        "reasoning": "The therapist introduces a scaling question to assess Shantel's comfort level at school, aiming to gauge her overall adjustment and emotional well-being in the new environment.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Oh, a 2, definitely. I mean, it’s not like the school totally stinks, but it’s nothing like my old school Washington.",
+        "id": "94-6",
+        "observation": "Shantel rates her comfort level at the new school as 2 out of 5.",
+        "emotional label": [
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So a 2 is what you would rate our school. What would you have said comfort scale was at Washington?",
+        "id": "94-7",
+        "reasoning": "The therapist is using scaling questions to explore Shantel's perception of her previous school environment, aiming to uncover positive past experiences that can guide the current therapy session.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Definitely a 4, maybe even a 5. Yeah, I was real good there.",
+        "id": "94-8",
+        "observation": "Shantel recalls her high comfort level at her previous school, indicating positive experiences and potential resources for building confidence and resilience.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mrs. D",
+        "content": "You know, she’s right about that. My ex-husband told me that Shantel never got any calls home while she was there, and she was even doing … what was that club you were in?",
+        "id": "94-9",
+        "observation": "Mrs. D acknowledges Shantel's positive behavior and involvement in extracurricular activities at her previous school, highlighting the contrast with her current challenges.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Wasn’t a club, mama. I was in plays and I also did this after-school dance class, too.",
+        "id": "94-10",
+        "observation": "Shantel clarifies her involvement in plays and dance classes, emphasizing her active participation in enriching activities that contributed to her well-being and sense of belonging.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So not only did you rate your school time at Washington higher, you were doing after-school stuff as well?",
+        "id": "94-11",
+        "reasoning": "The therapist is referencing Shantel's positive experiences at her previous school and after-school activities to explore what elements contributed to her well-being and how they can be replicated in her current situation.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Yeah, it was a great place.",
+        "id": "94-12",
+        "observation": "Shantel's affirmation of her previous school being a great place indicates her positive memories and emotional connection to that environment.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would be a way that you could do something at our school to make it feel more like you felt at Washington?",
+        "id": "94-13",
+        "reasoning": "The therapist is encouraging Shantel to think about practical steps she can take to recreate the positive feelings she had at her previous school, promoting a solution-focused approach to addressing her current challenges.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Hmm … I don’t know.",
+        "id": "94-14",
+        "observation": "Shantel's uncertainty suggests a potential barrier to identifying immediate solutions or making connections between her past experiences and present circumstances.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Is there anything that you did at Washington that you think you could “bring” here?",
+        "id": "94-15",
+        "reasoning": "The therapist is prompting Shantel to reflect on specific actions or behaviors from her previous school that she believes could be beneficial if implemented in her current school, fostering a sense of agency and empowerment in finding solutions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "I got it. I think I left something at Washington, with my old acting teacher.",
+        "id": "94-16",
+        "observation": "Shantel mentions her past connection with her acting teacher, indicating a potential source of support or guidance in her life.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Excuse me?",
+        "id": "94-17",
+        "reasoning": "The therapist seeks clarification or further elaboration from Shantel to better understand the significance of her statement about her acting teacher.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "My acting teacher always talked about how we had to hold on to our wisdom while we were doing our parts. He said we all knew more about our characters than the audience did, and we had to hold on to that wisdom and pull it out when we were up there, to make us do a better job.",
+        "id": "94-18",
+        "observation": "Shantel recalls her acting teacher's advice on tapping into personal wisdom and knowledge, suggesting a potential coping strategy or strength she possesses.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s fascinating. He said you had wisdom, and how old are you?",
+        "id": "94-19",
+        "reasoning": "The therapist acknowledges Shantel's story and inquires about her age, possibly to understand how her experiences and wisdom align with her developmental stage.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "You know how old I am. A lot younger than those two .",
+        "id": "94-20",
+        "reference_labels": [
+          "[pointing to mom, everybody laughs]"
+        ],
+        "observation": "Shantel humorously points out the age difference between herself and the adults present, using humor as a coping mechanism or to establish rapport.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mrs. D",
+        "content": "Shantel, you are crazy, joking about all this, and we’re here to talk about your problems!",
+        "id": "94-21",
+        "observation": "Mrs. D's confrontational tone and labeling of Shantel's behavior as 'crazy' may indicate a lack of understanding or frustration with the situation.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "You know, Mrs. Daniels, I think in some ways we are starting to talk about Shantel’s problems here at our school. Can I tell you what I’ve seen happening at school, Shantel?",
+        "id": "94-22",
+        "reasoning": "The therapist is redirecting the conversation towards a more constructive approach by acknowledging the issue and seeking permission to share observations with Shantel, aiming to shift the focus to a more solution-oriented discussion.",
+        "strategy": [
+          "Information"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "I guess.",
+        "id": "94-23",
+        "observation": "Shantel's response 'I guess' may suggest a tentative openness to engage in the conversation, indicating a potential willingness to listen and participate further.",
+        "emotional label": [
+          "Anxiety",
+          "Depression",
+          "Sadness",
+          "Anger",
+          "Fear",
+          "Guilty",
+          "Shame",
+          "Neutral",
+          "Unknown",
+          "Others",
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "I’ve talked to your teachers, and they all told me—even Ms. Frederick!—that you are clearly one of the smartest kids in their class. You raise your hand a lot and have good things to contribute. They say that if you did their work, your first-quarter grades would be all A’s and B’s.",
+        "id": "94-24",
+        "reasoning": "The therapist is using positive feedback from Shantel's teachers to challenge her negative self-perception and highlight her academic potential, aiming to build Shantel's self-esteem and motivation to improve.",
+        "strategy": [
+          "Affirmation and Reassurance"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Really? I thought they all hated me. They’re always looking at me like I did something wrong.",
+        "id": "94-25",
+        "observation": "Shantel's surprise and disbelief at the positive feedback from her teachers reveal her distorted perception of how others view her, indicating potential underlying self-esteem issues and a need for reassurance and validation.",
+        "emotional label": [
+          "Anxiety",
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mr. D",
+        "content": "What about the problems after school and in the lunch- room? I know it’s only been a month, but my wife and I have gotten something like five calls from the school ask- ing us to talk to Shantel and to come get her. Getting into fights, back-talking … This has got to stop.",
+        "id": "94-26",
+        "observation": "Mr. D expresses concern about Shantel's behavior at school, highlighting the frequency of incidents and the impact on the family, indicating a sense of urgency to address the situation.",
+        "emotional label": [
+          "Anger",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "They’re always getting me into trouble! I told you, nobody likes me here!",
+        "id": "94-27",
+        "reference_labels": [
+          "[puts head down, seems ready to either leave the room or cry]"
+        ],
+        "observation": "Shantel expresses feelings of isolation and frustration, attributing her behavior to the negative interactions with peers and staff at school, showing signs of emotional distress and a desire to escape the situation.",
+        "emotional label": [
+          "Anger",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Shantel, hold on a minute. What your stepdad is say- ing is true, right, about you getting into some trouble at our school?",
+        "id": "94-28",
+        "reasoning": "The therapist seeks clarification from Shantel about the reported incidents at school, aiming to validate Mr. D's concerns while also encouraging Shantel to reflect on her actions and take responsibility for them.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Yeah, but what else can I do? These other girls are always acting like they own the school or something, tellin’ me where to sit, and, oh man, don’t get me started on those lunch supervisors … they’re evil!",
+        "id": "94-29",
+        "observation": "Shantel expresses a sense of powerlessness and victimization in the face of peer pressure and authority figures at school, highlighting the challenges she faces in asserting herself and navigating social dynamics.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Okay, I think I’m getting a better picture of why you rated our school a 2 for you. I want you to try something with me for a minute. Let’s imagine that after we leave here today you go home with your parents, play with your little brothers, do your homework, and then go to sleep.",
+        "id": "94-30",
+        "reasoning": "The therapist uses a hypothetical scenario to shift Shantel's focus from the negative school environment to a more positive and familiar setting, aiming to evoke positive emotions and encourage a shift in perspective towards potential solutions and coping strategies.",
+        "strategy": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "That’s pretty much what I would do.",
+        "id": "94-31",
+        "observation": "Shantel's response indicates a level of agreement or familiarity with the therapist's approach, showing potential openness to the therapeutic process.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Great. But this is a different night of going to sleep because while you are sleeping, a miracle happens to you, and when you wake up and come back to school, everything that was a problem for you here is different, all the things that have been bothering you here are different somehow.",
+        "id": "94-32",
+        "reasoning": "The therapist introduces the miracle question technique, a key tool in Solution-Focused Brief Therapy, to help Shantel envision a future where her current problems have been resolved, encouraging a shift in perspective and potential solutions.",
+        "strategy": [
+          "Role-play"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "So … like all those mean girls and teachers are gone?",
+        "id": "94-33",
+        "observation": "Shantel's question reflects her initial interpretation of the miracle question, showing her desire for a significant change in her social and academic environment.",
+        "emotional label": [
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "No, the miracle happens with everybody still at school, including you. What’s different is that the problems are gone.",
+        "id": "94-34",
+        "reasoning": "The therapist clarifies the purpose of the miracle question, emphasizing that the change lies in the resolution of problems rather than the removal of individuals, guiding Shantel towards focusing on problem-solving and positive outcomes.",
+        "strategy": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Hmm.",
+        "id": "94-35",
+        "observation": "Shantel's response suggests contemplation or processing of the therapist's explanation, indicating a potential shift in perspective or understanding of the therapeutic approach.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, my question to you first, and then I’ll ask your parents their answer, is “What would you notice first that was different?”",
+        "id": "94-36",
+        "reasoning": "The therapist is initiating the miracle question technique, aiming to help Shantel envision a future where her struggles have improved, which can inspire hope and motivation for change.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "I know: I’d have my wisdom again.",
+        "id": "94-37",
+        "reference_labels": [
+          "[thinks for a long time]"
+        ],
+        "observation": "Shantel's response indicates a desire to regain a sense of empowerment and confidence, suggesting a shift towards a more positive self-perception and mindset.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Tell me more about that.",
+        "id": "94-38",
+        "reasoning": "The therapist is encouraging Shantel to elaborate on her statement, facilitating deeper exploration of how reclaiming her 'wisdom' could help her navigate and overcome her current challenges.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "All that wisdom I had at Washington, when I was acting and just being myself, I’d be able to get that back and use it to fight back here.",
+        "id": "94-39",
+        "observation": "Shantel's reference to her past positive experiences and self-expression suggests a potential source of strength and resilience that she aims to tap into to address her current difficulties.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Can you give me an example of what you mean by using your wisdom to fight back?",
+        "id": "94-40",
+        "reasoning": "The therapist is prompting Shantel to provide concrete examples of how her past wisdom and self-expression can be applied in her current context, encouraging her to identify practical strategies for coping and problem-solving.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Sure, with my wisdom, I would be able to see through the things the girls are saying to me, and just go off and make my own friends.",
+        "id": "94-41",
+        "observation": "Shantel expresses a desire to use her wisdom to navigate social challenges and form new friendships, indicating a sense of empowerment and self-awareness.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What else?",
+        "id": "94-42",
+        "reasoning": "The therapist encourages Shantel to explore additional possibilities or solutions, aligning with the SFBT approach of focusing on strengths and solutions rather than problems.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "I’d be better at holding on to my comebacks when those evil lunch supervisors come around yelling at me, just look at them and smile or something and say, “Yes,” and then get away from them and go sit somewhere else.",
+        "id": "94-43",
+        "observation": "Shantel describes a strategy to handle confrontations with lunch supervisors calmly and assertively, demonstrating a proactive approach to managing challenging situations.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Wait, with your wisdom you’d be able to do that? “See through” the other girls’ comments and not get all mad back at the lunch supervisors?",
+        "id": "94-44",
+        "reasoning": "The therapist seeks clarification and reinforces Shantel's proposed solutions, highlighting her ability to apply wisdom in difficult social interactions, which can empower her to respond more positively.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Shantel",
+        "content": "Yeah, that’s what I did at Washington. There were mean girls there, too. I just liked being there more, I guess.",
+        "id": "94-45",
+        "observation": "Shantel reflects on her past experiences and how she successfully managed similar challenges before, indicating resilience and adaptability in different social environments.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, let’s take the miracle one step further, and let me ask your parents the same question. What would be the first sign that the miracle had happened and things were better for Shantel at school?",
+        "id": "94-46",
+        "reasoning": "The therapist is extending the miracle question to involve Shantel's parents, aiming to explore their perspectives on what positive changes they would notice if things improved for Shantel at school.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mrs. D",
+        "content": "Shantel would be happy to go to school and wouldn’t be so hard to live with at home.  I’ve got to be honest …",
+        "id": "94-47",
+        "reference_labels": [
+          "[everybody laughs]"
+        ],
+        "observation": "Mrs. D's response indicates her hopes for Shantel's improved behavior and well-being, highlighting the family's desire for positive changes.",
+        "emotional label": [
+          "Guilty",
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Mr. D",
+        "content": "You got that right, Shantel, if you got some wisdom somewhere that you lost, you really need to go get it. I’ll drive you to go pick it up!  An example of a conversation that took place with a GRG during the SFBT group process illustrates the use of the aforementioned questions:",
+        "id": "94-48",
+        "reference_labels": [
+          "[laughter again]"
+        ],
+        "observation": "Mr. D's humorous response reflects a supportive and encouraging tone, suggesting a willingness to help Shantel find solutions and improve her situation.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Welcome back, everyone. Tonight, we want to start by discussing a time in the last three weeks that the problem or problems affecting your grandchild were not so overwhelming, and what you did as a grandparent to help ease or lessen those problems. Do we have anybody who can share with us tonight?",
+        "id": "94-49",
+        "reasoning": "The therapist is initiating a discussion about past exceptions to the problem, encouraging group members to reflect on positive experiences and interventions that have helped alleviate difficulties with their grandchildren.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Ms. Valdez",
+        "content": "I will. I think my grandson is getting better at school.",
+        "id": "94-50",
+        "observation": "Ms. Valdez's statement suggests a positive change in her grandson's behavior at school, illustrating how small improvements can be significant indicators of progress and the effectiveness of Solution-Focused Brief Therapy.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Really? Tell us how you know that.",
+        "id": "94-51",
+        "reasoning": "The therapist is prompting Ms. Valdez to provide specific examples or evidence to support her statement, encouraging her to reflect on her observations and experiences.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Ms. Valdez",
+        "content": "Well, my grandson was having trouble on the playground, getting in fights and all that, and they called me in.",
+        "id": "94-52",
+        "observation": "Ms. Valdez shares a concerning situation involving her grandson's behavior on the playground, indicating a need for intervention and support from the school.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Who is “they” here that you’re talking about?",
+        "id": "94-53",
+        "reasoning": "The therapist is seeking clarification on the identity of the individuals or group involved in the decision-making process regarding Juan's behavior, aiming to understand the context and dynamics of the situation.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Ms. Valdez",
+        "content": "The school staff, they wanted him to stay off the playground.",
+        "id": "94-54",
+        "observation": "Ms. Valdez reveals that the school staff intervened by restricting Juan's access to the playground, highlighting their concerns about his behavior and safety in that environment.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And all that was because they didn’t think your grandson could handle being on the playground? Have you seen times when Juan could handle being on playgrounds with other kids?",
+        "id": "94-55",
+        "reasoning": "The therapist is exploring exceptions to the problematic behavior by inquiring about instances when Juan demonstrated the ability to manage playground interactions, aiming to identify strengths and positive experiences to build upon.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Ms. Valdez",
+        "content": "Yes, I told them he’ll find his way, we just have to pay attention. To prove it I went to school to watch him play on the playground. I saw that he was alone, and nobody was playing with him. I thought, “No wonder he’s getting in trouble; he’s trying to find any way possible to fit in.” I told him to go see if he could play soccer with some of the kids on the playground—he loves to play—and he did!",
+        "id": "94-56",
+        "observation": "Ms. Valdez's proactive approach and keen observation skills allowed her to identify the root cause of her grandson's behavior and take steps to address it by encouraging him to engage in activities he enjoys.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And you were able to show the school that some kids can find their own way. You recalled how much your grandson loved playing soccer, and you helped him get in a game. And all that fighting stuff on the playground went away.",
+        "id": "94-57",
+        "reasoning": "The therapist acknowledges Ms. Valdez's positive influence on her grandson's behavior and highlights the importance of recognizing and nurturing children's strengths and interests to promote positive changes.",
+        "strategy": [
+          "Affirmation and Reassurance"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Ms. Valdez",
+        "content": "Yep. All it took was a little attention. That’s what these kids need, our attention.",
+        "id": "94-58",
+        "observation": "Ms. Valdez recognizes the power of giving attention and support to children, emphasizing the significance of being present and involved in addressing children's needs and fostering positive behaviors.",
+        "emotional label": [
+          "Happiness"
+        ]
+      }
+    ],
+    "summary": "The dialogue exemplifies how Solution-Focused Brief Therapy can uncover exceptions and facilitate positive changes. By exploring Shantel's past experiences and using scaling questions, the therapist aims to help Shantel find ways to improve her current situation. The conversation with Ms. Valdez further illustrates how small interventions can lead to significant improvements in a child's behavior and well-being.",
+    "chain_id": 47
+  },
+  {
+    "dialog_id": "000567",
+    "theme": "unrealistic goals",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Child-Parent Relationship Issues",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client expresses unrealistic hopes and desires during therapy sessions.",
+    "reasoning": "When clients express improbable or impossible outcomes as their goals, it is important to reframe these unrealistic goals to uncover their underlying needs or desires. This can be achieved by exploring what these unrealistic goals would do for or mean to the clients.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your best hope for our meeting today?",
+        "id": "139-0",
+        "reasoning": "Therapist initiates the session by inquiring about the client's aspirations.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I want my parents to get back together again.",
+        "id": "139-1",
+        "observation": "Client expresses an unrealistic desire for their parents to reconcile.",
+        "emotional label": [
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would having your parents back together again do for you?",
+        "id": "139-2",
+        "reasoning": "Therapist aims to uncover the underlying need or desire behind the client's unrealistic goal.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I’d be able to talk to my dad every day.",
+        "id": "139-3",
+        "observation": "Client reveals the importance of regular communication with their father.",
+        "emotional label": [
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So being able to talk to your dad every day would be your hope?",
+        "id": "139-4",
+        "reference_labels": "[Positive goal]",
+        "reasoning": "The therapist reframes the client's unrealistic goal of parents reconciling into a positive goal of regular communication with the father, aligning with Solution-Focused Brief Therapy's approach of uncovering underlying needs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, I’d like that.",
+        "id": "139-5",
+        "observation": "Client acknowledges the positive aspect of the reframed goal.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So when you are talking to your dad every day, what would you have done to make that happen?",
+        "id": "139-6",
+        "reference_labels": "[Detailing]",
+        "reasoning": "Therapist encourages the client to elaborate on the steps needed to achieve the positive goal.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would have set up a regular time to call my dad before I go to bed.",
+        "id": "139-7",
+        "observation": "Client outlines a specific action plan to facilitate regular communication with their father.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your best hope for our meeting today?",
+        "id": "139-8",
+        "reasoning": "Therapist continues to explore the client's aspirations for the session.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I don’t want to be HIV positive.",
+        "id": "139-9",
+        "observation": "Client expresses a desire to avoid a specific health condition.",
+        "emotional label": [
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What’s the reason that is so important to you?",
+        "id": "139-10",
+        "reasoning": "Therapist delves into the significance of the client's goal to avoid being HIV positive.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Because then I would feel more comfortable hanging around with my friends like I used to.",
+        "id": "139-11",
+        "observation": "Client links avoiding HIV positivity to regaining comfort in social interactions.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So feeling comfortable hanging around with your friends is something you would like to accomplish?",
+        "id": "139-12",
+        "reference_labels": "[Positive goal]",
+        "reasoning": "The therapist is reflecting the client's desire for increased comfort in social situations, aligning with the SFBT approach of focusing on positive goals and solutions.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would like that.",
+        "id": "139-13",
+        "observation": "Client expresses agreement with the positive reframing of their goal.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would you be doing that would show that you are more comfortable when you are with your friends?",
+        "id": "139-14",
+        "reference_labels": "[Detailing]",
+        "reasoning": "The therapist prompts the client to explore specific behaviors or actions that would indicate the achievement of increased comfort in social interactions, encouraging the client to envision concrete steps towards their goal.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "The post-reasoning section is empty as there is no additional reasoning provided in the original content.",
+    "chain_id": 75
+  },
+  {
+    "dialog_id": "000568",
+    "theme": "harmful goals",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Academic Pressure",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client expresses a desire to quit school due to academic struggles.",
+    "reasoning": "The solution-focused approach highlights the importance of aligning counseling goals with the client's needs and best interests. Harmful goals, such as dropping out of school or engaging in destructive behaviors, are not supported by ethical counselors. These goals often stem from underlying needs that can be addressed through reframing and identifying healthier alternatives.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your best hope from our meeting today?",
+        "id": "140-0",
+        "reasoning": "The therapist initiates the session by exploring the client's aspirations, setting a positive tone for the conversation.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I want to figure out how I can quit school.",
+        "id": "140-1",
+        "observation": "The client expresses a harmful goal of quitting school, indicating a need for further exploration and reframing.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What’s the reason you want to quit school?",
+        "id": "140-2",
+        "reasoning": "The therapist delves into the underlying reasons behind the client's desire to quit school, aiming to uncover the root causes.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Because I’m flunking all my classes, and I’ve just given up trying.",
+        "id": "140-3",
+        "observation": "The client links the desire to quit school to academic struggles and feelings of defeat, revealing important insights into their mindset.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, are you also saying that if you were trying harder and were doing better in school, you would be more willing to stay in school?",
+        "id": "140-4",
+        "reasoning": "The therapist uses reflective questioning to help the client consider the connection between effort, academic performance, and their willingness to continue with schooling.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Probably so.",
+        "id": "140-5",
+        "observation": "The client's response suggests a potential shift in perspective, indicating a willingness to reconsider their approach to academic challenges.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Could a goal for you be to figure out a way to try harder and do better in school?",
+        "id": "140-6",
+        "reasoning": "The therapist guides the client towards reframing the harmful goal of quitting school into a positive and productive one, focusing on improving academic performance.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yes, I think so.",
+        "id": "140-7",
+        "observation": "The client's affirmation indicates a willingness to consider a shift in perspective towards a more constructive goal, showing receptiveness to the therapist's guidance.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would be your first clue that you were trying harder?",
+        "id": "140-8",
+        "reference_labels": [
+          "[Detailing]"
+        ],
+        "reasoning": "The therapist prompts the client to elaborate on how they would recognize their efforts to try harder, encouraging self-reflection and goal-setting.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would be doing my homework.",
+        "id": "140-9",
+        "observation": "The client identifies a specific action, doing homework, as an indicator of trying harder in school, demonstrating a shift towards actionable and positive goal-setting.",
+        "emotional label": [
+          "Neutral"
+        ]
+      }
+    ],
+    "summary": "This dialogue exemplifies how attentive listening and redirection can transform harmful goals into constructive objectives, ultimately guiding clients towards more beneficial outcomes.",
+    "chain_id": 76
+  },
+  {
+    "dialog_id": "000572",
+    "theme": "promoting self-awareness and understanding reciprocity in behavior change through the miracle question process.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "School Bullying",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 1,
+    "background": "A client expresses a desire for their teacher to treat them fairly.",
+    "reasoning": "Clients may want others to change because they view them as the problem. You need to help clients understand reciprocity—the notion that changes in one’s own behavior often produce behavior changes in others. This concept can be used in the miracle question process to help clients recognize that they can initiate behavior changes.",
+    "dialog": [
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "You say “miracle.” Well, if that were to happen, my teacher would start treating me fairly like he does the other kids.",
+        "id": "144-0",
+        "observation": "Client expresses a desire for fair treatment from the teacher.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, suppose this miracle did occur, and the teacher was now treating you fairly like the other kids, what would that look like?",
+        "id": "144-1",
+        "reasoning": "Therapist explores the client's expectations of fair treatment from the teacher.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "He would call on me when I raise my hand.",
+        "id": "144-2",
+        "observation": "Client envisions specific changes in the teacher's behavior.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, if he called on you when you raised your hand, what would you start doing differently?",
+        "id": "144-3",
+        "reasoning": "Therapist prompts the client to consider their own behavioral changes in response to the teacher's actions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I wouldn’t talk in class without permission.",
+        "id": "144-4",
+        "observation": "Client describes a behavioral adjustment in response to the hypothetical fair treatment.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, what would you be doing instead?",
+        "id": "144-5",
+        "reasoning": "The therapist encourages the client to envision alternative behaviors, fostering self-reflection and personal responsibility in the change process.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would sit in my seat and look at the teacher, or be writing down what he says with my lips sealed.",
+        "id": "144-6",
+        "observation": "Client outlines alternative behaviors in the classroom setting.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What do you think he will do when he sees you acting this way?",
+        "id": "144-7",
+        "reasoning": "Therapist encourages the client to consider the potential impact of their changed behavior on the teacher.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "He will probably treat me like the other kids.",
+        "id": "144-8",
+        "observation": "Client anticipates a positive change in the teacher's behavior based on their own adjustments.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Is that what you want to have happen?",
+        "id": "144-9",
+        "reasoning": "Therapist confirms the client's desired outcome and reinforces the connection between behavior changes.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I sure do.",
+        "id": "144-10",
+        "observation": "Client affirms their wish for fair treatment from the teacher.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, doing those things you just described could possibly result in your teacher changing as well.",
+        "id": "144-11",
+        "reasoning": "Therapist highlights the potential for reciprocal change through the client's actions.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      }
+    ],
+    "summary": "Helping clients see the reciprocal cause and effect of small changes in their own behavior enables them to see the possibility for change in others. Detailed answers are crucial in generating specific solutions. Using hypothetical scenarios involving others can help develop detailed solutions. Engaging in detailed exchanges with clients can illustrate the ripple effect of their behaviors.",
+    "chain_id": 79
+  },
+  {
+    "dialog_id": "000608",
+    "theme": "highlighting client progress by comparing present and past ratings to identify successful strategies for improvement.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Client's present rating is the highest ever, seeking to understand client's progress and success.",
+    "reasoning": "When the Client Reports the Present Number Is the Highest Ever. If the present rating is the highest it has ever been, ask clients what is the lowest number they have ever been in the past. The purpose is to determine how clients have improved to where they are now. Ask questions that detail what clients are doing now that they weren’t doing when they were at the lower number. This helps clients appreciate how they have used their resources to achieve their highest rating and identifies instances of success that can be repeated or expanded to improve even more.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So right now you’re at 5 and that’s the highest you have ever been. I’m also thinking that you could have been lower than 5 at some point, and I’m wondering—what’s the lowest number you have ever been?",
+        "id": "180-0",
+        "reasoning": "The therapist is using scaling to explore the client's progress and perspective, aiming to understand the client's journey from their lowest point to their current highest rating.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Last month was horrible. I was so down when we broke up that I was at a 1.",
+        "id": "180-1",
+        "observation": "The client shares a significant personal experience, indicating a low point in their emotional state, which sets the context for their current progress.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "From a 1 to a 5—that’s a big improvement. I know that had to be real hard, knowing all that you’ve been going through. What have you done to get from a 1 to a 5?",
+        "id": "180-2",
+        "reasoning": "The therapist acknowledges the client's progress and resilience, encouraging further reflection on the actions and changes that contributed to the improvement in their emotional state.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I started hanging out with my girlfriends like I used to instead of staying home watching TV.",
+        "id": "180-3",
+        "observation": "The client identifies a specific behavioral change that helped them transition from a low point to a higher rating, highlighting the importance of social support and engaging in enjoyable activities.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How did you make that happen?",
+        "id": "180-4",
+        "reasoning": "The therapist prompts the client to reflect on the process of change, encouraging self-awareness and insight into their own agency in improving their emotional well-being.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I just kept thinking that I’m not going to let him bring me down. I have a lot going for me and I started remembering all the fun I used to have with my friends before I started going steady with Ron.",
+        "id": "180-5",
+        "observation": "The client demonstrates a shift in mindset and resilience by focusing on personal strengths and positive memories, indicating a proactive approach to overcoming challenges and maintaining emotional well-being.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That shows how well you can overcome tough times by remembering what you have going for you. When you move up to a 6, what will you be doing differently?",
+        "id": "180-6",
+        "reasoning": "The therapist is highlighting the client's ability to overcome challenges and prompting the client to consider specific actions or behaviors that will contribute to further progress.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I’ll be talking to my parents more about how I am doing.",
+        "id": "180-7",
+        "observation": "The client identifies increased communication with parents as a key change in behavior that will lead to improvement, indicating a willingness to engage in a supportive relationship.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "When you are talking to your parents more, how will they respond to this change in you?",
+        "id": "180-8",
+        "reasoning": "The therapist is exploring the potential positive outcomes of the client's increased communication with parents, encouraging the client to envision positive reactions and reinforcing the importance of supportive relationships.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "They’ll be happy because they won’t have to worry about me so much.",
+        "id": "180-9",
+        "observation": "The client anticipates that increased communication will alleviate parental concerns, indicating a desire to reduce worry and improve family dynamics.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So when you see them being happier and not worrying about you so much, how will you respond to them?",
+        "id": "180-10",
+        "reasoning": "The therapist is prompting the client to consider their own response to positive changes in the family dynamic, fostering reflection on reciprocal interactions and reinforcing the client's role in maintaining positive relationships.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "Writing the Message. This is a typical way to transition to the message-writing phase: Well, that’s about all the questions I have for you. Are there any questions you have for me? If not, I need to take a few minutes to review our meeting so I can write you a message that you can take with you. As I’m doing that why don’t you write me a note about what you got out of our meeting (you can ask younger children to draw a picture of what they will be doing when things are better). Then we can share our notes with each other before we finish our meeting. Some counselors take short cuts in the model by eliminating the message to the client. However, as mentioned previously, you are likely to achieve greater success with SFBC when you include the message segment of the process. Writing a message reinforces the client’s successes, encourages follow-through, and provides a tangible reminder of the client’s strengths and resources. I cannot emphasize enough the importance of constructing a message for the client.",
+    "chain_id": 97
+  },
+  {
+    "dialog_id": "000724",
+    "theme": "psychoanalytic therapy: understanding and resolving the oedipal conflict for stable self-development and prevention of neurosis.",
+    "psychotherapy": "Psychoanalytic Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A patient with a serious problem in psychosexual development but functioning on a high level otherwise.",
+    "reasoning": "The oedipal conflict is a frequently misunderstood concept. Oedipal pathology arises when a child's unambivalent relationship with parents conflicts with emerging erotic and rivalrous impulses. Proper resolution leads to a stable self, while repression can lead to neurosis. Symptoms may manifest in adolescence or adulthood due to unresolved conflicts.",
+    "dialog": [
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "In terms of her background as far as we know it, how do you account both for her strengths and for the fact that such a serious problem developed later?",
+        "id": "309-0",
+        "observation": "The Resident is seeking to understand the patient's strengths and the development of her psychosexual problem, indicating a comprehensive approach to the case.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "From what you have told me of her history, she comes from a family whose sense of order was both highly developed and functional. The parents have strong convictions and conveyed them clearly to their children. This kind of background makes for healthy pre-oedipal development-that is, a sense of personal security based on having a clearly defined place in an orderly world. At the same time it may make the child vulnerable to the instinctual impulses that arise unbidden and threaten the child's sense of what is acceptable. Often there is little tolerance for what is deemed evil and unnatural in such families, and the child finds it necessary to reject a part of herself. In Miss Delmore's case I would suspect that the absence of her parents during this crucial period of development made it all the more difficult for her to deal with phantasies that could then develop without being checked by the ameliorating reality that contact with her parents-the persons who were the targets of her sexual drive-would have brought. If as a child she found it necessary to institute a wholesale repression of both her sexual and her aggressive oedipal wishes, then that might explain the difficulties in which she finds herself today, when that repression is threatened by her adult sexual needs and her drive toward motherhood.",
+        "id": "309-1",
+        "reasoning": "The Therapist provides a detailed analysis of the patient's background and its potential impact on her psychosexual development, highlighting the role of family dynamics and the absence of parental figures in shaping her current struggles.",
+        "strategy": [
+          "Information"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "How should I proceed with this patient?",
+        "id": "309-2",
+        "observation": "The Resident seeks guidance on the next steps in treating the patient, demonstrating a willingness to learn and collaborate in the therapeutic process.",
+        "emotional label": [
+          "Anxiety",
+          "Depression",
+          "Sadness",
+          "Anger",
+          "Fear",
+          "Guilty",
+          "Shame",
+          "Neutral",
+          "Unknown",
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "My recommendation would be that she be referred and evaluated for psychoanalytic treatment.",
+        "id": "309-3",
+        "reasoning": "The Therapist suggests a specific treatment approach, indicating a preference for psychoanalytic treatment based on the patient's complex psychosexual issues and the need for in-depth exploration and resolution.",
+        "strategy": [
+          "Providing Suggestions"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "Why can't her problem be handled in less intensive psychotherapy?",
+        "id": "309-4",
+        "observation": "The Resident questions the necessity of intensive psychoanalytic treatment, reflecting a consideration for alternative therapeutic approaches.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Based on what you have told me about her, my prediction would be that if she were taken into psychotherapy she would rapidly form an oedipal transference of great intensity. Contrary to what is often taught, my experience-and what I have seen of the work of others, as well as my study of psychoanalytic theoryhas convinced me that psychotherapy is not geared to uncovering and working through repressed infantile sexual material. Even if you were an analyst, it would not help; for without the opportunities made possible by frequency of visits, the patient cannot be helped to develop the transference neurosis that is necessary to working through the oedipal wishes that are behind the symptom. All that would happen is that she would become very attached to you without it leading to a therapeutic resolution. It would either end up as an interminable treatment in which her unconscious phantasies would become symbolically gratified through her relationship with you, or the patient would become frightened by her feelings for you and would find reasons to interrupt therapy prematurely .",
+        "id": "309-5",
+        "reference_labels": [
+          "[see also methods 5]"
+        ],
+        "reasoning": "The Therapist explains the limitations of less intensive psychotherapy in addressing the patient's deep-seated issues, emphasizing the need for a psychoanalytic approach to properly address and resolve the underlying oedipal conflicts.",
+        "strategy": [
+          "Information"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Resident",
+        "content": "Are there circumstances in which a patient with a neurotic character structure can be helped by psychotherapy rather than by psychoanalysis?",
+        "id": "309-6",
+        "observation": "The resident's question reflects a curiosity about the potential effectiveness of psychotherapy for patients with neurotic character structures, indicating a willingness to explore different treatment modalities.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Of course, very often. There are many patients with a psychoneurotic character structure who are able to create an environment that leaves them free to function effectively until something comes up that creates an imbalance and disturbs their adjustment. You may remember that this is what happened in the case of Mr. Arianes . He had found a marital partner and a job both of which provided adult satisfaction while also meeting his unconscious, conflicted childhood needs. When his wife's attention was diverted by her sister's problems and he was no longer her sole concern, conflicts that had previously been compensated for generated anxiety and led to a somatic conversion. In his therapy he learned to understand the secondary complications of his basic problem. This helped him significantly, even though no attempt was made to effect a resolution of oedipal material.",
+        "id": "309-7",
+        "reference_labels": [
+          "[methods 3, 4]"
+        ],
+        "reasoning": "The therapist provides a detailed case example to illustrate how psychotherapy can be effective for patients with psychoneurotic character structures. By highlighting Mr. Arianes' case, the therapist emphasizes the importance of understanding and addressing secondary complications rather than directly resolving oedipal conflicts, showcasing the therapeutic process and outcomes.",
+        "strategy": [
+          "Information"
+        ]
+      }
+    ],
+    "summary": "Psychoneurosis varies in severity, guiding treatment recommendations based on the patient's overall functioning. The therapist's decision on treatment approach is influenced by the patient's level of disturbance in daily life.",
+    "chain_id": 142
+  },
+  {
+    "dialog_id": "000775",
+    "theme": "exploring exceptions and subtle changes to help clients construct solutions and recognize progress in therapy.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Partner Relationship Issues",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "The client may feel that she is not making progress and is struggling with her expectations.",
+    "reasoning": "The client's initial criteria for progress may have hindered her ability to recognize changes in her actions. By exploring exceptions and being attuned to subtle changes, the therapist can help the client in constructing solutions.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is different or better?",
+        "id": "370-0",
+        "reasoning": "Therapist prompts the client to identify positive changes or improvements.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, things are about the same.",
+        "id": "370-1",
+        "observation": "Client perceives the situation as unchanged.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, things seem about the same. Are there times when you would have expected things to be even worse, but they were not?",
+        "id": "370-2",
+        "reference_labels": "[Exceptions frame]",
+        "reasoning": "Therapist encourages the client to explore instances where expected negative outcomes did not occur.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, actually yes, I guess...",
+        "id": "370-3",
+        "observation": "Client reflects on a situation where a potential conflict did not escalate as expected.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So you might have had a fight but you did something different. What did you do rather than fight?",
+        "id": "370-4",
+        "reference_labels": "[Specification and contextual differences]",
+        "reasoning": "Therapist delves into specific actions taken by the client to avoid conflict.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I guess I was not going to try to talk my wife into being nice to my mother...",
+        "id": "370-5",
+        "observation": "Client describes a shift in behavior to prevent a potential argument.",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, that was different. How did you decide to do that? You could have tried things that you have done in the past that do not work.",
+        "id": "370-6",
+        "reference_labels": "[Specification and contextual difference]",
+        "reasoning": "Therapist explores the client's decision-making process and highlights the effectiveness of the new approach.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, I guess I am learning that I cannot change her...",
+        "id": "370-7",
+        "observation": "Client acknowledges a shift in perspective regarding influencing his wife's behavior.",
+        "emotional label": [
+          "Unknown"
+        ]
+      }
+    ],
+    "summary": "This session illustrates the importance of recognizing and creating exceptions to facilitate change. By acknowledging the client's perception of stagnation and exploring instances of deviation from expected negative patterns, the therapist helps the client identify alternative behaviors and perspectives. Emphasizing the significance of preventing situations from worsening as a form of progress can further enhance the therapeutic process.",
+    "chain_id": 168
+  },
+  {
+    "dialog_id": "000781",
+    "theme": "focusing on the expectations of the future",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Job Crisis",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "Anita seeks to improve her confidence for job interviews.",
+    "reasoning": "The therapist emphasizes focusing on hypothetical solutions and underlying presuppositions.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your goal in coming here?",
+        "id": "376-0",
+        "reasoning": "The therapist initiates a discussion to clarify Anita's objectives and set the focus for the session.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "I want more confidence on job interviews.",
+        "id": "376-1",
+        "observation": "Anita expresses her desire to improve her confidence specifically for job interviews, indicating a clear goal for therapy.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "You want to be acting more confidently when you interview?",
+        "id": "376-2",
+        "reasoning": "The therapist restates Anita's goal to ensure understanding and alignment on the desired outcome.",
+        "strategy": [
+          "Restatement or Paraphrasing"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "Yes, right now I am always scared, and convinced that I am going to mess up the interview and not get the job. I think that deep down I do not like myself. Some people have told me that I have a fear of failure. Some others say I am afraid of success.",
+        "id": "376-3",
+        "observation": "Anita shares her current feelings of fear, self-doubt, and conflicting feedback she has received, providing insight into her internal struggles and negative self-perception.",
+        "emotional label": [
+          "Anxiety",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, when you are acting more confidently and handling the job interviews more the way you want to, are you thinking you will never be afraid and that you will always admire yourself?",
+        "id": "376-4",
+        "reasoning": "The therapist probes into Anita's expectations regarding confidence and self-esteem, challenging her beliefs and encouraging introspection.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "No, I think I will still feel scared and still have doubts about myself, but somehow I will get myself to go to the interview and think differently of myself.",
+        "id": "376-5",
+        "observation": "Anita acknowledges that while she may still experience fear and self-doubt, she aims to change her perspective and take proactive steps towards facing challenges with a different mindset.",
+        "emotional label": [
+          "Anxiety",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, you will naturally still feel scared as you anticipate the interview, but you will be saying different things to yourself. Is that right?",
+        "id": "376-6",
+        "reasoning": "The therapist normalizes Anita's feelings and encourages behavioral changes by prompting her to shift her self-talk.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "Yes, I will say things like, “I can get this job,” and then I will go after it.",
+        "id": "376-7",
+        "observation": "Anita expresses a shift in her self-talk towards positive affirmations and proactive behavior, indicating a willingness to adopt a more confident mindset.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, even though you are sometimes feeling scared and perhaps even excited, you will be saying to yourself that you can get this job. How will you be doing that even though it will be normal to have doubts and fears?",
+        "id": "376-8",
+        "reasoning": "The therapist reinforces Anita's positive self-talk and success mindset by acknowledging the coexistence of doubts and fears while emphasizing her ability to maintain a confident narrative.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "I will just be telling myself that the fear and doubts are just temporary and I have gotten through other fears.",
+        "id": "376-9",
+        "observation": "Anita demonstrates a strategy of reframing her fears and doubts as temporary challenges that she has successfully overcome in the past, showing a growing resilience and self-awareness.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That sounds like that has been more workable, but how will you do that? It sounds like it could be easy or tempting to tell yourself that feeling scared means that you are no good or not capable of handling the interview the way you want to.",
+        "id": "376-10",
+        "reasoning": "The therapist prompts Anita to explore further how she can sustain her positive self-talk in the face of self-doubt, encouraging her to challenge negative self-perceptions and maintain a constructive mindset.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "Well, I know, but I just need to remind myself of the bigger view, that I have had other jobs and other interviews and that this is just one of the tough times. It will pass and I will get a job.",
+        "id": "376-11",
+        "observation": "Anita demonstrates a reflective stance by acknowledging past experiences and maintaining a positive outlook on the current situation, indicating a willingness to challenge negative thoughts and focus on resilience.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, if you were saying these things to yourself, maybe even when the interviews do not seem to lead immediately to a job, you would think you were on track to getting what you want from coming here?",
+        "id": "376-12",
+        "reasoning": "The therapist encourages Anita to consider the long-term benefits of her positive self-talk, linking it to her therapeutic goals and reinforcing the importance of maintaining a constructive mindset.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Anita",
+        "content": "Yes, I just have to keep those thoughts in mind.",
+        "id": "376-13",
+        "observation": "Anita affirms her commitment to sustaining positive self-affirmations, indicating a readiness to incorporate this cognitive shift into her daily routine to enhance her confidence and resilience.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, how will you continue saying these more useful things to yourself?",
+        "id": "376-14",
+        "reasoning": "The therapist prompts Anita to explore practical strategies for maintaining her positive self-talk, empowering her to take an active role in reinforcing her newfound mindset and self-perception.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "Anita's expectations for the future involve managing fears and doubts rather than eliminating them entirely. Through therapy, she learns to reframe her thoughts and take control of her self-perception. By focusing on behavioral changes and positive self-talk, Anita gains a sense of empowerment and resilience. This shift in mindset allows her to approach job interviews with confidence and a proactive attitude. The therapist's guidance helps Anita redefine success on her terms and take responsibility for her actions, leading to a more constructive outlook on her goals.",
+    "chain_id": 173
+  },
+  {
+    "dialog_id": "000809",
+    "theme": "being positive and future-oriented",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Partner Relationship Issues",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client seeks more harmony in relationships with wife and stepchild.",
+    "reasoning": "In Solution-Focused Brief Therapy, when clients start discussing new possibilities and engage in solution-focused talk, it's important for the therapist to continue encouraging this positive direction. Clients accepting the invitation to explore positives in exceptions or the future indicates progress.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your goal in coming here?",
+        "id": "405-0",
+        "reasoning": "Therapist initiates discussion on client's goal.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would like to have more harmony with my wife and her kid.",
+        "id": "405-1",
+        "observation": "Client expresses desire for improved family relationships.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How does that happen now, when it happens?",
+        "id": "405-2",
+        "reasoning": "Therapist prompts client to explore current positive instances.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I don’t know how to explain it, but sometimes my wife and I are right in “synch.” You know what I mean, we both know how to handle her little girl and what the other is thinking.",
+        "id": "405-3",
+        "observation": "Client describes moments of synchronization with wife.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What are you doing when you know that the two of you are in “synch?”",
+        "id": "405-4",
+        "reasoning": "Therapist delves deeper into client's actions during synchronized moments.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "We look at each other and I know that she agrees with what I am doing and she is supporting what I am doing.",
+        "id": "405-5",
+        "observation": "Client explains mutual understanding and support with wife.",
+        "emotional label": [
+          "Happiness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And what are you doing when she is doing that?",
+        "id": "405-6",
+        "reasoning": "Therapist seeks clarification on client's behaviors.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I guess I have talked with her beforehand and so we are both on the same wavelength.",
+        "id": "405-7",
+        "observation": "Client highlights communication as key to synchronization.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Let me double check. So, you want to be doing more of the things like talking beforehand that make for more “in synch” times with your wife?",
+        "id": "405-8",
+        "reasoning": "Therapist confirms client's desire for improved communication and synchronization.",
+        "strategy": [
+          "Question"
+        ]
+      }
+    ],
+    "summary": "In this example, the therapist effectively uses the client's language to explore goals and exceptions, maintaining a positive and solution-focused conversation. The tone remains neutral while emphasizing positivity.",
+    "chain_id": 190
+  },
+  {
+    "dialog_id": "000816",
+    "theme": "scaling the vague presentations",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Ongoing Depression",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client expresses a desire to overcome depression and increase daily activity levels.",
+    "reasoning": "Clients often present vague goals, which may hinder their ability to recognize progress. Specific goals help clients identify their performance. The scaling technique aids in breaking down black-and-white thinking, allowing for exceptions and intermediary actions to be identified.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What is your goal in coming here?",
+        "id": "413-0",
+        "reasoning": "The therapist initiates a discussion to understand the client's motivation and goal for therapy.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would like to get out of this depressed state. I’m being a total couch potato. I just keep on procrastinating and watching TV. I just keep getting more and more depressed.",
+        "id": "413-1",
+        "observation": "The client expresses feelings of depression and inactivity, highlighting the challenges he is facing.",
+        "emotional label": [
+          "Depression",
+          "Sadness"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, how would you like to be acting differently?",
+        "id": "413-2",
+        "reasoning": "The therapist prompts the client to envision a different way of behaving, encouraging him to consider positive changes.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I don’t want to be depressed.",
+        "id": "413-3",
+        "observation": "The client states his desire to overcome depression, indicating a willingness to change his current state.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would you like to be doing instead?",
+        "id": "413-4",
+        "reasoning": "The therapist guides the client to focus on desired behaviors, shifting the conversation towards actionable steps for improvement.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I would like to be getting out of this depression and being more active about my day again.",
+        "id": "413-5",
+        "observation": "The client articulates his goal of overcoming depression and increasing daily activity levels, showing a readiness to make positive changes.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, you would like to be more active about your day again. Tell me about times when that is happening now.",
+        "id": "413-6",
+        "reasoning": "The therapist is initiating the conversation by focusing on the client's desire to increase daily activity levels and prompting the client to reflect on current instances of being active.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I’m not active at all. All I do is sit around all day and feel sorry for myself.",
+        "id": "413-7",
+        "observation": "The client expresses feelings of inactivity and self-pity, indicating a low mood and lack of motivation to engage in daily activities.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, it seems to you like you have not been doing anything. Well, if we used a scale with one being total couch potato behavior, the worst you can imagine, and 10 being idealistically the most active you can imagine, how would you say you have been averaging this past week?",
+        "id": "413-8",
+        "reasoning": "The therapist introduces the scaling technique to help the client assess his activity levels objectively and identify a starting point for improvement, encouraging the client to consider a range of behaviors rather than just extremes.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "On an average, I guess about a two.",
+        "id": "413-9",
+        "observation": "The client rates his average activity level as a two, indicating a low but not the lowest level of engagement, showing a willingness to engage in the scaling exercise.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "About a two. So, I guess there have been some times when you have acted even less than two?",
+        "id": "413-10",
+        "reasoning": "The therapist further explores the client's behaviors below his average rating, encouraging the client to reflect on instances of even lower activity levels to gain insight into patterns and exceptions.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, there were some totally bad days. I hardly made it out of bed.",
+        "id": "413-11",
+        "observation": "The client describes experiencing severe depressive symptoms, such as difficulty getting out of bed, indicating a significant impact on daily functioning.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Hmm. You definitely do not want more of those, I guess. So, if two was the average and you had some one times, does that mean you also had some times where you were a little more active than a two?",
+        "id": "413-12",
+        "reasoning": "The therapist introduces the scaling technique to help the client recognize variations in activity levels, encouraging a shift from black-and-white thinking to identifying incremental progress.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, maybe a two and a half or three.",
+        "id": "413-13",
+        "observation": "The client acknowledges moments of slightly increased activity levels, indicating a potential starting point for building on positive experiences.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What did you do differently at those times?",
+        "id": "413-14",
+        "reasoning": "The therapist prompts the client to reflect on the factors that contributed to the slightly higher activity levels, aiming to identify specific actions or behaviors that can be replicated for further progress.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I just got so disgusted and bored with the TV that I decided that I had to talk to someone.",
+        "id": "413-15",
+        "observation": "The client attributes increased activity to feeling fed up with passive activities like watching TV, highlighting the importance of social interaction and seeking support in improving mood and engagement.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How did you decide to do that? You could have decided on something else less constructive, like drugs or a different TV channel.",
+        "id": "413-16",
+        "reasoning": "The therapist is prompting the client to reflect on their decision-making process and consider the positive choice they made in seeking a more constructive path, highlighting the client's agency and ability to make beneficial choices.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I know, but I am realizing that I have to do something.",
+        "id": "413-17",
+        "observation": "The client acknowledges the need for change and demonstrates a growing awareness of the importance of taking action to address their situation, indicating a readiness for personal growth.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What do you mean? You could keep on doing what you are. No one is going to stop you, are they?",
+        "id": "413-18",
+        "reasoning": "The therapist challenges the client's current behavior by presenting an alternative perspective, encouraging the client to consider the consequences of maintaining the status quo and prompting further reflection on their desire for change.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I know, but this is not a life. I want to do something more productive.",
+        "id": "413-19",
+        "observation": "The client expresses dissatisfaction with their current situation and a desire for a more fulfilling and purposeful life, indicating a readiness to explore new possibilities and make positive changes.",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So this more active approach like you took the other day is what you want to be doing more. When you are no longer coming here, are you thinking you will be averaging a 10 or more? What will you be averaging then?",
+        "id": "413-20",
+        "reasoning": "The therapist uses the scaling technique to help the client envision a future where they are more active and engaged, encouraging the client to set specific goals and visualize their progress, fostering motivation and a sense of achievement.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, a 10 average is not possible. But if I was averaging more like seven, that would do it.",
+        "id": "413-21",
+        "observation": "The client demonstrates a shift from an unrealistic expectation (10) to a more achievable goal (seven), indicating a willingness to set more realistic and attainable targets.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What will you be doing differently at seven?",
+        "id": "413-22",
+        "reasoning": "The therapist prompts the client to identify specific actions that would lead to achieving the goal of averaging seven, encouraging the client to think about concrete steps towards improvement.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I guess I will be making a plan for my day and sticking to most of it. You know, I will be going shopping and cleaning my apartment.",
+        "id": "413-23",
+        "observation": "The client outlines specific behaviors such as planning daily activities and engaging in household tasks, indicating a readiness to take practical steps towards increasing daily activity levels.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, are you thinking that as you continue to do more of what you are doing at this two and a half, this somewhat more active approach, that you will be eventually averaging seven?",
+        "id": "413-24",
+        "reasoning": "The therapist helps the client connect the current level of activity (two and a half) with the desired goal of averaging seven, fostering a sense of progression and highlighting the importance of consistent effort.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yeah, maybe. I just have to keep at it.",
+        "id": "413-25",
+        "observation": "The client acknowledges the need for persistence and effort in maintaining the increased activity levels, showing a commitment to the process of change and improvement.",
+        "emotional label": [
+          "Happiness"
+        ]
+      }
+    ],
+    "summary": "The conversation utilizes scaling within a solution-focused framework to help the client specify his goals and identify exceptions. By using a scale and averaging concept, the therapist guides the client to recognize progress and define specific actions for improvement.Exploring the client's experiences below and above his average allows for a deeper understanding of his behaviors and motivates him towards a more active approach.The scale can be further utilized to break down the next steps beyond the current progress, fostering continued growth and goal attainment.",
+    "chain_id": 194
+  },
+  {
+    "dialog_id": "000819",
+    "theme": "empowering the client to recognize and build on moments of control and sustainability in abstaining from cocaine use.",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Substance Abuse",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 0,
+    "is_same_session": 0,
+    "background": "A client struggling with cocaine addiction has made conscious decisions to abstain from drug use.",
+    "reasoning": "The client perceives exceptions where she consciously chose not to use cocaine as within her control and sustainable.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "When was the last time you did coke?",
+        "id": "416-0",
+        "reference_labels": "[Attempting to set up the amount of time since she did coke as a further exception]",
+        "reasoning": "The therapist is prompting the client to reflect on the time elapsed since her last cocaine use, aiming to highlight the recent exception of abstaining from drug use.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, actually four days ago. I decided that this had to stop and everyone told me that I had to go into a drug rehab center. I do not want to do that. I have seen too many people go in, clean up, only to come out and get high again.",
+        "id": "416-1",
+        "observation": "Client expresses resistance to traditional drug rehab methods",
+        "emotional label": [
+          "Depression",
+          "Fear"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Four days ago! Four days without coke! That’s great! How have you done that?",
+        "id": "416-2",
+        "reference_labels": "[Specification of the process of this most recent exception]",
+        "reasoning": "The therapist acknowledges and reinforces the client's recent success in abstaining from cocaine, emphasizing the positive achievement to encourage further reflection on her coping strategies.",
+        "strategy": [
+          "Affirmation and Reassurance"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, I decided it was time, so I decided several weeks ago to stop buying large amounts of cocaine at one time and I also changed my home phone number so that only one dealer could get in touch with me. As a matter of fact, the last time I did coke, I did only $150 worth.",
+        "id": "416-3",
+        "observation": "Client describes proactive steps taken to limit access to cocaine",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Only $150 worth! How did you resist doing the usual $400?",
+        "id": "416-4",
+        "reference_labels": "[Presupposing that this is exceptional that she did not do the usual amount]",
+        "reasoning": "The therapist highlights the client's deviation from previous drug use patterns, focusing on the client's ability to resist the temptation to use a larger amount of cocaine.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, as part of all this, I decided that I would buy only small amounts of coke at a time, instead of all at once. This way, even if I want more, I have to go get it. You know, I have to call the dealer, get in my car, drive wherever, bring it back. It’s harder that way.",
+        "id": "416-5",
+        "observation": "Client explains the strategy of buying smaller amounts of cocaine to create barriers to use",
+        "emotional label": [
+          "Neutral"
+        ]
+      }
+    ],
+    "summary": "The client not only had exceptions to doing coke but had already changed some important parts of the way she normally did coke. Both the exceptions and the changes in her habits were very important first signs of her “on track” solution behavior. She did not perceive them, however, as exceptional or something that was substantially different yet.",
+    "chain_id": 196
+  },
+  {
+    "dialog_id": "000948",
+    "theme": "sfbt and emotions",
+    "psychotherapy": "Solution-Focused Brief Therapy",
+    "topic": "Substance Abuse",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 1,
+    "is_same_session": 0,
+    "background": "Client and therapist discuss client's confidence in remaining abstinent and improving trust with wife.",
+    "reasoning": "Therapist and client focus on outward signs and contexts of client's change, aiming for further improvement in how she feels. Using scales can be useful in discussing situations and interactions.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, “10” stands for you have as much confidence as anybody can have about anything that you’ll remain abstinent and “0” stands for the opposite; where are you now?",
+        "id": "559-0",
+        "reasoning": "Therapist uses scale to assess client's confidence in remaining abstinent.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "“10.”",
+        "id": "559-1",
+        "observation": "Client expresses high confidence",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "And where would you say your Wife would say she is—if she were here?",
+        "id": "559-2",
+        "reasoning": "Therapist explores client's perception of wife's trust level.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "“3”—Of course, that’s just a guess …",
+        "id": "559-3",
+        "observation": "Client unsure about wife's trust level",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Sure, but you know her pretty well … How would she know that she’s gone up from “3” to “4”?",
+        "id": "559-4",
+        "reasoning": "Therapist prompts client to consider how wife would perceive trust improvement.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "It’s a matter of trust, you see. It will take some time.",
+        "id": "559-5",
+        "observation": "Client acknowledges trust-building process",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Naturally; how long perhaps?",
+        "id": "559-6",
+        "reasoning": "Therapist explores timeline for trust improvement",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "At least a month or two.",
+        "id": "559-7",
+        "observation": "Client suggests a timeline",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "How will she show you more trust, from “3” to “4”?",
+        "id": "559-8",
+        "reasoning": "Therapist delves into actions indicating increased trust",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "She probably won’t. She’s rather pissed with me, you see, and she keeps her distance.",
+        "id": "559-9",
+        "observation": "Client reveals wife's current feelings",
+        "emotional label": [
+          "Anger"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So, where on the same scale will she be when she shows you she’s less pissed and more trustful?",
+        "id": "559-10",
+        "reasoning": "Therapist explores potential trust level improvement",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "At least “6” or perhaps even “7”?",
+        "id": "559-11",
+        "observation": "Client predicts wife's improved trust level",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What will she do?",
+        "id": "559-12",
+        "reasoning": "Therapist prompts client to consider wife's actions",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Perhaps she’d get up and make me a cooked breakfast—fried eggs, bacon, that sort of thing.",
+        "id": "559-13",
+        "observation": "Client imagines wife's gesture of trust",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Will that be a big or a small surprise?",
+        "id": "559-14",
+        "reasoning": "Therapist explores client's reaction to wife's gesture",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Gigantic!  Might even be a miracle.",
+        "id": "559-15",
+        "reference_labels": [
+          "[Laughs.]"
+        ],
+        "observation": "Client anticipates wife's gesture with excitement",
+        "emotional label": [
+          "Unknown"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So what will you do?",
+        "id": "559-16",
+        "reasoning": "Therapist prompts client to consider his response",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I’d give her a great big hug.",
+        "id": "559-17",
+        "observation": "Client plans affectionate response",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Before or after eating?",
+        "id": "559-18",
+        "reasoning": "Therapist adds a playful element to the conversation",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Before …",
+        "id": "559-19",
+        "observation": "Client decides on timing of hug",
+        "emotional label": [
+          "Happiness"
+        ]
+      }
+    ],
+    "summary": "The conversation emphasizes the importance of context, behavior, and feeling states in imagining improved relationships. By discussing trust and gestures in everyday life, the client can envision feeling significantly better about his relationship with his wife.",
+    "chain_id": 256
+  },
+  {
+    "dialog_id": "000950",
+    "theme": "rational emotive behavior therapy: challenging irrational beliefs and promoting self-compassion in therapy using the 'friend dispute' technique.",
+    "psychotherapy": "Rational Emotive Behavior Therapy",
+    "topic": "Job Crisis",
+    "stage": "",
+    "guide": "",
+    "is_same_qa": 1,
+    "is_same_session": 0,
+    "background": "A client struggles with self-perception and self-acceptance.",
+    "reasoning": "Ellis emphasizes the need to vigorously dispute clients' irrational beliefs to counter their strong attachment to these beliefs. The 'friend dispute' technique aims to help clients recognize their double standards in self-judgment and encourages them to adopt a more compassionate attitude towards themselves.",
+    "dialog": [
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So can you see that you are saying to yourself that because you’ve lost your job you are a failure and that this leads to your depression?",
+        "id": "561-0",
+        "reasoning": "The therapist prompts the client to reflect on their self-perception and its impact on their emotional state.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Yes.",
+        "id": "561-1",
+        "observation": "The client acknowledges the therapist's statement, indicating an initial agreement and awareness of their self-perception.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Now I’m going to help you re-evaluate that belief. What is the name of your best friend?",
+        "id": "561-2",
+        "reasoning": "The therapist introduces the 'friend dispute' technique to encourage the client to consider their self-judgment from a different perspective.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Mary.",
+        "id": "561-3",
+        "observation": "The client provides the name of their best friend as requested by the therapist, setting the stage for the application of the technique.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Now let’s suppose that Mary came to you and told you that she had lost a job that she valued. Would you say to her ‘Get out of my house – you’re a failure’?",
+        "id": "561-4",
+        "reasoning": "The therapist uses a hypothetical scenario involving the client's best friend to challenge the client's self-judgment and promote self-compassion.",
+        "strategy": [
+          "Role-play"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "No, of course not.",
+        "id": "561-5",
+        "observation": "The client's response indicates a shift in perspective, demonstrating the effectiveness of the 'friend dispute' technique in fostering self-compassion and challenging irrational beliefs.",
+        "emotional label": [
+          "Others"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Would you think of her as a failure?",
+        "id": "561-6",
+        "reasoning": "The therapist prompts the client to reflect on their judgment towards others to gain insight into their self-perception.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "What would the effect be on her if you did tell her that she was a failure?",
+        "id": "561-7",
+        "reasoning": "The therapist encourages the client to consider the emotional impact of labeling someone else negatively, drawing parallels to the client's self-criticism.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "If she believed me then she would feel depressed.",
+        "id": "561-8",
+        "observation": "The client's response indicates an understanding of the potential negative consequences of harsh judgment, reflecting on their own self-critical tendencies.",
+        "emotional label": [
+          "Depression"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Just as you feel when you tell yourself that you are a failure!",
+        "id": "561-9",
+        "reasoning": "The therapist draws a connection between the client's behavior towards others and their self-judgment, highlighting the impact of negative self-talk on emotional well-being.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I get your point.",
+        "id": "561-10",
+        "observation": "The client acknowledges the therapist's analogy, indicating a growing awareness of the parallels between their attitudes towards others and themselves.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Incidentally, how would you think of her in the event of her losing her job?",
+        "id": "561-11",
+        "reasoning": "The therapist is probing the client to explore their thoughts and attitudes towards others facing challenges, aiming to uncover potential cognitive distortions or irrational beliefs.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Well, it wouldn’t change my view of her. Even if she made a bad error she’d still be the same Mary.",
+        "id": "561-12",
+        "observation": "The client demonstrates a compassionate and accepting attitude towards others' mistakes, indicating a potential discrepancy in self-perception compared to how they view others.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "The same fallible Mary?",
+        "id": "561-13",
+        "reasoning": "The therapist is reflecting the client's statement back to them, highlighting the concept of fallibility and aiming to draw parallels between the client's view of others and themselves.",
+        "strategy": [
+          "Question"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "Of course.",
+        "id": "561-14",
+        "observation": "The client reaffirms their belief in the fallibility of others, further emphasizing the discrepancy in self-judgment compared to their judgment of others.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "So let me get this straight. Mary loses her job and she’s the same fallible Mary. You lose your job and you are a failure.",
+        "id": "561-15",
+        "reasoning": "The therapist is using a comparative technique to challenge the client's irrational beliefs and double standards in self-judgment, aiming to promote self-acceptance and compassion towards themselves.",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "I see what you’re saying.",
+        "id": "561-16",
+        "observation": "The client acknowledges understanding, indicating a level of receptiveness to the therapist's communication.",
+        "emotional label": [
+          "Neutral"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "Now how about being consistent? Either you begin to view yourself as fallible or you start viewing Mary and other people as failures if they fail.",
+        "id": "561-17",
+        "reasoning": "The therapist challenges the client to consider adopting a more rational and consistent view of themselves and others, aligning with the principles of Rational Emotive Behavior Therapy (REBT).",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      },
+      {
+        "speaker": "Seeker",
+        "participant": "Client",
+        "content": "So you are encouraging me to accept myself as fallible, as I would other people?",
+        "id": "561-18",
+        "observation": "The client reflects on the therapist's suggestion, showing a willingness to explore the concept of self-acceptance and consistency in self-judgment.",
+        "emotional label": [
+          "Anxiety"
+        ]
+      },
+      {
+        "speaker": "Supporter",
+        "participant": "Therapist",
+        "content": "That’s right. Up to now, you have, in effect, been saying Mary is allowed to fail but I’m not. But if you give up the demand that you must not fail then you will begin to treat yourself as your own best friend.",
+        "id": "561-19",
+        "reasoning": "The therapist guides the client to recognize and challenge their irrational beliefs, promoting self-acceptance and self-compassion, key aspects of Rational Emotive Behavior Therapy (REBT).",
+        "strategy": [
+          "Reflection of Feelings"
+        ]
+      }
+    ],
+    "summary": "The 'terrorist dispute' technique challenges clients to recognize their capacity to tolerate difficult situations and encourages a discussion on the importance of tolerating discomfort when necessary.",
+    "chain_id": 258
+  }
+]

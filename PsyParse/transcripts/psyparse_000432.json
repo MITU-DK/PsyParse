@@ -1,0 +1,27 @@
+[
+  {
+    "turn": 1,
+    "therapist": "It's completely understandable to feel overwhelmed in those moments. Have you tried any breathing techniques or grounding exercises that might help you feel more centered? Let's explore what has worked for you in the past and how we can build on that together.",
+    "patient": "I haven't really tried breathing techniques or grounding exercises when I’m out. I usually just focus on getting through the moment and try to avoid looking at people. It feels like I can't really think of anything else when that anxiety hits."
+  },
+  {
+    "turn": 2,
+    "therapist": "That makes a lot of sense; it can be really difficult to think clearly when anxiety takes over. It sounds like avoiding eye contact is your way of managing those intense feelings. Would you be open to exploring some simple techniques, like breathing exercises or brief grounding methods, that you can practice in those moments to help regain a bit of control?",
+    "patient": "I guess I could try some techniques, but I worry they won’t help in the moment. I feel so caught up in my thoughts that it's hard to remember anything else. What if I still feel like everyone is judging me?"
+  },
+  {
+    "turn": 3,
+    "therapist": "It's completely normal to feel that way, especially when anxiety is at its peak. Let’s take a moment to acknowledge that fear of judgment—it's a common experience. What if we worked together to create a small reminder or mantra that you can carry with you? Something simple that can help break through those overwhelming thoughts when they come up.",
+    "patient": "That sounds like a good idea. I think having something to hold onto might help, but I'm worried I won't remember it when I'm feeling anxious. What kind of mantra could I use that feels realistic for me in those moments?"
+  },
+  {
+    "turn": 4,
+    "therapist": "It's great that you’re open to trying a mantra! How about something simple and affirming, like “I am enough just as I am” or “It’s okay to feel anxious; I can handle this”? We can also customize it to something that resonates more with you personally. What feelings or thoughts do you want to counter when anxiety strikes?",
+    "patient": "Those are nice, but I’m not sure if I believe them when I'm anxious. Maybe something more focused on just getting through the moment would be better. What about “Just keep walking” or “Focus on my steps”?"
+  },
+  {
+    "turn": 5,
+    "therapist": "I love those ideas! “Just keep walking” and “Focus on my steps” are both practical and grounding—perfect for redirecting your attention in those tough moments. It’s all about finding what feels right for you. You can practice saying those mantras during calmer times, so they’re easier to recall when anxiety hits. How does that sound?",
+    "patient": "That sounds more doable for me. Having something simple to say might help me keep my mind occupied instead of spiraling into those anxious thoughts. I’ll give it a try next time I’m out. Thank you for helping me find something that feels more manageable! [SESSION_END]"
+  }
+]
