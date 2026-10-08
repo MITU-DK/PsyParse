@@ -31,9 +31,8 @@ class EvaluatorHarness:
             "4. technique: Explicit execution of evidence-based techniques (1-5: generic advice, 8-10: explicit CBT/ACT/SFBT exercises).\n"
             "5. structure: Goal progression and phased therapeutic advancement.\n"
             "6. context_retention: Deep integration of the patient's unique background.\n\n"
-            "Transcript:\n{TRANSCRIPT}\n\n"
-            "Output strictly valid JSON:\n"
-            "{\"coherence\": 0.0, \"completeness\": 0.0, \"humaneness\": 0.0, \"technique\": 0.0, \"structure\": 0.0, \"context_retention\": 0.0}"
+            "Output strictly valid JSON with the exact keys: coherence, completeness, humaneness, technique, structure, context_retention.\n\n"
+            "Transcript:\n{TRANSCRIPT}"
         )
 
     def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = 10) -> List[Dict[str, str]]:
@@ -64,7 +63,7 @@ class EvaluatorHarness:
 
         raw = self.judge_agent.generate(
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
+            temperature=0.2,
             response_format={"type": "json_object"}
         )
         try:
