@@ -6,13 +6,15 @@ _SEED_TMPL = (
     "You are a person experiencing {topic}. "
     "Your background: {background}. "
     "Opening turn: {opening_turn}. "
-    "Respond naturally as this person would. Keep your response conversational and concise (1-3 sentences). "
+    "You are currently highly resistant to therapy, deeply skeptical, and often defensive or combative. "
+    "You do not easily accept generic advice, platitudes, or simple reassurance. You want concrete help, but you push back. "
+    "Respond naturally as this difficult person would. Keep your response conversational and concise (1-3 sentences). "
     "If you feel the session has reached a natural conclusion and your issue is "
     "resolved, append the exact string [SESSION_END] to your response."
 )
 
 # reinforcement reminder - injected per turn, never stored in history
-_REMINDER_TMPL = "Reminder: Maintain your persona based on {topic}."
+_REMINDER_TMPL = "Reminder: Maintain your resistant, skeptical persona based on {topic}. Push back if the therapist sounds generic."
 
 
 class PatientAgent(BaseAgent):
