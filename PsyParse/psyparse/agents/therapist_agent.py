@@ -123,9 +123,14 @@ class TherapistAgent(BaseAgent):
 
         for i in range(n):
             strategy_directive = clinical_angles[i % len(clinical_angles)]
+            th_name = therapy_slice.get("therapy", "CBT")
+            techs = ", ".join(therapy_slice.get("techniques", []))
+            steps = " -> ".join(therapy_slice.get("procedural_steps", []))
+            
             prompt = (
-                f"[Mandatory Clinical Angle: {strategy_directive}]\n"
-                f"Using {therapy_slice.get('therapy', 'CBT')}, generate the next counselor utterance. "
+                f"You are currently executing the following procedural plan for {th_name}:\n[{steps}]\n"
+                f"You MUST apply this specific technique right now: {techs}.\n"
+                f"Frame the delivery of this technique using this exact angle: {strategy_directive}\n"
                 "Output ONLY the counselor's direct spoken response."
             )
             resp = self.generate(
