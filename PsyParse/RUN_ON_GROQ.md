@@ -30,7 +30,7 @@ for item in os.listdir('.'):
 with open('.env', 'w') as f:
     f.write('DEEPSEEK_API_KEY=YOUR_GROQ_API_KEY_HERE\n')
     f.write('DEEPSEEK_BASE_URL=https://api.groq.com/openai/v1\n')
-    f.write('DEEPSEEK_MODEL=llama-3.1-8b-instant\n')
+    f.write('DEEPSEEK_MODEL=llama3-8b-8192\n')
 
 print("Groq API Setup Complete! Ready for execution.")
 ```
