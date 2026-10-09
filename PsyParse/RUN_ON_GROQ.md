@@ -9,16 +9,25 @@ Open a new notebook and paste this entire block into the very first cell.
 
 ```python
 import os
+import shutil
 
-# Clone the repository
-!rm -rf PsyParse
+# 1. Force root directory and wipe everything to fix the nested folder bug
+os.chdir('/kaggle/working')
+for item in os.listdir('.'):
+    if os.path.isdir(item): shutil.rmtree(item)
+    else: os.remove(item)
+
+# 2. Clone the repository
 !git clone https://github.com/manishsn7340/PsyParse.git
 
-# Install dependencies
-!pip install -r PsyParse/PsyParse/requirements.txt faiss-cpu sentence-transformers rank_bm25
+# 3. Change into the correct nested directory
+%cd /kaggle/working/PsyParse/PsyParse
 
-# Setup the .env file for Groq Cloud
-with open('PsyParse/PsyParse/.env', 'w') as f:
+# 4. Install dependencies
+!pip install -r requirements.txt faiss-cpu sentence-transformers rank_bm25
+
+# 5. Setup the .env file for Groq Cloud
+with open('.env', 'w') as f:
     f.write('DEEPSEEK_API_KEY=YOUR_GROQ_API_KEY_HERE\n')
     f.write('DEEPSEEK_BASE_URL=https://api.groq.com/openai/v1\n')
     f.write('DEEPSEEK_MODEL=llama-3.1-8b-instant\n')
