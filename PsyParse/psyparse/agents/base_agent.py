@@ -22,12 +22,13 @@ class BaseAgent:
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
+        from psyparse import config
         self.system_prompt = system_prompt
-        self.model = model or os.getenv("LLM_MODEL", "qwen2.5:14b")
+        self.model = model or config.DEEPSEEK_MODEL
         self.temperature = temperature
         
-        resolved_base_url = base_url or os.getenv("LLM_BASE_URL", "http://localhost:11434/v1")
-        resolved_api_key = api_key or os.getenv("LLM_API_KEY", "ollama")
+        resolved_base_url = base_url or config.DEEPSEEK_BASE_URL
+        resolved_api_key = api_key or config.DEEPSEEK_API_KEY
         
         self.client = OpenAI(base_url=resolved_base_url, api_key=resolved_api_key)
         self.history: List[Dict[str, str]] = []
