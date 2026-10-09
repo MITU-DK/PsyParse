@@ -10,6 +10,8 @@ Open a new notebook and paste this entire block into the very first cell.
 ```python
 import os
 import shutil
+import json
+import urllib.request
 
 # 1. Force root directory and wipe everything to fix the nested folder bug
 os.chdir('/kaggle/working')
@@ -17,22 +19,38 @@ for item in os.listdir('.'):
     if os.path.isdir(item): shutil.rmtree(item)
     else: os.remove(item)
 
-# 2. Clone the repository
+# 2. Clone the repository and change directory
 !git clone https://github.com/manishsn7340/PsyParse.git
-
-# 3. Change into the correct nested directory
 %cd /kaggle/working/PsyParse/PsyParse
 
-# 4. Install dependencies
+# 3. Install dependencies
 !pip install -r requirements.txt faiss-cpu sentence-transformers rank_bm25
 
-# 5. Setup the .env file for Groq Cloud
-with open('.env', 'w') as f:
-    f.write('DEEPSEEK_API_KEY=YOUR_GROQ_API_KEY_HERE\n')
-    f.write('DEEPSEEK_BASE_URL=https://api.groq.com/openai/v1\n')
-    f.write('DEEPSEEK_MODEL=llama3-8b-8192\n')
+# 4. Setup the .env file with Auto-Discovery for Groq Models
+API_KEY = "YOUR_GROQ_API_KEY_HERE"
 
-print("Groq API Setup Complete! Ready for execution.")
+print("\nDiscovering available Groq models...")
+try:
+    req = urllib.request.Request('https://api.groq.com/openai/v1/models', headers={'Authorization': f'Bearer {API_KEY}'})
+    resp = urllib.request.urlopen(req)
+    models = [m['id'] for m in json.loads(resp.read().decode())['data']]
+    
+    # Priority: llama 8b, then any llama, then anything
+    preferred = [m for m in models if 'llama' in m.lower() and '8b' in m.lower() and 'tool' not in m.lower()]
+    if not preferred: preferred = [m for m in models if 'llama' in m.lower()]
+    if not preferred: preferred = models
+        
+    best_model = preferred[0]
+    print(f"✅ Success! Auto-selected model: {best_model}")
+    
+    with open('.env', 'w') as f:
+        f.write(f'DEEPSEEK_API_KEY={API_KEY}\n')
+        f.write('DEEPSEEK_BASE_URL=https://api.groq.com/openai/v1\n')
+        f.write(f'DEEPSEEK_MODEL={best_model}\n')
+        
+    print("Groq API Setup Complete! Ready for execution.")
+except Exception as e:
+    print(f"❌ Error fetching models. Check your API key. Error: {e}")
 ```
 
 ## 2. Train the Model (Run Grid Search)
