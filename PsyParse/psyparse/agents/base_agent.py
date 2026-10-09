@@ -22,7 +22,7 @@ class BaseAgent:
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
-        from psyparse import config
+        import config
         self.system_prompt = system_prompt
         self.model = model or config.DEEPSEEK_MODEL
         self.temperature = temperature
