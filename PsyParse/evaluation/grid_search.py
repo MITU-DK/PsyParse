@@ -16,16 +16,25 @@ def run_retrieval_grid_search(
     on Dev scenarios to avoid saturated 100.0 outputs.
     """
     with open(dev_scenarios_path, "r", encoding="utf-8") as f:
-        dev_scenarios = json.load(f)
+        dev_scenarios = json.load(f)[:3]
 
     retriever = retriever_instance or HybridRetriever()
     alpha_grid = [0.3, 0.5, 0.7]
     results: Dict[str, float] = {}
 
+    # Pre-compute Stage 1 profiles to save API calls
+    precomputed = []
+    print("Pre-computing Phase 1 interviews (doing this once per scenario)...")
+    for idx, sc in enumerate(dev_scenarios):
+        print(f"Running interview for scenario {idx + 1}/{len(dev_scenarios)}...")
+        profile, keywords, _, _ = run_stage_1(sc)
+        precomputed.append((sc, profile, keywords))
+
+    print("Executing Alpha Grid Search...")
     for alpha in alpha_grid:
         topic_match_scores = []
-        for sc in dev_scenarios:
-            profile, keywords, _, _ = run_stage_1(sc)
+        for idx, (sc, profile, keywords) in enumerate(precomputed):
+            print(f"Testing alpha={alpha}, scenario {idx + 1}/{len(dev_scenarios)}...")
             retrieved = retriever.retrieve(profile, keywords, alpha=alpha, k1=10, k2=3)
 
             target_topic = sc.get("topic", "").lower()

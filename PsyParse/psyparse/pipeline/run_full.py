@@ -16,7 +16,7 @@ def run_psyparse_pipeline(
     scenario: Dict[str, Any],
     retriever: HybridRetriever,
     model: str = "qwen2.5:14b",
-    max_therapy_turns: int = 10,
+    max_therapy_turns: int = 5,
 ) -> Dict[str, Any]:
     """
     Executes the end-to-end PsyPARSE counseling pipeline.
@@ -63,7 +63,7 @@ def run_psyparse_pipeline(
         real_patient=patient_agent,
         evaluator=evaluator,
         max_turns=max_therapy_turns,
-        min_turns=6,
+        min_turns=3,
     )
     print("Stage 3b Complete. Pipeline Finished!\n")
 

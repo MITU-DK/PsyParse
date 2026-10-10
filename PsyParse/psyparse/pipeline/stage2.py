@@ -10,7 +10,7 @@ def run_stage_2(
     keywords: List[str],
     retriever: HybridRetriever,
     therapist: TherapistAgent,
-    alpha: float = 0.5,
+    alpha: float = 0.3,
     w1: float = 0.5,
     w2: float = 0.5,
     k1: int = 10,

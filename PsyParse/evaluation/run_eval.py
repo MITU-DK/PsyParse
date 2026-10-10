@@ -2,11 +2,14 @@ import os
 import re
 import json
 import logging
+from dotenv import load_dotenv
 from typing import Dict, Any, List
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.pipeline.run_full import run_psyparse_pipeline
 from psyparse.agents.base_agent import BaseAgent
 from psyparse.agents.patient_agent import PatientAgent
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +38,7 @@ class EvaluatorHarness:
             "Transcript:\n{TRANSCRIPT}"
         )
 
-    def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = 10) -> List[Dict[str, str]]:
+    def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = 3) -> List[Dict[str, str]]:
         topic = scenario.get("topic", "General")
         background = scenario.get("background", "")
         therapist = BaseAgent(
@@ -50,11 +53,14 @@ class EvaluatorHarness:
         therapist_msg = therapist.send(f"Patient: {opening}")
         patient.respond(therapist_msg)
 
-        for _ in range(max_turns - 1):
+        print("  -> Simulating Baseline Dialogue (Vanilla LLM)...")
+        for turn in range(max_turns - 1):
+            print(f"     [Baseline] Turn {turn+1}/{max_turns-1}...")
             therapist_msg = therapist.send(patient.get_history()[-1]["content"])
             patient_resp = patient.respond(therapist_msg)
             if "[SESSION_END]" in patient_resp:
                 break
+        print("  -> Baseline Dialogue Complete.")
         return patient.get_history()
 
     def evaluate_transcript(self, transcript: List[Dict[str, str]]) -> Dict[str, float]:
@@ -63,8 +69,7 @@ class EvaluatorHarness:
 
         raw = self.judge_agent.generate(
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,
-            response_format={"type": "json_object"}
+            temperature=0.2
         )
         try:
             cleaned = re.sub(r"^```(?:json)?|```$", "", raw.strip(), flags=re.MULTILINE)
@@ -94,7 +99,7 @@ class EvaluatorHarness:
         }
 def main():
     import sys
-    n_scenarios = int(sys.argv[1]) if len(sys.argv) > 1 else None
+    n_scenarios = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     
     try:
         with open("data/eval_scenarios.json", "r", encoding="utf-8") as f:

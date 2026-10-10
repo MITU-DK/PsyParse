@@ -79,7 +79,7 @@ class BaseAgent:
         self,
         user_message: str,
         temperature: Optional[float] = None,
-        max_retries: int = 3,
+        max_retries: int = 15,
         ephemeral_system: Optional[str] = None,
     ) -> str:
         self.history.append({"role": "user", "content": user_message})
@@ -94,7 +94,7 @@ class BaseAgent:
         self,
         messages: List[Dict[str, str]],
         temperature: Optional[float] = None,
-        max_retries: int = 3,
+        max_retries: int = 15,
         ephemeral_system: Optional[str] = None,
         response_format: Optional[Dict[str, str]] = None,
     ) -> str:
@@ -106,10 +106,10 @@ class BaseAgent:
         self,
         messages: List[Dict[str, str]],
         temperature: float,
-        max_retries: int = 3,
+        max_retries: int = 15,
         response_format: Optional[Dict[str, str]] = None,
     ) -> str:
-        delay = 1.0
+        delay = 4.0
         last_exception = None
 
         for attempt in range(max_retries):

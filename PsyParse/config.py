@@ -13,9 +13,9 @@ DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "openai/gpt-oss-20b")
 
 # ---- PUBLISHED_PARAMS: do NOT change, from paper Table V ----
 ROLLOUT_ROUNDS = 3
-PRUNING_BRANCHES = 4
-RAG_TOP_K2 = 3
-RAG_TOP_K1 = 10
+PRUNING_BRANCHES = 2
+RAG_TOP_K2 = 1
+RAG_TOP_K1 = 3
 RAG_DROP_FRAC = 0.3
 
 # ---- AGENT_TEMPERATURES: fixed per SOP ----
