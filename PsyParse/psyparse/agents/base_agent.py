@@ -9,6 +9,49 @@ from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
+
+# histories are stored from the patient's side: "user" = therapist, "assistant" = patient
+def clean_history(history: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    res = []
+    for m in history:
+        txt = m["content"].replace("[SESSION_END]", "").strip()
+        if not txt or txt.startswith("[Internal Instruction") or txt.startswith("[Instruction"):
+            continue
+        res.append({"speaker": "Therapist" if m["role"] == "user" else "Patient", "text": txt})
+    return res
+
+
+def format_dialogue(history: List[Dict[str, str]]) -> str:
+    return "\n".join(f"{m['speaker']}: {m['text']}" for m in clean_history(history))
+
+
+def flip_roles(history: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    # patient-side history -> therapist-side history (therapist = assistant)
+    res = []
+    for m in clean_history(history):
+        role = "assistant" if m["speaker"] == "Therapist" else "user"
+        res.append({"role": role, "content": m["text"]})
+    return res
+
+
+_warned = set()
+
+
+def _check_limits(completion, ctx_limit: int, max_tokens: int) -> None:
+    # ollama silently drops the start of prompts longer than its context, so at least shout about it
+    try:
+        used = completion.usage.prompt_tokens + completion.usage.completion_tokens
+        if used > 0.9 * ctx_limit and "ctx" not in _warned:
+            _warned.add("ctx")
+            print(f"  [warn] a call used {used} tokens, close to CTX_LIMIT={ctx_limit}. "
+                  "start ollama with a bigger OLLAMA_CONTEXT_LENGTH and set CTX_LIMIT to match")
+        if completion.choices[0].finish_reason == "length" and "len" not in _warned:
+            _warned.add("len")
+            print(f"  [warn] a reply hit max_tokens={max_tokens} and was cut, raise MAX_TOKENS if this keeps happening")
+    except Exception:
+        pass
+
+
 class BaseAgent:
     """
     Core LLM Agent with state management, exponential backoff retry logic,
@@ -21,11 +64,15 @@ class BaseAgent:
         temperature: float = 0.7,
         base_url: Optional[str] = None,
         api_key: Optional[str] = None,
+        reasoning_effort: Optional[str] = None,
     ):
         import config
         self.system_prompt = system_prompt
         self.model = model or config.DEEPSEEK_MODEL
         self.temperature = temperature
+        self.max_tokens = config.MAX_TOKENS
+        self.ctx_limit = config.CTX_LIMIT
+        self.reasoning_effort = config.REASONING_EFFORT if reasoning_effort is None else reasoning_effort
         
         resolved_base_url = base_url or config.DEEPSEEK_BASE_URL
         resolved_api_key = api_key or config.DEEPSEEK_API_KEY
@@ -97,10 +144,11 @@ class BaseAgent:
         max_retries: int = 15,
         ephemeral_system: Optional[str] = None,
         response_format: Optional[Dict[str, str]] = None,
+        max_tokens: Optional[int] = None,
     ) -> str:
         payload = self._build_payload(messages, ephemeral_system)
         temp = self.temperature if temperature is None else temperature
-        return self._call_api_with_retry(payload, temp, max_retries, response_format)
+        return self._call_api_with_retry(payload, temp, max_retries, response_format, max_tokens)
 
     def _call_api_with_retry(
         self,
@@ -108,6 +156,7 @@ class BaseAgent:
         temperature: float,
         max_retries: int = 15,
         response_format: Optional[Dict[str, str]] = None,
+        max_tokens: Optional[int] = None,
     ) -> str:
         delay = 4.0
         last_exception = None
@@ -118,17 +167,22 @@ class BaseAgent:
                     "model": self.model,
                     "messages": messages,
                     "temperature": max(0.0, min(temperature, 1.0)),
+                    # cap output so a rambling model can't eat minutes on one reply
+                    "max_tokens": max_tokens or self.max_tokens,
                 }
                 if response_format:
                     kwargs["response_format"] = response_format
+                if self.reasoning_effort:
+                    kwargs["reasoning_effort"] = self.reasoning_effort
 
                 completion = self.client.chat.completions.create(**kwargs)
                 content = completion.choices[0].message.content or ""
+                _check_limits(completion, self.ctx_limit, kwargs["max_tokens"])
                 return content.strip()
             except Exception as e:
                 last_exception = e
                 logger.warning("LLM API attempt %d failed: %s. Retrying in %.1fs...", attempt + 1, e, delay)
                 time.sleep(delay)
-                delay *= 2.0
+                delay = min(delay * 2.0, 60.0)
 
         raise RuntimeError(f"API call failed after {max_retries} attempts: {last_exception}")

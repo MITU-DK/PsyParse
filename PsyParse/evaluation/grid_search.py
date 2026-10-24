@@ -1,56 +1,89 @@
 import json
+import itertools
 import logging
+from typing import Dict, Any, Optional
+
 import numpy as np
-from typing import Dict, List, Any, Optional
+
+import config
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.pipeline.stage1 import run_stage_1
 
 logger = logging.getLogger(__name__)
 
-def run_retrieval_grid_search(
-    dev_scenarios_path: str = "data/dev_scenarios.json",
-    retriever_instance: Optional[HybridRetriever] = None,
-) -> Dict[str, float]:
+# dataset label -> therapy_type used in the db (same mapping as data prep)
+GOLD_MAP = {
+    "solution-focused brief therapy": "SFBT",
+    "psychoanalytic therapy": "Psychoanalytic",
+    "cognitive behaviour therapy": "CBT",
+    "cognitive behavioral therapy": "CBT",
+    "client-centered therapy": "PCT",
+    "adlerian therapy": "Adlerian",
+    "family therapy": "Family",
+    "acceptance commitment therapy": "ACT",
+    "marriage and family systems therapy": "Family Systems",
+    "rational emotive behavior therapy": "REBT",
+    "gestalt therapy": "Gestalt",
+    "reality therapy": "Reality",
+    "postmodern therapy": "Postmodern",
+    "existential therapy": "Existential",
+}
+
+
+def run_retrieval_grid_search(retriever: Optional[HybridRetriever] = None) -> Dict[str, Any]:
     """
-    Empirically evaluates alpha balance parameters {0.3, 0.5, 0.7}
-    on Dev scenarios to avoid saturated 100.0 outputs.
+    Grid search over alpha and (w1, w2) on the dev scenarios (SOP Table VII).
+    Objective: is the dev scenario's real therapy in the top-k2 retrieved types (hit),
+    tie-break by reciprocal rank of it.
     """
-    with open(dev_scenarios_path, "r", encoding="utf-8") as f:
-        dev_scenarios = json.load(f)[:3]
+    with open(config.DATA_DIR / "dev_scenarios.json", encoding="utf-8") as f:
+        dev = json.load(f)
 
-    retriever = retriever_instance or HybridRetriever()
-    alpha_grid = [0.3, 0.5, 0.7]
-    results: Dict[str, float] = {}
+    retriever = retriever or HybridRetriever()
 
-    # Pre-compute Stage 1 profiles to save API calls
-    precomputed = []
-    print("Pre-computing Phase 1 interviews (doing this once per scenario)...")
-    for idx, sc in enumerate(dev_scenarios):
-        print(f"Running interview for scenario {idx + 1}/{len(dev_scenarios)}...")
-        profile, keywords, _, _ = run_stage_1(sc)
-        precomputed.append((sc, profile, keywords))
+    # stage 1 is the only llm part, cache it so reruns are free
+    cache_path = config.RESULTS_DIR / "dev_profiles.json"
+    cache = {}
+    if cache_path.exists():
+        with open(cache_path, encoding="utf-8") as f:
+            cache = json.load(f)
+    for idx, sc in enumerate(dev):
+        sid = sc.get("dialog_id", str(idx))
+        if sid in cache:
+            continue
+        print(f"Running interview for dev scenario {idx + 1}/{len(dev)}...")
+        profile, keywords, _, _ = run_stage_1(sc, retriever=retriever)
+        cache[sid] = {"profile": profile, "keywords": keywords}
+        config.RESULTS_DIR.mkdir(exist_ok=True)
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(cache, f, indent=2)
 
-    print("Executing Alpha Grid Search...")
-    for alpha in alpha_grid:
-        topic_match_scores = []
-        for idx, (sc, profile, keywords) in enumerate(precomputed):
-            print(f"Testing alpha={alpha}, scenario {idx + 1}/{len(dev_scenarios)}...")
-            retrieved = retriever.retrieve(profile, keywords, alpha=alpha, k1=10, k2=3)
+    alphas = [0.3, 0.5, 0.7]
+    ws = [(0.3, 0.7), (0.5, 0.5), (0.7, 0.3)]
+    rows = []
+    for alpha, (w1, w2) in itertools.product(alphas, ws):
+        hits, rr = [], []
+        for idx, sc in enumerate(dev):
+            sid = sc.get("dialog_id", str(idx))
+            gold = GOLD_MAP.get(str(sc.get("psychotherapy", "")).lower().strip(), sc.get("psychotherapy"))
+            got = retriever.retrieve(cache[sid]["profile"], cache[sid]["keywords"], alpha=alpha, w1=w1, w2=w2)
+            types = [g["therapy_type"] for g in got]
+            hits.append(1.0 if gold in types else 0.0)
+            rr.append(1.0 / (types.index(gold) + 1) if gold in types else 0.0)
+        rows.append({"alpha": alpha, "w1": w1, "w2": w2,
+                     "hit_at_k2": round(float(np.mean(hits)) * 100, 2), "mrr": round(float(np.mean(rr)), 3)})
+        print(f"alpha={alpha} w1={w1} w2={w2} -> hit@k2={rows[-1]['hit_at_k2']}% mrr={rows[-1]['mrr']}")
 
-            target_topic = sc.get("topic", "").lower()
-            matches = sum(
-                1 for r in retrieved
-                if any(target_topic in cond.lower() for cond in r.get("applicable_conditions", []))
-            )
-            topic_match_scores.append(matches / max(1, len(retrieved)))
+    # prefer the paper/SOP default 0.5/0.5/0.5 when scores tie
+    def key(r):
+        return (r["hit_at_k2"], r["mrr"], -abs(r["alpha"] - 0.5) - abs(r["w1"] - 0.5))
+    best = max(rows, key=key)
+    out = {"n_dev": len(dev), "grid": rows, "best": best}
+    with open(config.RESULTS_DIR / "grid_search_results.json", "w", encoding="utf-8") as f:
+        json.dump(out, f, indent=2)
+    print(f"\nbest: {best}\n-> set ALPHA, W1, W2 in config.py to these values")
+    return out
 
-        score = float(np.mean(topic_match_scores) * 100.0)
-        results[f"alpha_{alpha:.1f}"] = round(score, 2)
-
-    with open("grid_search_results.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
-
-    return results
 
 if __name__ == "__main__":
-    print(run_retrieval_grid_search())
+    run_retrieval_grid_search()

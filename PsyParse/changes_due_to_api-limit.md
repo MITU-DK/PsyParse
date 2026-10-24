@@ -1,3 +1,5 @@
+> **Outdated (2026-10-24):** describes an older version of the code. Several functions mentioned here no longer exist. See RUN_LOCALLY.md and ../CLAUDE.md for the current setup.
+
 # API & Environment Deviations Report
 
 This document records the exact deviations from the original `psyparse_implementation_plan.md` necessitated by API billing limits and endpoint availability issues during Stage 1/2 testing.

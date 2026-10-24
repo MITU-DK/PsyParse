@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, Any, List, Tuple
+import config
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.agents.therapist_agent import TherapistAgent
 
@@ -10,11 +11,11 @@ def run_stage_2(
     keywords: List[str],
     retriever: HybridRetriever,
     therapist: TherapistAgent,
-    alpha: float = 0.3,
-    w1: float = 0.5,
-    w2: float = 0.5,
-    k1: int = 10,
-    k2: int = 3,
+    alpha: float = config.ALPHA,
+    w1: float = config.W1,
+    w2: float = config.W2,
+    k1: int = config.RAG_TOP_K1,
+    k2: int = config.RAG_TOP_K2,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
     Executes Stage 2: Hybrid RAG, therapy scoring (Eq. 1 & 2),

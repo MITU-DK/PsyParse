@@ -1,133 +1,155 @@
-import os
+import re
 import json
 import pickle
+from collections import Counter
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
-from rank_bm25 import BM25Okapi
-from typing import List, Dict, Any, Tuple
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
+
+import config
+
+FIELDS = ["core_problems", "emotional_states", "symptoms"]
+
+
+# same tokenizer the bm25 index in data/ was built with
+def tokenize(text: str) -> List[str]:
+    return [w for w in re.findall(r"[a-z]{2,}", str(text).lower()) if w not in ENGLISH_STOP_WORDS]
+
+
+def as_text(v: Any) -> str:
+    if isinstance(v, list):
+        return " ".join(str(x) for x in v)
+    return str(v or "")
+
 
 class HybridRetriever:
     """
     Implements multi-therapy RAG:
       - Equation 1: Hybrid Retrieval S(P, C_i) = alpha * Cos(E(P), E(C_i)) + (1 - alpha) * B_norm(K, T_i)
       - Equation 2: Therapy Suitability S_th(P, T_i) = w1 * M_s(P, T_i) + w2 * App(T_i)
-      - Percentile pruning (bottom 30%) and top-k2 diversity grouping with fallback escape hatches.
+      - Percentile pruning (bottom 30%) and top-k2 grouping by distinct therapy type.
     """
-    def __init__(
-        self,
-        db_path: str = "data/therapy_database.json",
-        faiss_path: str = "data/therapy_faiss.index",
-        bm25_path: str = "data/therapy_bm25.pkl",
-        app_table_path: str = "data/app_table.json",
-        model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-    ):
+    def __init__(self, data_dir: Optional[Path] = None, model_name: str = "all-MiniLM-L6-v2"):
+        d = Path(data_dir or config.DATA_DIR)
         self.encoder = SentenceTransformer(model_name)
-        with open(db_path, "r", encoding="utf-8") as f:
+        self.encoder.max_seq_length = 256
+
+        with open(d / "therapy_database.json", encoding="utf-8") as f:
             self.database: List[Dict[str, Any]] = json.load(f)
+        with open(d / "app_table.json", encoding="utf-8") as f:
+            self.app_table = json.load(f)
+        with open(d / "therapy_types.json", encoding="utf-8") as f:
+            self.types: List[str] = json.load(f)
+        self.type_emb = np.load(d / "therapy_type_embeddings.npy")
+        self.faiss_index = faiss.read_index(str(d / "therapy_faiss.index"))
+        with open(d / "therapy_bm25.pkl", "rb") as f:
+            saved = pickle.load(f)
+        self.bm25 = saved["bm25"] if isinstance(saved, dict) else saved
 
-        self.faiss_index = faiss.read_index(faiss_path)
-        with open(bm25_path, "rb") as f:
-            bm25_data = pickle.load(f)
-            if isinstance(bm25_data, dict) and "bm25" in bm25_data:
-                self.bm25: BM25Okapi = bm25_data["bm25"]
-            else:
-                self.bm25: BM25Okapi = bm25_data
+        ids = [c["dialog_id"] for c in self.database]
+        if isinstance(saved, dict) and saved.get("ids") != ids:
+            raise ValueError("bm25 ids dont match therapy_database.json, rebuild the indices")
+        if self.faiss_index.ntotal != len(self.database):
+            raise ValueError("faiss index size dont match therapy_database.json, rebuild the indices")
 
-        self.app_table: Dict[str, Dict[str, float]] = {}
-        if os.path.exists(app_table_path):
-            with open(app_table_path, "r", encoding="utf-8") as f:
-                self.app_table = json.load(f)
+        # idf from the db so stage 1 keywords are real tf-idf (not just word counts of one text)
+        docs = []
+        for c in self.database:
+            tag = c.get("therapy_tag", {})
+            docs.append(" ".join([as_text(c["case_profile"].get(k)) for k in FIELDS] + tag.get("applicable_conditions", [])))
+        self.tfidf = TfidfVectorizer(tokenizer=tokenize, lowercase=False, token_pattern=None)
+        self.tfidf.fit(docs)
+
+    def keywords(self, texts: List[str], top_n: int = 10) -> List[str]:
+        vec = self.tfidf.transform([" ".join(texts)]).toarray()[0]
+        vocab = self.tfidf.get_feature_names_out()
+        top = [i for i in np.argsort(vec)[::-1][:top_n] if vec[i] > 0]
+        return [vocab[i] for i in top]
+
+    def embed_profile(self, profile: Dict[str, Any]) -> np.ndarray:
+        # embed each field on its own and mean pool, same as the case embeddings in the index
+        texts = [as_text(profile.get(k)) for k in FIELDS]
+        texts = [t for t in texts if t.strip()] or [json.dumps(profile)]
+        vecs = self.encoder.encode(texts, convert_to_numpy=True)
+        q = vecs.mean(axis=0)
+        q = q / max(np.linalg.norm(q), 1e-12)
+        return q.astype("float32")
 
     def retrieve(
         self,
         patient_profile: Dict[str, Any],
         keywords: List[str],
-        alpha: float = 0.5,
-        w1: float = 0.5,
-        w2: float = 0.5,
-        k1: int = 10,
-        k2: int = 3,
+        alpha: float = config.ALPHA,
+        w1: float = config.W1,
+        w2: float = config.W2,
+        k1: int = config.RAG_TOP_K1,
+        k2: int = config.RAG_TOP_K2,
+        drop_frac: float = config.RAG_DROP_FRAC,
     ) -> List[Dict[str, Any]]:
-        # Schema subset matching the indexed Case Profiles
-        shared_text = " ".join([
-            str(patient_profile.get("core_problems", "")),
-            str(patient_profile.get("emotional_states", "")),
-            str(patient_profile.get("symptoms", "")),
-        ])[:1000]
+        n = len(self.database)
+        q = self.embed_profile(patient_profile)
 
-        # 1. Semantic Search (FAISS IndexFlatIP)
-        p_emb = self.encoder.encode([shared_text], convert_to_numpy=True)
-        faiss.normalize_L2(p_emb)
-        sims, indices = self.faiss_index.search(p_emb, len(self.database))
-        cos_scores = np.zeros(len(self.database))
-        for score, idx in zip(sims[0], indices[0]):
-            cos_scores[idx] = float(score)
+        # 1. semantic search over all cases
+        sims, idxs = self.faiss_index.search(q[None, :], n)
+        cos = np.zeros(n)
+        for s, i in zip(sims[0], idxs[0]):
+            cos[i] = float(s)
 
-        # 2. Lexical Search (BM25 with Min-Max Normalization)
-        tokenized_k = [k.lower() for k in keywords]
-        bm25_raw = np.array(self.bm25.get_scores(tokenized_k))
-        b_min, b_max = bm25_raw.min(), bm25_raw.max()
-        bm25_norm = np.zeros_like(bm25_raw) if b_max == b_min else (bm25_raw - b_min) / (b_max - b_min)
+        # 2. bm25 on keywords vs therapy tags, minmax over the whole db
+        raw = np.asarray(self.bm25.get_scores(tokenize(" ".join(keywords))), dtype=float)
+        bm = (raw - raw.min()) / (raw.max() - raw.min()) if raw.max() > raw.min() else np.zeros(n)
 
-        # 3. Hybrid Score (Eq. 1)
-        hybrid_scores = alpha * cos_scores + (1.0 - alpha) * bm25_norm
-        ranked_pool_indices = np.argsort(hybrid_scores)[::-1][:k1]
+        # 3. hybrid score (Eq. 1), keep top k1 cases
+        hyb = alpha * cos + (1.0 - alpha) * bm
+        top = np.argsort(hyb)[::-1][:k1]
 
-        # 4. Therapy Suitability Scoring (Eq. 2)
-        candidate_cases = []
-        sym_emb = self.encoder.encode([str(patient_profile.get("symptoms", ""))], convert_to_numpy=True)
-        faiss.normalize_L2(sym_emb)
+        # 4. therapy suitability (Eq. 2)
+        # live patient has no topic label, so use the majority topic of the retrieved cases for App
+        case_topic = self.app_table.get("case_topic", {})
+        topic = Counter(case_topic.get(self.database[i]["dialog_id"], "Unknown") for i in top).most_common(1)[0][0]
+        app_row = self.app_table.get("app", {}).get(topic) or self.app_table.get("app", {}).get("Unknown") or {}
 
-        for idx in ranked_pool_indices:
-            case = self.database[idx]
+        cands = []
+        for i in top:
+            case = self.database[i]
             tag = case.get("therapy_tag", {})
-            th_type = tag.get("therapy_type", "CBT")
-            app_conditions = " ".join(tag.get("applicable_conditions", []))
-
-            # Symptom match M_s (cosine similarity)
-            app_emb = self.encoder.encode([app_conditions], convert_to_numpy=True)
-            faiss.normalize_L2(app_emb)
-            m_s = max(0.0, float(np.dot(sym_emb, app_emb.T)[0][0]))
-
-            # Applicability App
-            topic = str(patient_profile.get("core_problems", "General"))
-            app_val = self.app_table.get(topic, {}).get(th_type, 0.5)
-
-            s_th = (w1 * m_s) + (w2 * app_val)
-            candidate_cases.append({
-                "case": case,
-                "s_th": s_th,
-                "m_s": m_s,
-                "app": app_val,
-                "therapy_type": th_type,
+            th = tag.get("therapy_type", "CBT")
+            m_s = 0.0
+            if th in self.types:
+                m_s = float(np.clip(np.dot(q, self.type_emb[self.types.index(th)]), 0.0, 1.0))
+            app = float(app_row.get(th, 0.5))
+            cands.append({
+                "case_id": case["dialog_id"],
+                "score": float(hyb[i]),
+                "cos": float(cos[i]),
+                "bm25": float(bm[i]),
+                "topic": topic,
+                "therapy_type": th,
                 "techniques": tag.get("techniques", []),
                 "applicable_conditions": tag.get("applicable_conditions", []),
+                "m_s": m_s,
+                "app": app,
+                "s_th": w1 * m_s + w2 * app,
             })
 
-        # 5. Percentile Filtering (discard bottom 30%)
-        candidate_cases.sort(key=lambda x: x["s_th"], reverse=True)
-        keep_count = max(1, int(len(candidate_cases) * 0.7))
-        filtered = candidate_cases[:keep_count]
+        # 5. drop the bottom 30% by s_th
+        cands.sort(key=lambda c: c["s_th"], reverse=True)
+        n_drop = int(len(cands) * drop_frac + 1e-9)
+        kept, dropped = cands[:len(cands) - n_drop], cands[len(cands) - n_drop:]
 
-        # 6. Distinct Grouping by Therapy Type with diversity override
-        type_to_best: Dict[str, Dict[str, Any]] = {}
-        for c in filtered:
-            tt = c["therapy_type"]
-            if tt not in type_to_best:
-                type_to_best[tt] = c
+        # 6. best case per therapy type, refill from dropped (non-SFBT first, db is ~69% SFBT)
+        best: Dict[str, Dict[str, Any]] = {}
+        for c in kept:
+            best.setdefault(c["therapy_type"], c)
+        if len(best) < k2:
+            for c in sorted(dropped, key=lambda c: c["therapy_type"] == "SFBT"):
+                if len(best) >= k2:
+                    break
+                best.setdefault(c["therapy_type"], c)
 
-        selected = list(type_to_best.values())
-
-        # If filtering reduced distinct types below 2, rescue from the discarded pool
-        if len(selected) < 2 and len(candidate_cases) > len(selected):
-            existing_types = {s["therapy_type"] for s in selected}
-            for c in candidate_cases:
-                if c["therapy_type"] not in existing_types:
-                    selected.append(c)
-                    existing_types.add(c["therapy_type"])
-                    if len(selected) >= 2:
-                        break
-
-        selected.sort(key=lambda x: x["s_th"], reverse=True)
-        return selected[:k2]
+        out = sorted(best.values(), key=lambda c: c["s_th"], reverse=True)
+        return out[:k2]

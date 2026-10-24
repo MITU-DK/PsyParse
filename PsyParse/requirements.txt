@@ -3,3 +3,5 @@ faiss-cpu
 rank_bm25
 scikit-learn
 openai
+python-dotenv
+numpy

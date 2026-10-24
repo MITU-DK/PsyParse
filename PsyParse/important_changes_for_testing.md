@@ -1,3 +1,5 @@
+> **Outdated (2026-10-24):** describes an older version of the code. Several functions mentioned here no longer exist. See RUN_LOCALLY.md and ../CLAUDE.md for the current setup.
+
 # Important Changes Made for Testing Only
 
 > ⚠️ These changes MUST be reverted before final submission / handoff to evaluators.

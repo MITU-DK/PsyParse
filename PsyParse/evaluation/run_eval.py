@@ -1,138 +1,181 @@
-import os
 import re
+import sys
 import json
 import logging
-from dotenv import load_dotenv
-from typing import Dict, Any, List
+from pathlib import Path
+from typing import Dict, Any, List, Optional
+
+import config
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.pipeline.run_full import run_psyparse_pipeline
-from psyparse.agents.base_agent import BaseAgent
-from psyparse.agents.patient_agent import PatientAgent
-
-load_dotenv()
+from psyparse.agents.base_agent import BaseAgent, clean_history, format_dialogue
+from psyparse.agents.patient_agent import PatientAgent, get_opening
 
 logger = logging.getLogger(__name__)
 
-class EvaluatorHarness:
-    def __init__(
-        self,
-        retriever: HybridRetriever,
-        model: str = "qwen2.5:14b",
-    ):
-        self.retriever = retriever
-        self.model = model
-        self.judge_prompt_template = self._get_strict_judge_prompt()
-        self.judge_agent = BaseAgent(system_prompt="You are a strict, expert clinical psychology evaluator.", model=model, temperature=0.0)
+METRICS = ["coherence", "completeness", "humaneness", "technique", "structure", "context_retention"]
+JUDGE_PROMPT = (Path(__file__).resolve().parent / "judge_prompt.txt").read_text(encoding="utf-8")
 
-    def _get_strict_judge_prompt(self) -> str:
-        return (
-            "Evaluate this therapeutic transcript on 6 dimensions using a strict 1.0 to 10.0 scale (use one decimal, e.g., 7.4).\n"
-            "Do NOT give scores above 8.0 unless the therapist demonstrates expert, explicit clinical methodology.\n\n"
-            "1. coherence: Logical flow and topical transitions.\n"
-            "2. completeness: Depth of exploring underlying trauma/symptoms (1-4: superficial, 8-10: comprehensive).\n"
-            "3. humaneness: Anticipatory empathy and authentic warmth.\n"
-            "4. technique: Explicit execution of evidence-based techniques (1-5: generic advice, 8-10: explicit CBT/ACT/SFBT exercises).\n"
-            "5. structure: Goal progression and phased therapeutic advancement.\n"
-            "6. context_retention: Deep integration of the patient's unique background.\n\n"
-            "Output strictly valid JSON with the exact keys: coherence, completeness, humaneness, technique, structure, context_retention.\n\n"
-            "Transcript:\n{TRANSCRIPT}"
+
+def make_judge() -> BaseAgent:
+    return BaseAgent(
+        system_prompt="You are a strict, expert clinical psychology supervisor. You must respond ONLY with a valid JSON object, with no conversational text.",
+        model=config.JUDGE_MODEL,
+        temperature=config.TEMP_JUDGE,
+        base_url=config.JUDGE_BASE_URL,
+        api_key=config.JUDGE_API_KEY,
+        reasoning_effort=config.JUDGE_REASONING_EFFORT,
+    )
+
+
+def judge_transcript(judge: BaseAgent, transcript_str: str, samples: int = config.JUDGE_SAMPLES) -> Optional[Dict[str, float]]:
+    # average a few judge calls, returns None if the judge never gives parseable scores
+    prompt = JUDGE_PROMPT.replace("{TRANSCRIPT}", transcript_str)
+    runs = []
+    tries = 0
+    while len(runs) < samples and tries < samples + 3:
+        tries += 1
+        raw = judge.generate(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=config.TEMP_JUDGE,
+            response_format={"type": "json_object"},
         )
+        try:
+            txt = re.sub(r"^```(?:json)?|```$", "", raw.strip(), flags=re.MULTILINE)
+            m = re.search(r"\{.*\}", txt, re.DOTALL)
+            data = json.loads(m.group(0) if m else txt)
+            runs.append({k: min(10.0, max(1.0, float(data[k]))) for k in METRICS})
+        except Exception as e:
+            logger.warning("judge output not parseable (%s): %s", e, raw[:200])
+    if not runs:
+        return None
+    # report on a 10-100 scale like the paper
+    return {k: round(sum(r[k] for r in runs) / len(runs) * 10.0, 2) for k in METRICS}
 
-    def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = 3) -> List[Dict[str, str]]:
-        topic = scenario.get("topic", "General")
-        background = scenario.get("background", "")
+
+class EvaluatorHarness:
+    def __init__(self, retriever: HybridRetriever, model: Optional[str] = None):
+        self.retriever = retriever
+        self.model = model or config.DEEPSEEK_MODEL
+        self.judge_agent = make_judge()
+
+    def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = config.BASELINE_TURNS) -> List[Dict[str, str]]:
+        # vanilla llm counselor: no topic, no background, no intake script (SOP: plain LLM baseline)
         therapist = BaseAgent(
-            system_prompt=f"You are a counselor. The patient is experiencing {topic}. Background: {background}. Provide standard empathetic responses.",
+            system_prompt="You are a professional psychological counselor. Have a supportive counseling conversation with the client.",
             model=self.model,
             temperature=0.7,
         )
-        patient = PatientAgent(scenario=scenario, model=self.model, temperature=0.7, min_turns=8)
-        opening = scenario.get("opening_turn", "I've been struggling lately.")
+        # same patient setup and same ending rule as the psyparse arm (intake + min therapy turns)
+        patient = PatientAgent(scenario=scenario, model=self.model, temperature=0.7,
+                               min_turns=config.INTAKE_TURNS + config.MIN_THERAPY_TURNS)
+        opening = get_opening(scenario, model=self.model)
         patient.add_message("assistant", opening)
 
-        therapist_msg = therapist.send(f"Patient: {opening}")
-        patient.respond(therapist_msg)
-
-        print("  -> Simulating Baseline Dialogue (Vanilla LLM)...")
-        for turn in range(max_turns - 1):
-            print(f"     [Baseline] Turn {turn+1}/{max_turns-1}...")
-            therapist_msg = therapist.send(patient.get_history()[-1]["content"])
-            patient_resp = patient.respond(therapist_msg)
-            if "[SESSION_END]" in patient_resp:
+        print(f"  -> Simulating Baseline Dialogue (Vanilla LLM, {max_turns} turns)...")
+        last = opening
+        for turn in range(max_turns):
+            therapist_msg = therapist.send(last)
+            last = patient.respond(therapist_msg)
+            if "[SESSION_END]" in last:
                 break
+            last = last.strip()
         print("  -> Baseline Dialogue Complete.")
         return patient.get_history()
 
-    def evaluate_transcript(self, transcript: List[Dict[str, str]]) -> Dict[str, float]:
-        transcript_str = "\n".join([f"{m['role'].capitalize()}: {m['content']}" for m in transcript])
-        prompt = self.judge_prompt_template.replace("{TRANSCRIPT}", transcript_str)
-
-        raw = self.judge_agent.generate(
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2
-        )
-        try:
-            cleaned = re.sub(r"^```(?:json)?|```$", "", raw.strip(), flags=re.MULTILINE)
-            data = json.loads(cleaned)
-            # Scale the 1.0-10.0 score up to 10-100 for final reporting
-            return {k: round(float(data.get(k, 5.0)) * 10.0, 2) for k in [
-                "coherence", "completeness", "humaneness", "technique", "structure", "context_retention"
-            ]}
-        except Exception as e:
-            logger.error(f"Judge parsing failed: {e}")
-            return {k: 50.0 for k in ["coherence", "completeness", "humaneness", "technique", "structure", "context_retention"]}
-
     def evaluate_scenario(self, scenario: Dict[str, Any]) -> Dict[str, Any]:
-        baseline_transcript = self.run_baseline_dialogue(scenario)
-        psyparse_result = run_psyparse_pipeline(scenario, self.retriever, model=self.model)
+        sid = scenario.get("dialog_id", "unknown")
+        baseline = self.run_baseline_dialogue(scenario)
+        psy = run_psyparse_pipeline(scenario, self.retriever, model=self.model)
 
-        baseline_scores = self.evaluate_transcript(baseline_transcript)
-        psyparse_scores = self.evaluate_transcript(psyparse_result["transcript"])
+        # judge each transcript on its own, speakers labeled Therapist/Patient, no arm-revealing tags
+        print("  -> Judging transcripts...")
+        b_scores = judge_transcript(self.judge_agent, format_dialogue(baseline))
+        p_scores = judge_transcript(self.judge_agent, format_dialogue(psy["transcript"]))
+        valid = b_scores is not None and p_scores is not None
 
-        return {
-            "scenario_id": scenario.get("dialog_id", "unknown"),
+        res = {
+            "scenario_id": sid,
             "topic": scenario.get("topic", "General"),
-            "baseline_scores": baseline_scores,
-            "psyparse_scores": psyparse_scores,
-            "delta": {k: round(psyparse_scores[k] - baseline_scores[k], 2) for k in baseline_scores},
-            "best_therapy": psyparse_result["best_therapy"]
+            "gold_therapy": scenario.get("psychotherapy", ""),
+            "best_therapy": psy["best_therapy"],
+            "top_therapies": [t["therapy_type"] for t in psy["top_therapies"]],
+            "agent_model": self.model,
+            "judge_model": config.JUDGE_MODEL,
+            "quick_test": config.QUICK_TEST,
+            "baseline_turns": len([m for m in baseline if m["role"] == "user"]),
+            "psyparse_turns": psy["turns"],
+            "valid": valid,
+            "baseline_scores": b_scores,
+            "psyparse_scores": p_scores,
+            "delta": {k: round(p_scores[k] - b_scores[k], 2) for k in METRICS} if valid else None,
         }
+
+        # full record for manual review (SOP E2)
+        tdir = config.RESULTS_DIR / "transcripts"
+        tdir.mkdir(parents=True, exist_ok=True)
+        detail = dict(res)
+        detail.update({
+            "patient_profile": psy["patient_profile"],
+            "keywords": psy["keywords"],
+            "top_therapies_detail": psy["top_therapies"],
+            "guidance": psy["guidance"],
+            "rollout_logs": psy["rollout_logs"],
+            "pruning_logs": psy["pruning_logs"],
+            "baseline_transcript": clean_history(baseline),
+            "psyparse_transcript": clean_history(psy["transcript"]),
+        })
+        with open(tdir / f"{sid}.json", "w", encoding="utf-8") as f:
+            json.dump(detail, f, indent=2)
+        return res
+
+
 def main():
-    import sys
-    n_scenarios = int(sys.argv[1]) if len(sys.argv) > 1 else 3
-    
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    resume = "--resume" in sys.argv
+    n_scenarios = int(args[0]) if args else 3
+
     try:
-        with open("data/eval_scenarios.json", "r", encoding="utf-8") as f:
+        with open(config.DATA_DIR / "eval_scenarios.json", "r", encoding="utf-8") as f:
             scenarios = json.load(f)
     except FileNotFoundError:
-        print("Error: data/eval_scenarios.json not found. Did you run data_prep.py or pull the data?")
+        print("Error: data/eval_scenarios.json not found.")
         return
+    scenarios = scenarios[:n_scenarios]
 
-    if n_scenarios:
-        scenarios = scenarios[:n_scenarios]
-        
-    print(f"Initializing HybridRetriever...")
-    retriever = HybridRetriever(
-        faiss_path="data/therapy_faiss.index",
-        bm25_path="data/therapy_bm25.pkl",
-        db_path="data/therapy_database.json"
-    )
-    
-    print(f"Initializing EvaluatorHarness...")
-    harness = EvaluatorHarness(retriever=retriever, model=os.getenv("DEEPSEEK_MODEL", "qwen2.5:14b"))
-    
+    config.RESULTS_DIR.mkdir(exist_ok=True)
+    out_path = config.RESULTS_DIR / "eval_results.json"
     results = []
-    os.makedirs("results", exist_ok=True)
-    
+    if resume and out_path.exists():
+        with open(out_path, encoding="utf-8") as f:
+            results = [r for r in json.load(f) if "valid" in r]
+        print(f"Resuming, {len(results)} scenarios already done")
+    done = {r["scenario_id"] for r in results}
+
+    if config.QUICK_TEST:
+        print("*** QUICK_TEST mode: tiny settings to check the pipeline works, scores are NOT real results ***")
+    print(f"agent model = {config.DEEPSEEK_MODEL} | judge model = {config.JUDGE_MODEL} | "
+          f"turns: intake {config.INTAKE_TURNS} + therapy {config.THERAPY_TURNS}, baseline {config.BASELINE_TURNS} | "
+          f"rounds {config.ROLLOUT_ROUNDS}, branches {config.PRUNING_BRANCHES}, k2 {config.RAG_TOP_K2}, "
+          f"parallel {config.PARALLEL_CALLS}, results -> {config.RESULTS_DIR.name}/")
+    print("Initializing HybridRetriever...")
+    retriever = HybridRetriever()
+    harness = EvaluatorHarness(retriever=retriever)
+
     for i, scenario in enumerate(scenarios):
-        print(f"\nEvaluating scenario {i+1}/{len(scenarios)}...")
+        if scenario.get("dialog_id") in done:
+            continue
+        print(f"\nEvaluating scenario {i+1}/{len(scenarios)} ({scenario.get('dialog_id')}, {scenario.get('topic')})...")
         res = harness.evaluate_scenario(scenario)
+        print(f"  delta: {res['delta']}")
         results.append(res)
-        
-        with open("results/eval_results.json", "w", encoding="utf-8") as f:
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2)
-            
-    print("\nEvaluation complete! Results saved to results/eval_results.json")
-    
+
+    print(f"\nEvaluation complete! Results saved to {out_path}")
+    from evaluation.aggregate import aggregate_eval_results
+    print(aggregate_eval_results(str(out_path)))
+
+
 if __name__ == "__main__":
     main()

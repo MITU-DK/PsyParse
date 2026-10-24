@@ -29,9 +29,20 @@ class EvaluationAgent(BaseAgent):
             f"Dialogue History:\n{conversation_history}\n\n"
             f"Therapist Response:\n{therapist_response}\n\n"
             f"Target Therapy: {therapy_name}\n\n"
-            "Score the response on a continuous scale from 1.0 to 5.0 for:\n"
-            "- empathy: Affective warmth, emotional attunement, validation (1=cold/robotic, 3=adequate, 5=profoundly attuning)\n"
-            f"- alignment: Procedural application and fidelity to {therapy_name} techniques (1=off-track/generic, 3=moderate, 5=exemplary technique fidelity)\n\n"
+            "Score the response on a continuous scale from 1.0 to 5.0, using one decimal (e.g. 3.6). Use the full range and "
+            "do not default to whole numbers; small differences in quality should show up as different scores.\n\n"
+            "empathy (Eq. 3 E):\n"
+            "  1 = cold, dismissive or generic; ignores what the client said\n"
+            "  2 = polite but formulaic validation (\"that sounds hard\")\n"
+            "  3 = accurate reflection of the client's feelings\n"
+            "  4 = reflects the specific feelings AND their meaning for this client, in the client's own terms\n"
+            "  5 = deeply attuned, anticipates what the client may feel next, makes the client feel truly understood\n"
+            f"alignment with {therapy_name} (Eq. 3 A):\n"
+            "  1 = no recognizable technique, off-track, or invents facts about the client\n"
+            "  2 = mentions a technique or gives generic advice without doing it\n"
+            "  3 = starts a technique but stays shallow\n"
+            "  4 = clearly carries out a technique, tied to the client's actual details\n"
+            "  5 = skillful, step-by-step execution that moves the client forward in the plan\n\n"
             "Respond ONLY with valid JSON: {\"empathy\": <float>, \"alignment\": <float>}"
         )
         return self._evaluate_json(prompt, {"empathy": 3.0, "alignment": 3.0})
@@ -47,12 +58,35 @@ class EvaluationAgent(BaseAgent):
             f"Dialogue History:\n{conversation_history}\n\n"
             f"Proposed Response:\n{therapist_response}\n\n"
             f"Predicted Patient Reaction:\n{predicted_patient_reaction}\n\n"
-            "Score on a continuous scale from 1.0 to 5.0 for:\n"
-            "- empathy: Depth of emotional resonance in the therapist's response (1.0 to 5.0)\n"
-            "- stability: Conversational safety, grounding, and forward therapeutic movement in the patient's reaction (1.0 to 5.0)\n\n"
+            "Score on a continuous scale from 1.0 to 5.0, using one decimal (e.g. 3.6). Use the full range and "
+            "do not default to whole numbers; small differences in quality should show up as different scores.\n\n"
+            "empathy of the therapist's response (Eq. 4 E):\n"
+            "  1 = cold, dismissive or generic\n"
+            "  2 = formulaic validation\n"
+            "  3 = accurate reflection of the client's feelings\n"
+            "  4 = specific, personal understanding in the client's own terms\n"
+            "  5 = deeply attuned and anticipatory\n"
+            "stability, judged from the predicted patient reaction (Eq. 4 S):\n"
+            "  1 = client withdraws, feels misunderstood, gets more distressed or pushes back\n"
+            "  2 = client disengages or gives a short, flat answer\n"
+            "  3 = client stays neutral and keeps talking\n"
+            "  4 = client opens up, shares more, or engages with the intervention\n"
+            "  5 = client gains insight, feels calmer, or commits to a concrete step\n\n"
             "Respond ONLY with valid JSON: {\"empathy\": <float>, \"stability\": <float>}"
         )
         return self._evaluate_json(prompt, {"empathy": 3.0, "stability": 3.0})
+
+    def score_trajectory(self, rollout_dialogue: str, therapy_name: str) -> Dict[str, float]:
+        # how the simulated patient actually took the rollout, used to tell therapies apart in stage 3a
+        prompt = (
+            f"Below is a short simulated counseling exchange using {therapy_name}.\n\n"
+            f"{rollout_dialogue}\n\n"
+            "Judge ONLY the patient's reactions. Score on a continuous scale from 1.0 to 5.0:\n"
+            "- receptivity: does the patient open up, engage with the intervention and move forward "
+            "(1=resists, feels misunderstood or withdraws, 3=neutral, 5=clearly engaged and gaining insight)\n\n"
+            "Respond ONLY with valid JSON: {\"receptivity\": <float>}"
+        )
+        return self._evaluate_json(prompt, {"receptivity": 3.0})
 
     def _evaluate_json(self, prompt: str, fallback: Dict[str, float]) -> Dict[str, float]:
         raw = self.generate(
@@ -66,7 +100,7 @@ class EvaluationAgent(BaseAgent):
             match = re.search(r"\{.*\}", cleaned, re.DOTALL)
             payload = match.group(0) if match else cleaned
             data = json.loads(payload)
-            return {k: float(data.get(k, fallback[k])) for k in fallback}
+            return {k: min(5.0, max(1.0, float(data.get(k, fallback[k])))) for k in fallback}
         except Exception as e:
             logger.warning("Score parsing fallback invoked: %s (Raw: %s)", e, raw)
             return fallback

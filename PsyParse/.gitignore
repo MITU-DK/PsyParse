@@ -12,3 +12,7 @@ __pycache__/
 .pyparse_implementation_plan.md
 PsyParse/changes_due_to_api-limit.md
 PsyParse/important_changes_for_testing.md
+CLAUDE.md
+article.pdf
+ARTICLE.pdf
+results_quick/

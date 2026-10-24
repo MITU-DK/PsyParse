@@ -1,29 +1,33 @@
-import json
-import os
-import re
-from psyparse.agents.base_agent import BaseAgent
+import config
+from evaluation.run_eval import make_judge, judge_transcript
 
-prompt_template = (
-    "Evaluate this therapeutic transcript on 6 dimensions using a strict 1.0 to 10.0 scale (use one decimal, e.g., 7.4).\n"
-    "Do NOT give scores above 8.0 unless the therapist demonstrates expert, explicit clinical methodology.\n\n"
-    "1. coherence: Logical flow and topical transitions.\n"
-    "2. completeness: Depth of exploring underlying trauma/symptoms (1-4: superficial, 8-10: comprehensive).\n"
-    "3. humaneness: Anticipatory empathy and authentic warmth.\n"
-    "4. technique: Explicit execution of evidence-based techniques (1-5: generic advice, 8-10: explicit CBT/ACT/SFBT exercises).\n"
-    "5. structure: Goal progression and phased therapeutic advancement.\n"
-    "6. context_retention: Deep integration of the patient's unique background.\n\n"
-    "Transcript:\n{TRANSCRIPT}\n\n"
-    "Output strictly valid JSON:\n"
-    "{\"coherence\": 0.0, \"completeness\": 0.0, \"humaneness\": 0.0, \"technique\": 0.0, \"structure\": 0.0, \"context_retention\": 0.0}"
+# the judge has to clearly prefer the strong transcript, otherwise the A/B deltas mean nothing
+weak = (
+    "Patient: I keep thinking everyone on the high street is staring at me, so I keep my head down.\n"
+    "Therapist: That sounds hard. How was your day otherwise?\n"
+    "Patient: Not great, I just rushed home.\n"
+    "Therapist: I see. Try to stay positive and things will get better.\n"
+    "Patient: I guess.\n"
+    "Therapist: Is there anything else you want to talk about?"
+)
+strong = (
+    "Patient: I keep thinking everyone on the high street is staring at me, so I keep my head down.\n"
+    "Therapist: Walking down the high street feeling watched sounds exhausting, and keeping your head down makes sense as a way to protect yourself. "
+    "When you notice that thought, 'everyone is staring at me', how strongly do you believe it, from 0 to 100?\n"
+    "Patient: About 90. I feel like they're judging how I look.\n"
+    "Therapist: So at 90 percent sure, no wonder you rush your shopping. Let's look at that thought together like a detective: "
+    "what have you actually seen people doing on the street that supports it, and what doesn't fit it?\n"
+    "Patient: Honestly, most people are looking at their phones or the shops. I don't really know if anyone looks at me.\n"
+    "Therapist: That's an important observation. If you held the thought 'most people are busy with their own errands', how much would you believe it now? "
+    "Maybe this week we could try a small experiment: lift your head for just one shop window and notice what people are really doing."
 )
 
-judge = BaseAgent("You are a strict, expert clinical psychology evaluator.", temperature=0.0)
-
-t1 = "Therapist: Tell me about your day.\nPatient: It was bad."
-t2 = "Therapist: Let's do a cognitive restructuring exercise. What is the automatic thought?\nPatient: I am worthless."
-
-r1 = judge.generate([{"role": "user", "content": prompt_template.replace("{TRANSCRIPT}", t1)}], response_format={"type":"json_object"})
-r2 = judge.generate([{"role": "user", "content": prompt_template.replace("{TRANSCRIPT}", t2)}], response_format={"type":"json_object"})
-
-print("T1:", r1)
-print("T2:", r2)
+judge = make_judge()
+print("judge model:", config.JUDGE_MODEL)
+w = judge_transcript(judge, weak)
+s = judge_transcript(judge, strong)
+print("weak  :", w)
+print("strong:", s)
+if w and s:
+    gap = sum(s.values()) / len(s) - sum(w.values()) / len(w)
+    print(f"avg gap (strong - weak) = {gap:+.1f}  ->", "OK" if gap > 15 else "judge is not discriminating well, try a bigger JUDGE_MODEL")
