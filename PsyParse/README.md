@@ -173,7 +173,7 @@ All in [`config.py`](config.py). Values marked *Paper* come from the paper's imp
 | `INTAKE_TURNS`, `THERAPY_TURNS` | Fixed / env | `5`, `5` | dialogue length; final run uses `THERAPY_TURNS=10` (baseline gets intake + therapy turns) |
 | `JUDGE_MODEL`, `JUDGE_SAMPLES` | env | agent model, `3` | judge model (should be bigger) and number of averaged judge runs |
 | `QUICK_TEST` | env | `0` | `1` = tiny settings for smoke tests |
-| `PARALLEL_CALLS`, `MAX_TOKENS`, `CTX_LIMIT` | env | `4`, `1024`, `12288` | speed / safety settings, see the run guides |
+| `PARALLEL_CALLS`, `MAX_TOKENS`, `CTX_LIMIT` | env | `4`, `1024`, `16384` | speed / safety settings, see the run guides |
 
 ---
 

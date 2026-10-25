@@ -11,7 +11,7 @@ What fits on the free tier:
 - **Agents** (therapist / patient / evaluator): `openai/gpt-oss-20b`
 - **Judge:** `openai/gpt-oss-120b`. It has to be bigger than the agents, otherwise it gives 90+ to everything.
 - Both are "thinking" models: their hidden reasoning counts against the output limit. Always set **`REASONING_EFFORT=low`** (short thinking, faster) and **`MAX_TOKENS=2048`** (room for thinking + reply). If you see `[warn] a reply hit max_tokens`, raise it to 3072.
-- Groq models have a large context (131k), so set `CTX_LIMIT=131072`. The 12288 default is for Ollama.
+- Groq models have a large context (131k), so set `CTX_LIMIT=131072`. The 16384 default is for Ollama.
 
 Always set **`PARALLEL_CALLS=1`** with Groq. Parallel calls just hit the per-minute limit (429 errors). The code retries 429s automatically with a growing wait, so a run slows down instead of crashing.
 

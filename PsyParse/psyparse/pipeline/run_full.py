@@ -58,6 +58,11 @@ def run_psyparse_pipeline(
     print(f"Stage 3a Complete. T* = {best_slice.get('therapy')}")
 
     print(f"Running Stage 3b: Pruned Therapy Dialogue (Using {best_slice.get('therapy', 'selected therapy')})...")
+    # techniques of the runner-up therapies back up the chosen plan (multi-therapy guidance)
+    support = []
+    for f in guidance.get("frameworks", []):
+        if f.get("therapy") != best_slice.get("therapy"):
+            support += [f"{t} ({f.get('therapy')})" for t in f.get("techniques", [])[:2]]
     full_transcript, pruning_logs = run_stage_3b(
         best_therapy_slice=best_slice,
         patient_profile=profile,
@@ -65,6 +70,7 @@ def run_psyparse_pipeline(
         evaluator=evaluator,
         max_turns=turns,
         min_turns=min(turns, config.MIN_THERAPY_TURNS),
+        support=support,
     )
     print("Stage 3b Complete. Pipeline Finished!\n")
 

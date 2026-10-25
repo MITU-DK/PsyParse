@@ -43,7 +43,7 @@ if GROQ_JUDGE_KEY:
     JUDGE_MODEL = "openai/gpt-oss-120b"
 # more parallel slots = faster but more gpu memory; 32b or a single 15GB gpu only fits 2
 N_PARALLEL = "4" if GPU_GB >= 28 and JUDGE_MODEL != "qwen2.5:32b" else "2"
-CTX = "12288"           # 15-turn transcripts + judge rubric reach ~8k tokens; ollama silently cuts anything longer
+CTX = "16384"           # long 15-turn baseline transcripts + rubric reach ~10.5k tokens; ollama silently cuts anything longer
 
 !apt-get update -qq && apt-get install -y -qq zstd
 !curl -fsSL https://ollama.com/install.sh | sh
@@ -151,7 +151,7 @@ ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 4
   ```
 - Keep the browser tab open during the long run; an idle/closed interactive session can be stopped by Kaggle.
 - **Time limits:** Kaggle sessions stop after 12 hours (~30 GPU hours per week). Free Colab disconnects after a few hours or when idle. If a full run won't fit, run `run_eval.py 5`, download, then continue in a new session: run Cell 1 with `MODE = "full"`, upload `eval_results.json` into `results/` (create the folder first: `!mkdir -p results`), and run Cell 5 again with the same ALPHA/W1/W2 and `--resume`.
-- If you see `[warn] a call used ... tokens, close to CTX_LIMIT`: set `CTX = "16384"` in Cell 1 and `N_PARALLEL = "1"` (more context per slot uses more GPU memory).
+- If you see `[warn] a call used ... tokens, close to CTX_LIMIT`: set `CTX = "24576"` in Cell 1 and `N_PARALLEL = "1"` (more context per slot uses more GPU memory).
 - If you see `[warn] a reply hit max_tokens`: add `f.write("MAX_TOKENS=1536\n")` to the `.env` lines in Cell 1.
 - **Very slow:** the model may not fit in GPU memory and part of it moved to the CPU. Run `!ollama ps` while the judge is working: the PROCESSOR column must say `100% GPU`. If it shows a CPU share, set `N_PARALLEL = "1"` in Cell 1 and restart.
 - **Groq judge errors (429):** the free daily token limit was reached. Wait, or lower `JUDGE_SAMPLES` (add `f.write("JUDGE_SAMPLES=1\n")`).

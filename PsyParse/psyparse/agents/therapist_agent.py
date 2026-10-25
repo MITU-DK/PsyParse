@@ -25,15 +25,6 @@ KNOWN_TECHNIQUES = {
     "Existential": ["meaning exploration", "responsibility and choice", "facing uncertainty"],
 }
 
-# every angle still carries out the plan step, they only change how the reply gets there
-ANGLES = [
-    "Lead with the thinking side: carry out the step by working with one specific thought or belief the client just expressed.",
-    "Lead with the feeling: first validate the specific emotion underneath what the client said, then carry out the step.",
-    "Lead with action: carry out the step through a concrete exercise, experiment or small plan fitted to the client's situation.",
-    "Lead with discovery: carry out the step through guided questions that help the client find the insight themselves.",
-]
-
-
 def fallback_slice(cand: Dict[str, Any]) -> Dict[str, Any]:
     th = cand.get("therapy_type", "CBT")
     techs = KNOWN_TECHNIQUES.get(th) or [t[:120] for t in cand.get("techniques", [])[:2]] or ["supportive exploration"]
@@ -84,24 +75,21 @@ class TherapistAgent(BaseAgent):
 
     def _get_interview_prompt(self) -> str:
         return (
-            "You are an experienced psychological counselor in the first part of a session, getting to know the client "
-            "before choosing an approach. You want to understand their core problems, feelings, symptoms, thinking patterns, "
-            "relationships and goals. Be warm, curious and natural: this is a real conversation, not a questionnaire. "
-            "Each turn, respond to what the client actually just said, give them something helpful back, then explore one topic "
-            "with one open question. Output only what you say to the client, in natural spoken sentences (no lists or headings). "
-            "Vary your wording from turn to turn."
+            "You are an experienced psychological counselor in the first part of a session. While you get to know the client "
+            "(core problems, feelings, symptoms, thinking patterns, relationships, goals) you already counsel them: every reply "
+            "should leave the client with something of value, not just a question. Be warm, specific and natural. "
+            "Output only what you say to the client. Vary your wording from turn to turn."
         )
 
     def conduct_interview_turn(self, target_question: str, patient_last_response: Optional[str] = None) -> str:
         instruction = (
             f"Topic to explore this turn: {target_question}\n"
-            "Start from the actual content of what the client just said: if they mention an event, a person or a feeling, "
-            "pick it up specifically (don't just paraphrase it back). Then give one short piece of real help that fits what they "
-            "described: a normalizing explanation, a gentle reframe, or a bit of psychoeducation (e.g. how avoidance keeps anxiety going). "
-            "Then ask ONE open question that moves toward the topic, in your own words and linked to what they said. "
-            "If they already covered this topic, go deeper on it instead of asking it again. "
-            "No advice lists yet. Only use facts the client actually said. "
-            "Avoid stock openers like 'It sounds like...' or 'It's understandable...'."
+            "Write a full counseling reply: (1) respond to the specific content of what the client just said (events, people, "
+            "feelings, their exact words) and validate the feeling underneath; (2) give real help that fits it: explain what may "
+            "be going on (e.g. how a thought pattern or avoidance keeps the problem alive) and offer one concrete thing they can "
+            "notice or try; (3) then ask ONE open question that explores the topic above, in your own words and linked to what they "
+            "said. If they already covered this topic, go deeper on it instead of asking it again. "
+            "Only use facts the client actually said. Avoid stock openers like 'It sounds like...' or 'It's understandable...'."
         )
         if patient_last_response:
             return self.send(f"{patient_last_response}\n\n[Instruction: {instruction}]")
@@ -187,28 +175,35 @@ class TherapistAgent(BaseAgent):
                 res.append(fallback_slice(cand))
         return {"frameworks": res}
 
-    def setup_rollout_mode(self, therapy_slice: Dict[str, Any], patient_profile: Dict[str, Any]) -> None:
+    def setup_rollout_mode(self, therapy_slice: Dict[str, Any], patient_profile: Dict[str, Any],
+                           support: Optional[List[str]] = None) -> None:
         th_name = therapy_slice.get("therapy", "CBT")
         techs = ", ".join(therapy_slice.get("techniques", []))
+        # multi-therapy guidance (paper): techniques of the other retrieved therapies can back up the main plan
+        extra = f"Supporting techniques from the other retrieved therapies (use when they fit): {', '.join(support)}\n" if support else ""
         steps = " -> ".join(therapy_slice.get("procedural_steps", []))
         guided_prompt = (
             f"You are an experienced counselor running an active therapy session using {th_name}.\n"
             f"Techniques to use: {techs}\n"
             f"Session plan: {steps}\n"
+            f"{extra}"
             f"What you know about the client: {json.dumps(patient_profile)}\n\n"
             "You already had an intake conversation with this client (it is in the conversation history).\n\n"
             "How to respond:\n"
-            "- Every reply does real therapeutic work. First show you understood what the client just said, in their own terms. "
-            "Then carry out the current step of the plan WITH the client: name the technique in plain words, say briefly why it "
-            "fits what they described, and actually do it, e.g. walk through a thought record step by step (situation, automatic "
-            "thought, evidence for and against, balanced thought), ask the scaling question and follow up on the number, guide a "
-            "short grounding or breathing exercise, explore a value and link it to an action, or plan a small experiment "
-            "(what, when, where, what might get in the way).\n"
-            "- Tie what you say to specific details the client shared earlier (people, events, their own words), so it is clearly "
-            "about them and not generic.\n"
-            "- Take the space the moment needs: a short paragraph when exploring, more when explaining or walking through an "
-            "exercise or plan (usually about 80-200 words). When you give an exercise or a plan you may lay out the steps as a "
-            "short numbered list; otherwise talk naturally, without headings.\n"
+            "- Every reply is a full, substantive counseling reply that covers the whole person: (1) the feeling: validate the "
+            "specific emotion in the client's own terms; (2) the thinking: work on the meaning, thought or pattern behind it with "
+            "the current step of the plan; (3) the doing: when it fits, give a concrete tool, exercise or small step, tied to the "
+            "client's real situation.\n"
+            "- Actually carry out the current step WITH the client instead of describing it, e.g. walk through a thought record "
+            "step by step (situation, automatic thought, evidence for and against, balanced thought), ask the scaling question and "
+            "follow up on the number, guide a short grounding or breathing exercise, explore a value and link it to an action, or "
+            "plan a small experiment (what, when, where, what might get in the way). Briefly explain why it fits what they described.\n"
+            "- Never announce what you are doing ('I'll use empathic understanding to...', 'Let me apply reflective listening'); "
+            "just do it. Naming a technique is fine when you teach it to the client.\n"
+            "- Tie what you say to specific details the client shared earlier (people, places, events, their own words), so it is "
+            "clearly about them and not generic.\n"
+            "- Be as thorough as a skilled counselor in a written session: explain, teach and guide, don't just ask. When you give "
+            "an exercise or a plan, lay out the steps clearly (a short numbered list is fine).\n"
             "- End with one clear question or one concrete invitation to try something. Avoid stock phrases like "
             "'How does that sound?' or 'every step of the way', and don't repeat what you already said in earlier turns.\n"
             "- Only use facts the client actually said. Never invent events, people, names or details; if you need an example "
@@ -224,7 +219,6 @@ class TherapistAgent(BaseAgent):
         turn: int,
         max_turns: int,
         temperature: float = 0.7,
-        angle: Optional[str] = None,
     ) -> str:
         steps = therapy_slice.get("procedural_steps", [])
         step = current_step(steps, turn, max_turns)
@@ -248,8 +242,6 @@ class TherapistAgent(BaseAgent):
                 "planned step together (e.g. a short role-play or walking through the exact moment), work through an obstacle "
                 "that could get in the way, or pick up something the client raised that is still open."
             )
-        if angle:
-            instruction += f"\nFrame your reply with this angle: {angle}"
         instruction += "\nOutput ONLY the counselor's spoken words."
 
         resp = self.generate(
@@ -268,10 +260,11 @@ class TherapistAgent(BaseAgent):
         n: int = 4,
         temperature: float = 0.7,
     ) -> List[str]:
-        # one branch per clinical angle so the 4 candidates are actually different
+        # paper: n candidates from the same prompt, diversity comes from T_single. the old "one clinical angle per
+        # branch" narrowed every reply to one dimension (only thoughts / only feelings), which the judge scores as incomplete
         # respond_step doesnt touch history so the branches can be generated at the same time
         def one(i):
-            return self.respond_step(therapy_slice, turn, max_turns, temperature=temperature, angle=ANGLES[i % len(ANGLES)])
+            return self.respond_step(therapy_slice, turn, max_turns, temperature=temperature)
         with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, n))) as ex:
             return list(ex.map(one, range(n)))
 

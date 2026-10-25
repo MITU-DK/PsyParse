@@ -93,14 +93,23 @@ class EvaluationAgent(BaseAgent):
             "  4 = specific, personal understanding in the client's own terms; 5 = deeply attuned and anticipatory\n"
             "stability, judged from the predicted patient reaction (S):\n"
             "  1 = withdraws, feels misunderstood or more distressed; 2 = disengages or gives a flat answer; 3 = neutral, keeps talking;\n"
-            "  4 = opens up or engages with the intervention; 5 = gains insight, feels calmer or commits to a concrete step\n\n"
-            'Respond ONLY with valid JSON: {"scores": [{"id": 1, "empathy": <float>, "stability": <float>}, ...]} '
+            "  4 = opens up or engages with the intervention; 5 = gains insight, feels calmer or commits to a concrete step\n"
+            "therapeutic value of the therapist reply (G):\n"
+            "  1 = no real help, generic, stock phrases or repeats earlier turns; 2 = mostly questions or reflection;\n"
+            "  3 = some useful content; 4 = substantive help tied to this client's details (insight, a technique, a concrete step);\n"
+            "  5 = rich, personal help that covers feelings, thoughts and actions and clearly moves the client toward their goals\n\n"
+            'Respond ONLY with valid JSON: {"scores": [{"id": 1, "empathy": <float>, "stability": <float>, "goal": <float>}, ...]} '
             f"with exactly {len(candidates)} entries."
         )
-        data = self._raw_json(prompt, max_tokens=300 + 60 * len(candidates))
+        data = self._raw_json(prompt, max_tokens=300 + 80 * len(candidates))
         try:
             rows = {int(x["id"]): x for x in data["scores"]}
-            return [{k: min(5.0, max(1.0, float(rows[i][k]))) for k in ["empathy", "stability"]} for i in range(1, len(candidates) + 1)]
+            res = []
+            for i in range(1, len(candidates) + 1):
+                e, st = float(rows[i]["empathy"]), float(rows[i]["stability"])
+                g = float(rows[i].get("goal", (e + st) / 2))
+                res.append({k: min(5.0, max(1.0, v)) for k, v in [("empathy", e), ("stability", st), ("goal", g)]})
+            return res
         except Exception as e:
             logger.warning("candidate ranking not parseable (%s), scoring one by one", e)
             return None

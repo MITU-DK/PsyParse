@@ -23,7 +23,7 @@ TEMP_JUDGE = 0.3
 
 # ---- speed ----
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1024"))       # output cap per call, same for both arms (512 cut off long baseline replies)
-CTX_LIMIT = int(os.getenv("CTX_LIMIT", "12288"))         # should match OLLAMA_CONTEXT_LENGTH, only used for a warning
+CTX_LIMIT = int(os.getenv("CTX_LIMIT", "16384"))         # should match OLLAMA_CONTEXT_LENGTH, only used for a warning
 PARALLEL_CALLS = int(os.getenv("PARALLEL_CALLS", "4"))  # concurrent llm calls in stage 3a/3b, set 1 for rate-limited apis
 # for reasoning models (groq gpt-oss / qwen3): "low" keeps the hidden thinking short so it doesn't eat MAX_TOKENS. empty = not sent
 REASONING_EFFORT = os.getenv("REASONING_EFFORT", "")
@@ -72,5 +72,8 @@ W2 = float(os.getenv("W2", "0.5"))         # therapy score weight for App
 WE_M = 0.5          # rollout: empathy weight (Eq. 3)
 WT_M = 0.5          # rollout: alignment weight (Eq. 3)
 TAU_RESP = 2.5      # rollout discard threshold (out of 5)
-WE_S = 0.5          # pruning: empathy weight (Eq. 4)
-WS = 0.5            # pruning: stability weight (Eq. 4)
+# pruning (Eq. 4) plus a goal-fit term: the paper picks "the response that best fits the therapeutic goals and
+# emotional context", with only E and S the scorer preferred soothing replies over helpful ones
+WE_S = 0.34         # pruning: empathy weight
+WS = 0.33           # pruning: stability weight
+WG_S = 0.33         # pruning: therapeutic goal / helpfulness weight

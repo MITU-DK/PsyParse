@@ -21,6 +21,8 @@ def run_stage_3b(
     t_single: float = config.TEMP_SINGLE,
     we_s: float = config.WE_S,
     ws: float = config.WS,
+    wg_s: float = config.WG_S,
+    support: List[str] = None,
 ) -> Tuple[List[Dict[str, str]], List[Dict[str, Any]]]:
     """
     Stage 3b: Response Pruning for Empathetic Optimization.
@@ -28,7 +30,7 @@ def run_stage_3b(
     prunes via Eq. 4, and prevents premature session closure.
     """
     therapist = TherapistAgent(mode="guided", model=evaluator.model)
-    therapist.setup_rollout_mode(best_therapy_slice, patient_profile)
+    therapist.setup_rollout_mode(best_therapy_slice, patient_profile, support=support)
     # therapist remembers the intake interview
     therapist.set_history(flip_roles(real_patient.get_history()))
 
@@ -79,7 +81,9 @@ def run_stage_3b(
             full = format_dialogue(real_patient.get_history())
             with ThreadPoolExecutor(max_workers=workers) as ex:
                 scored = list(ex.map(lambda cr: evaluator.score_pruning(full, cr[0], cr[1]), zip(candidates, reactions)))
-        turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0), 3) for sc in scored]
+        # the one-by-one fallback has no goal score, use the mean of the other two there
+        turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0)
+                             + wg_s * sc.get("goal", (sc.get("empathy", 3.0) + sc.get("stability", 3.0)) / 2), 3) for sc in scored]
 
         # random tie break, otherwise ties always pick branch 1 (= always the same angle)
         top = max(turn_scores)
@@ -93,7 +97,9 @@ def run_stage_3b(
 
         # 5. Keep simulated patient timeline synchronized
         simulated_patient.set_history(real_patient.get_history())
-        logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i})
+        # keep the candidates so we can see later what the scorer picked and what it threw away
+        logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i, "scores": scored,
+                     "candidates": candidates, "reactions": reactions})
         print(f"  [stage3b] turn {turn}/{max_turns}: branch scores {turn_scores} -> picked {best_i + 1}")
 
         # 6. patient can only end after min_turns (enforced inside PatientAgent.respond)

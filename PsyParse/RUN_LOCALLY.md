@@ -18,9 +18,9 @@ pip install -r requirements.txt
 
 ## 2. Start Ollama (context size and parallel calls matter)
 ```bash
-OLLAMA_CONTEXT_LENGTH=12288 OLLAMA_NUM_PARALLEL=4 OLLAMA_FLASH_ATTENTION=1 OLLAMA_KV_CACHE_TYPE=q8_0 ollama serve
+OLLAMA_CONTEXT_LENGTH=16384 OLLAMA_NUM_PARALLEL=4 OLLAMA_FLASH_ATTENTION=1 OLLAMA_KV_CACHE_TYPE=q8_0 ollama serve
 ```
-- **`OLLAMA_CONTEXT_LENGTH=12288`:** Ollama's default context is only 2k–4k tokens, and it **silently cuts off the start** of longer prompts. A 15-turn transcript plus the judge rubric can reach ~8k tokens, so 12288 leaves room.
+- **`OLLAMA_CONTEXT_LENGTH=16384`:** Ollama's default context is only 2k–4k tokens, and it **silently cuts off the start** of longer prompts. A 15-turn transcript plus the judge rubric can reach ~10.5k tokens, so 16384 leaves room (the longest baseline transcript reached ~10.5k).
 - **`OLLAMA_NUM_PARALLEL=4`:** lets the 4 candidate replies, scores and rollouts run at the same time. More parallel slots need more GPU memory: use `2` with a 32B model, or `1` if a model doesn't fit.
 
 ## 3. Pull models
@@ -47,7 +47,7 @@ JUDGE_MODEL=qwen2.5:32b
 
 # match the ollama server settings from step 2
 PARALLEL_CALLS=4
-CTX_LIMIT=12288
+CTX_LIMIT=16384
 
 # optional
 JUDGE_SAMPLES=3      # judge runs averaged per transcript
@@ -107,7 +107,7 @@ PYTHONPATH=. python -m psyparse.pipeline.run_full     # demo: one dev scenario, 
 - `results_quick/`: the same files for quick-test runs (not real results)
 
 ## Troubleshooting
-- **`[warn] a call used ... tokens, close to CTX_LIMIT`:** restart Ollama with `OLLAMA_CONTEXT_LENGTH=16384` and set `CTX_LIMIT=16384`. Lower `OLLAMA_NUM_PARALLEL` if memory gets tight.
+- **`[warn] a call used ... tokens, close to CTX_LIMIT`:** restart Ollama with `OLLAMA_CONTEXT_LENGTH=24576` and set `CTX_LIMIT=24576`. Lower `OLLAMA_NUM_PARALLEL` if memory gets tight.
 - **`[warn] a reply hit max_tokens`:** set `MAX_TOKENS=1536` in `.env`.
 - **Very slow, or the GPU isn't used:** the model doesn't fit and Ollama moved part of it to the CPU (check `ollama ps`). Use smaller models or lower `OLLAMA_NUM_PARALLEL`.
 - **`[warn] profile extraction failed`:** the agent model returned bad JSON. A bigger agent model usually fixes it.
