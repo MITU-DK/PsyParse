@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Tuple
 import config
 from psyparse.agents.base_agent import format_dialogue, flip_roles
 from psyparse.agents.patient_agent import PatientAgent
-from psyparse.agents.therapist_agent import TherapistAgent, fallback_slice
+from psyparse.agents.therapist_agent import TherapistAgent, fallback_slice, support_for
 from psyparse.agents.evaluation_agent import EvaluationAgent
 
 logger = logging.getLogger(__name__)
@@ -21,6 +21,7 @@ def run_stage_3a(
     we_m: float = config.WE_M,
     wt_m: float = config.WT_M,
     total_turns: int = config.THERAPY_TURNS,
+    margin: float = config.ROLLOUT_MARGIN,
 ) -> Tuple[Dict[str, Any], Dict[str, Any], float]:
     """
     Stage 3a: Multi-Turn Rollout for Personalized Therapy Selection.
@@ -35,7 +36,8 @@ def run_stage_3a(
         sl = lookup.get(th.lower()) or fallback_slice(cand)
 
         therapist = TherapistAgent(mode="guided", model=evaluator.model)
-        therapist.setup_rollout_mode(sl, patient_profile)
+        # same setup as the real session in 3b, so the rollout tests the therapist that will actually be used
+        therapist.setup_rollout_mode(sl, patient_profile, support=support_for(guidance_framework, th))
         therapist.set_history(flip_roles(snap))
 
         # simulated patient forked from the post-interview state, never ends early during a rollout
@@ -97,9 +99,17 @@ def run_stage_3a(
         logs[th] = {"score": round(total, 3), "mean_s_resp": round(avg, 3), "comparison": c, "rounds": rounds, "slice": sl}
         print(f"  [stage3a] {th}: S_resp avg={avg:.2f} comparison={c} -> {total:.2f}")
 
-    # argmax (Eq. 3 trajectory), ties broken by the stage 2 suitability score
+    # argmax (Eq. 3 trajectory). totals closer than `margin` count as a tie (the scorer gives every reply about 4.35,
+    # so gaps of 0.03-0.1 are noise), ties go to the stage 2 suitability score
     s_th = {c.get("therapy_type"): c.get("s_th", 0.0) for c in selected_therapies}
-    win = max(scores, key=lambda k: (scores[k], s_th.get(k, 0.0))) if scores else selected_therapies[0]["therapy_type"]
+    if scores:
+        top = max(scores.values())
+        close = [k for k in scores if top - scores[k] < margin]
+        win = max(close, key=lambda k: (s_th.get(k, 0.0), scores[k]))
+        if len(close) > 1:
+            print(f"  [stage3a] {close} within {margin} of each other, picking by stage 2 score -> {win}")
+    else:
+        win = selected_therapies[0]["therapy_type"]
 
     win_cand = next((c for c in selected_therapies if c.get("therapy_type") == win), selected_therapies[0])
     win_slice = lookup.get(win.lower()) or fallback_slice(win_cand)

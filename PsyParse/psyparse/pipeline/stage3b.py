@@ -65,18 +65,27 @@ def run_stage_3b(
         with ThreadPoolExecutor(max_workers=workers) as ex:
             reactions = list(ex.map(simulated_patient.simulate_reaction, candidates))
 
-        # 3. Eq. 4 scores, all candidates in one call so they actually get compared
+        # 3. Eq. 4 scores + ranking, all candidates in one call so they actually get compared
         # last few messages are enough context here and keep the prompt small
         hist = format_dialogue(real_patient.get_history()[-8:])
-        # shuffle before ranking, llms favour the first option and branch 1 is always the same angle
+        # rank in a shuffled order and again in the reversed order, then average: the scorer tends to just go
+        # down the list, that cancels out this way and only a real preference survives
         order = list(range(len(candidates)))
         rng.shuffle(order)
-        ranked = evaluator.rank_candidates(hist, [candidates[i] for i in order], [reactions[i] for i in order])
+
+        def rank(o):
+            r = evaluator.rank_candidates(hist, [candidates[i] for i in o], [reactions[i] for i in o])
+            if r is None:
+                return None
+            res = [None] * len(candidates)
+            for pos, i in enumerate(o):
+                res[i] = r[pos]
+            return res
+        with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, 2))) as ex:
+            runs = [x for x in ex.map(rank, [order, order[::-1]]) if x]
         scored = None
-        if ranked is not None:
-            scored = [None] * len(candidates)
-            for pos, i in enumerate(order):
-                scored[i] = ranked[pos]
+        if runs:
+            scored = [{k: round(sum(r[i][k] for r in runs) / len(runs), 3) for k in runs[0][i]} for i in range(len(candidates))]
         if scored is None:
             full = format_dialogue(real_patient.get_history())
             with ThreadPoolExecutor(max_workers=workers) as ex:
@@ -85,9 +94,10 @@ def run_stage_3b(
         turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0)
                              + wg_s * sc.get("goal", (sc.get("empathy", 3.0) + sc.get("stability", 3.0)) / 2), 3) for sc in scored]
 
-        # random tie break, otherwise ties always pick branch 1 (= always the same angle)
-        top = max(turn_scores)
-        best_i = rng.choice([i for i, x in enumerate(turn_scores) if x == top])
+        # Eq. 4 first, the averaged rank breaks ties, random if still tied
+        keys = [(turn_scores[i], -scored[i].get("rank", 0.0)) for i in range(len(candidates))]
+        top = max(keys)
+        best_i = rng.choice([i for i, k in enumerate(keys) if k == top])
         best_r = candidates[best_i]
 
         # 4. Commit best response, real patient reacts
@@ -99,7 +109,7 @@ def run_stage_3b(
         simulated_patient.set_history(real_patient.get_history())
         # keep the candidates so we can see later what the scorer picked and what it threw away
         logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i, "scores": scored,
-                     "candidates": candidates, "reactions": reactions})
+                     "focus": therapist.last_focus, "candidates": candidates, "reactions": reactions})
         print(f"  [stage3b] turn {turn}/{max_turns}: branch scores {turn_scores} -> picked {best_i + 1}")
 
         # 6. patient can only end after min_turns (enforced inside PatientAgent.respond)

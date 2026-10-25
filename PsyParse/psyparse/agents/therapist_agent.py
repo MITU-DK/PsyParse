@@ -43,6 +43,15 @@ def fallback_slice(cand: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def support_for(guidance: Dict[str, Any], th: str) -> List[str]:
+    # techniques of the other retrieved therapies back up the chosen plan (multi-therapy guidance)
+    res = []
+    for f in guidance.get("frameworks", []):
+        if str(f.get("therapy", "")).lower() != str(th).lower():
+            res += [f"{t} ({f.get('therapy')})" for t in f.get("techniques", [])[:2]]
+    return res
+
+
 def plan_span(max_turns: int) -> int:
     # the patient may end the session from MIN_THERAPY_TURNS on (8 of 10), so the plan has to be done by then,
     # otherwise the "plan a step" / "consolidate" steps never happen
@@ -89,7 +98,8 @@ class TherapistAgent(BaseAgent):
             "be going on (e.g. how a thought pattern or avoidance keeps the problem alive) and offer one concrete thing they can "
             "notice or try; (3) then ask ONE open question that explores the topic above, in your own words and linked to what they "
             "said. If they already covered this topic, go deeper on it instead of asking it again. "
-            "Only use facts the client actually said. Avoid stock openers like 'It sounds like...' or 'It's understandable...'."
+            "Only use facts the client actually said. Don't open with a stock phrase or praise ('It sounds like...', "
+            "'It's understandable...', 'It's really tough...', 'That's a great...'); start with the substance."
         )
         if patient_last_response:
             return self.send(f"{patient_last_response}\n\n[Instruction: {instruction}]")
@@ -178,6 +188,7 @@ class TherapistAgent(BaseAgent):
     def setup_rollout_mode(self, therapy_slice: Dict[str, Any], patient_profile: Dict[str, Any],
                            support: Optional[List[str]] = None) -> None:
         th_name = therapy_slice.get("therapy", "CBT")
+        self.support = support or []
         techs = ", ".join(therapy_slice.get("techniques", []))
         # multi-therapy guidance (paper): techniques of the other retrieved therapies can back up the main plan
         extra = f"Supporting techniques from the other retrieved therapies (use when they fit): {', '.join(support)}\n" if support else ""
@@ -206,6 +217,10 @@ class TherapistAgent(BaseAgent):
             "an exercise or a plan, lay out the steps clearly (a short numbered list is fine).\n"
             "- End with one clear question or one concrete invitation to try something. Avoid stock phrases like "
             "'How does that sound?' or 'every step of the way', and don't repeat what you already said in earlier turns.\n"
+            "- Don't open with praise or a stock phrase ('That's a great...', 'It's wonderful to hear', 'I'm glad to hear', "
+            "'It sounds like', 'It's completely normal', 'It's incredibly brave'); start with the substance.\n"
+            "- Once a task is settled (a message is written, a step is planned), don't keep polishing it in later turns; "
+            "move on to the next step of the plan.\n"
             "- Only use facts the client actually said. Never invent events, people, names or details; if you need an example "
             "from their life, ask for it.\n"
             "- If the client starts saying goodbye before the plan is finished, acknowledge it warmly and keep working on the "
@@ -219,6 +234,7 @@ class TherapistAgent(BaseAgent):
         turn: int,
         max_turns: int,
         temperature: float = 0.7,
+        focus: Optional[str] = None,
     ) -> str:
         steps = therapy_slice.get("procedural_steps", [])
         step = current_step(steps, turn, max_turns)
@@ -230,6 +246,8 @@ class TherapistAgent(BaseAgent):
             "and actually carry out the current step with one of the target techniques (do it, don't just name it). "
             "Move the session forward: don't redo a step you already finished in earlier turns."
         )
+        if focus:
+            instruction += f"\nFor this reply, build the work on the current step around this technique: {focus}."
         if turn >= max_turns:
             instruction += (
                 "\nThis is the END of the session: summarize in the client's own words what they noticed or learned today, "
@@ -238,9 +256,10 @@ class TherapistAgent(BaseAgent):
         elif turn > plan_span(max_turns):
             # plan is done but the session goes on: deepen instead of looping on goodbyes
             instruction += (
-                "\nThe plan is basically done. Use this turn to deepen the work instead of summarizing again: rehearse the "
-                "planned step together (e.g. a short role-play or walking through the exact moment), work through an obstacle "
-                "that could get in the way, or pick up something the client raised that is still open."
+                "\nThe plan's steps are done. Don't polish the same task again and don't summarize again. Pick a problem from "
+                "the intake that has not been worked on yet (see what you know about the client: core problems, thinking "
+                "patterns, relationships) and work on it with one of the techniques. If everything was covered, add something "
+                "new to the main problem: rehearse the hard moment (short role-play), plan for a setback, or link it to a value."
             )
         instruction += "\nOutput ONLY the counselor's spoken words."
 
@@ -260,11 +279,15 @@ class TherapistAgent(BaseAgent):
         n: int = 4,
         temperature: float = 0.7,
     ) -> List[str]:
-        # paper: n candidates from the same prompt, diversity comes from T_single. the old "one clinical angle per
-        # branch" narrowed every reply to one dimension (only thoughts / only feelings), which the judge scores as incomplete
+        # temperature alone (paper) gave 4 near copies that the scorer couldn't tell apart, and the old "one clinical
+        # angle per branch" made replies one-dimensional. so: branch 1 follows the plan as written, the others build the
+        # same full reply around a different technique (own therapy + supporting ones), rotated over the turns
+        pool = list(therapy_slice.get("techniques", [])) + list(getattr(self, "support", []))
         # respond_step doesnt touch history so the branches can be generated at the same time
+        self.last_focus = [pool[(turn * (n - 1) + i - 1) % len(pool)] if i > 0 and pool else None for i in range(n)]
+
         def one(i):
-            return self.respond_step(therapy_slice, turn, max_turns, temperature=temperature)
+            return self.respond_step(therapy_slice, turn, max_turns, temperature=temperature, focus=self.last_focus[i])
         with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, n))) as ex:
             return list(ex.map(one, range(n)))
 

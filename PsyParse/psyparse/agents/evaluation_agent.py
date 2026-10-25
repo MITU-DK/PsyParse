@@ -77,17 +77,21 @@ class EvaluationAgent(BaseAgent):
         return self._evaluate_json(prompt, {"empathy": 3.0, "stability": 3.0})
 
     def rank_candidates(self, conversation_history: str, candidates: List[str], reactions: List[str]) -> Optional[List[Dict[str, float]]]:
-        # Eq. 4 scores for all branches in ONE call, so the model compares them instead of giving each the same 4.5
+        # Eq. 4 scores for all branches in ONE call, plus a forced best-to-worst ranking. scores alone tied in ~half
+        # the turns (all 4.0) and otherwise just went down with the list position (4.5, 4.4, 4.3, 4.2)
         block = ""
         for i, (c, r) in enumerate(zip(candidates, reactions), 1):
             block += f"--- Candidate {i} ---\nTherapist: {c}\nPredicted patient reaction: {r}\n\n"
+        n = len(candidates)
         prompt = (
             "You are comparing candidate therapist replies for the next turn of a counseling session. "
             "Each candidate comes with the patient's predicted reaction to it.\n\n"
             f"Recent dialogue:\n{conversation_history}\n\n"
             f"{block}"
-            "Score EVERY candidate on a continuous 1.0-5.0 scale with one decimal, comparing them against each other: "
-            "the better candidate must get the higher score. Give equal scores only if two candidates are truly equally good.\n\n"
+            "First read all candidates and decide which one is best for the client right now, considering what each one "
+            "actually does (which technique, how specific to this client, what it adds compared to the earlier turns). "
+            "The order in which they are listed means nothing. Put them in a \"ranking\" from best to worst: every id "
+            "exactly once, no ties. Then score every candidate on a 1.0-5.0 scale with one decimal, consistent with your ranking.\n\n"
             "empathy of the therapist reply (E):\n"
             "  1 = cold, dismissive or generic; 2 = formulaic validation; 3 = accurate reflection of the feelings;\n"
             "  4 = specific, personal understanding in the client's own terms; 5 = deeply attuned and anticipatory\n"
@@ -95,24 +99,38 @@ class EvaluationAgent(BaseAgent):
             "  1 = withdraws, feels misunderstood or more distressed; 2 = disengages or gives a flat answer; 3 = neutral, keeps talking;\n"
             "  4 = opens up or engages with the intervention; 5 = gains insight, feels calmer or commits to a concrete step\n"
             "therapeutic value of the therapist reply (G):\n"
-            "  1 = no real help, generic, stock phrases or repeats earlier turns; 2 = mostly questions or reflection;\n"
-            "  3 = some useful content; 4 = substantive help tied to this client's details (insight, a technique, a concrete step);\n"
+            "  1 = no real help: empty praise, stock phrases, repeats earlier turns or keeps polishing a task that is already done;\n"
+            "  2 = mostly questions or reflection; 3 = some useful content;\n"
+            "  4 = substantive help tied to this client's details (insight, a technique carried out, a concrete step);\n"
             "  5 = rich, personal help that covers feelings, thoughts and actions and clearly moves the client toward their goals\n\n"
-            'Respond ONLY with valid JSON: {"scores": [{"id": 1, "empathy": <float>, "stability": <float>, "goal": <float>}, ...]} '
-            f"with exactly {len(candidates)} entries."
+            'Respond ONLY with valid JSON: {"ranking": [<best id>, ..., <worst id>], '
+            '"scores": [{"id": 1, "empathy": <float>, "stability": <float>, "goal": <float>}, ...]} '
+            f"with exactly {n} ids in the ranking and {n} score entries."
         )
-        data = self._raw_json(prompt, max_tokens=300 + 80 * len(candidates))
+        data = self._raw_json(prompt, max_tokens=300 + 80 * n)
         try:
             rows = {int(x["id"]): x for x in data["scores"]}
             res = []
-            for i in range(1, len(candidates) + 1):
+            for i in range(1, n + 1):
                 e, st = float(rows[i]["empathy"]), float(rows[i]["stability"])
                 g = float(rows[i].get("goal", (e + st) / 2))
                 res.append({k: min(5.0, max(1.0, v)) for k, v in [("empathy", e), ("stability", st), ("goal", g)]})
-            return res
         except Exception as e:
             logger.warning("candidate ranking not parseable (%s), scoring one by one", e)
             return None
+        try:
+            order = [int(x) for x in data.get("ranking", [])]
+        except Exception:
+            order = []
+        if sorted(order) == list(range(1, n + 1)):
+            for pos, i in enumerate(order, 1):
+                res[i - 1]["rank"] = float(pos)
+        else:
+            # no usable ranking, derive it from the scores (equal scores share a rank)
+            tot = [sum(r.values()) for r in res]
+            for i, r in enumerate(res):
+                r["rank"] = float(1 + sum(1 for t in tot if t > tot[i]))
+        return res
 
     def compare_trajectories(self, rollouts: Dict[str, str]) -> Optional[Dict[str, Dict[str, float]]]:
         # stage 3a: put the simulated sessions next to each other and score them relative to each other
