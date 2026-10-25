@@ -1,3 +1,4 @@
+import random
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Tuple
@@ -44,6 +45,8 @@ def run_stage_3b(
     )
     simulated_patient.set_history(real_patient.get_history())
 
+    # seeded per scenario so a rerun picks the same way on ties / shuffles
+    rng = random.Random(str(real_patient.scenario.get("dialog_id", "")))
     logs = []
     for turn in range(1, max_turns + 1):
         # 1. Generate diverse therapist candidate branches
@@ -55,31 +58,45 @@ def run_stage_3b(
             temperature=t_single,
         )
 
-        # 2. Simulate patient reactions & score pairs (Eq. 4)
-        hist = format_dialogue(real_patient.get_history())
+        # 2. simulate the patient's reaction to each candidate (lookahead is stateless, so run side by side)
+        workers = max(1, min(config.PARALLEL_CALLS, len(candidates)))
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            reactions = list(ex.map(simulated_patient.simulate_reaction, candidates))
 
-        def score(cand):
-            sim_reaction = simulated_patient.simulate_reaction(cand)
-            sc = evaluator.score_pruning(hist, cand, sim_reaction)
-            return (we_s * sc.get("empathy", 3.0)) + (ws * sc.get("stability", 3.0))
+        # 3. Eq. 4 scores, all candidates in one call so they actually get compared
+        # last few messages are enough context here and keep the prompt small
+        hist = format_dialogue(real_patient.get_history()[-8:])
+        # shuffle before ranking, llms favour the first option and branch 1 is always the same angle
+        order = list(range(len(candidates)))
+        rng.shuffle(order)
+        ranked = evaluator.rank_candidates(hist, [candidates[i] for i in order], [reactions[i] for i in order])
+        scored = None
+        if ranked is not None:
+            scored = [None] * len(candidates)
+            for pos, i in enumerate(order):
+                scored[i] = ranked[pos]
+        if scored is None:
+            full = format_dialogue(real_patient.get_history())
+            with ThreadPoolExecutor(max_workers=workers) as ex:
+                scored = list(ex.map(lambda cr: evaluator.score_pruning(full, cr[0], cr[1]), zip(candidates, reactions)))
+        turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0), 3) for sc in scored]
 
-        # lookahead + scoring is stateless per candidate, so run them side by side
-        with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, len(candidates)))) as ex:
-            turn_scores = [round(x, 3) for x in ex.map(score, candidates)]
-        best_i = max(range(len(candidates)), key=lambda i: turn_scores[i])  # first one wins ties
+        # random tie break, otherwise ties always pick branch 1 (= always the same angle)
+        top = max(turn_scores)
+        best_i = rng.choice([i for i, x in enumerate(turn_scores) if x == top])
         best_r = candidates[best_i]
 
-        # 3. Commit best response, real patient reacts
+        # 4. Commit best response, real patient reacts
         therapist.add_message("assistant", best_r)
         real_reaction = real_patient.respond(best_r)
         therapist.add_message("user", real_reaction.replace("[SESSION_END]", "").strip())
 
-        # 4. Keep simulated patient timeline synchronized
+        # 5. Keep simulated patient timeline synchronized
         simulated_patient.set_history(real_patient.get_history())
         logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i})
         print(f"  [stage3b] turn {turn}/{max_turns}: branch scores {turn_scores} -> picked {best_i + 1}")
 
-        # 5. patient can only end after min_turns (enforced inside PatientAgent.respond)
+        # 6. patient can only end after min_turns (enforced inside PatientAgent.respond)
         if "[SESSION_END]" in real_reaction:
             break
 

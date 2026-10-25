@@ -9,7 +9,7 @@ import config
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.pipeline.run_full import run_psyparse_pipeline
 from psyparse.agents.base_agent import BaseAgent, clean_history, format_dialogue
-from psyparse.agents.patient_agent import PatientAgent, get_opening
+from psyparse.agents.patient_agent import PatientAgent, get_opening, get_persona
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +31,9 @@ def make_judge() -> BaseAgent:
 def judge_transcript(judge: BaseAgent, transcript_str: str, samples: int = config.JUDGE_SAMPLES) -> Optional[Dict[str, float]]:
     # average a few judge calls, returns None if the judge never gives parseable scores
     prompt = JUDGE_PROMPT.replace("{TRANSCRIPT}", transcript_str)
+    # ~3 chars per token is on the safe side. ollama cuts the START of a too long prompt = the rubric, without any error
+    if len(prompt) / 3 > config.CTX_LIMIT - 400:
+        print(f"  [warn] judge prompt is ~{len(prompt) // 3} tokens, may not fit CTX_LIMIT={config.CTX_LIMIT}: raise the context length")
     runs = []
     tries = 0
     while len(runs) < samples and tries < samples + 3:
@@ -116,6 +119,7 @@ class EvaluatorHarness:
         tdir.mkdir(parents=True, exist_ok=True)
         detail = dict(res)
         detail.update({
+            "patient_persona": get_persona(scenario, self.model),
             "patient_profile": psy["patient_profile"],
             "keywords": psy["keywords"],
             "top_therapies_detail": psy["top_therapies"],

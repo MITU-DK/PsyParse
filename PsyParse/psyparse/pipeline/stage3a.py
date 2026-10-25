@@ -48,10 +48,14 @@ def run_stage_3a(
             hist = format_dialogue(sim.get_history())
             best_msg, best_s = "", -1.0
 
+            # spread the few rollout rounds over the whole plan (e.g. turns 1, 4, 7 of 10),
+            # otherwise they only cover the opening steps and no technique is ever tried
+            step_turn = 1 + (r - 1) * total_turns // max(1, num_rounds)
+
             # Eq. 3: regenerate responses below tau_resp, keep the best one
             for retry in range(max_retries + 1):
                 temp = config.TEMP_SINGLE if retry == 0 else min(1.0, config.TEMP_SINGLE + 0.2)
-                resp = therapist.respond_step(sl, r, total_turns, temperature=temp)
+                resp = therapist.respond_step(sl, step_turn, total_turns, temperature=temp)
                 sc = evaluator.score_rollout(hist, resp, th)
                 s = we_m * sc.get("empathy", 3.0) + wt_m * sc.get("alignment", 3.0)
                 if s > best_s:
@@ -65,20 +69,33 @@ def run_stage_3a(
             therapist.add_message("user", reaction)
             rounds.append({"round": r, "s_resp": round(best_s, 3)})
 
-        # patient receptivity over the rollout, so the choice depends on how the patient actually reacts
-        tail = sim.get_history()[len(snap):]
-        recep = evaluator.score_trajectory(format_dialogue(tail), th).get("receptivity", 3.0)
         avg = cum / max(1, num_rounds)
-        total = avg + recep
-        print(f"  [stage3a] {th}: S_resp avg={avg:.2f} receptivity={recep:.2f} -> {total:.2f}")
-        log = {"score": round(total, 3), "mean_s_resp": round(avg, 3), "receptivity": recep, "rounds": rounds, "slice": sl}
-        return th, total, log
+        tail = format_dialogue(sim.get_history()[len(snap):])
+        return th, avg, tail, rounds, sl
 
     # each therapy's rollout is independent, run them side by side
     with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, len(selected_therapies)))) as ex:
         outs = list(ex.map(rollout, selected_therapies))
-    scores = {th: total for th, total, _ in outs}
-    logs = {th: log for th, _, log in outs}
+
+    # the per-reply scores barely differ between therapies, so also judge the rollouts next to each other
+    comp = None
+    if len(outs) > 1:
+        # judge in both orders and average, llms favour whatever is shown first
+        tails = {th: tail for th, _, tail, _, _ in outs}
+        a = evaluator.compare_trajectories(tails)
+        b = evaluator.compare_trajectories(dict(reversed(list(tails.items()))))
+        if a and b:
+            comp = {th: {k: round((a[th][k] + b[th][k]) / 2, 2) for k in a[th]} for th in tails}
+        else:
+            comp = a or b
+    scores, logs = {}, {}
+    for th, avg, tail, rounds, sl in outs:
+        c = (comp or {}).get(th)
+        rel = sum(c.values()) / len(c) if c else 0.0
+        total = avg + rel
+        scores[th] = total
+        logs[th] = {"score": round(total, 3), "mean_s_resp": round(avg, 3), "comparison": c, "rounds": rounds, "slice": sl}
+        print(f"  [stage3a] {th}: S_resp avg={avg:.2f} comparison={c} -> {total:.2f}")
 
     # argmax (Eq. 3 trajectory), ties broken by the stage 2 suitability score
     s_th = {c.get("therapy_type"): c.get("s_th", 0.0) for c in selected_therapies}

@@ -3,15 +3,16 @@
 The notebook clones the GitHub repo, so **push your latest code first**. Colab/Kaggle only see what is on GitHub.
 
 **GPU settings**
+
 - **Kaggle:** right sidebar → **Accelerator: GPU T4 x2** (2 × 15 GB) and **Internet: On**.
 - **Colab:** `Runtime → Change runtime type → T4 GPU` (1 × 15 GB). Colab Pro gives L4 (24 GB) or A100 (40 GB).
 
 The setup cell detects the platform and GPU memory and picks models that fit. All Ollama models are already 4-bit, so there is nothing more to quantize. Speed comes from smaller models, fewer calls (quick mode) and parallel calls.
 
-| MODE | Agents | Judge | What it runs | Use it for |
-|---|---|---|---|---|
-| `"quick"` | qwen2.5:7b | qwen2.5:14b | `QUICK_TEST=1`: 3 intake + 2 therapy turns, 1 rollout round, 2 branches, 1 judge run (~40 LLM calls/scenario) | finding errors and reading a transcript in minutes. **Numbers are not results**; saved to `results_quick/` |
-| `"full"` | qwen2.5:14b | qwen2.5:32b if ≥ 28 GB GPU memory (Kaggle T4 x2, A100), otherwise qwen2.5:14b | paper/SOP settings (~150+ LLM calls/scenario) | real results in `results/` |
+| MODE      | Agents      | Judge                                                                         | What it runs                                                                                                  | Use it for                                                                                                 |
+| --------- | ----------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `"quick"` | qwen2.5:7b  | qwen2.5:14b                                                                   | `QUICK_TEST=1`: 3 intake + 2 therapy turns, 1 rollout round, 2 branches, 1 judge run (~40 LLM calls/scenario) | finding errors and reading a transcript in minutes. **Numbers are not results**; saved to `results_quick/` |
+| `"full"`  | qwen2.5:14b | qwen2.5:32b if ≥ 28 GB GPU memory (Kaggle T4 x2, A100), otherwise qwen2.5:14b | paper/SOP settings (~150+ LLM calls/scenario)                                                                 | real results in `results/`                                                                                 |
 
 On a single T4 (free Colab) the full-mode judge is only as big as the agents, which makes it weak. Better: set `GROQ_JUDGE_KEY` in cell 1. The judge then runs on Groq's `openai/gpt-oss-120b` (1 call per transcript, so the free tier is enough for ~10 scenarios a day) while the agents stay on the GPU.
 
@@ -22,7 +23,7 @@ On a single T4 (free Colab) the full-mode judge is only as big as the agents, wh
 ```python
 import os, subprocess, time, urllib.request
 
-MODE = "quick"          # "quick" or "full"
+MODE = "full"           # "quick" = smoke test only, "full" = real results (see the table below)
 GROQ_JUDGE_KEY = ""     # optional: Groq API key -> big judge on Groq, agents stay on the GPU
 
 WORKDIR = "/kaggle/working" if os.path.exists("/kaggle") else "/content"
@@ -42,12 +43,16 @@ if GROQ_JUDGE_KEY:
     JUDGE_MODEL = "openai/gpt-oss-120b"
 # more parallel slots = faster but more gpu memory; 32b or a single 15GB gpu only fits 2
 N_PARALLEL = "4" if GPU_GB >= 28 and JUDGE_MODEL != "qwen2.5:32b" else "2"
-CTX = "8192"            # enough for 15-turn transcripts; ollama silently cuts anything longer
+CTX = "12288"           # 15-turn transcripts + judge rubric reach ~8k tokens; ollama silently cuts anything longer
 
 !apt-get update -qq && apt-get install -y -qq zstd
 !curl -fsSL https://ollama.com/install.sh | sh
 
-env = dict(os.environ, OLLAMA_CONTEXT_LENGTH=CTX, OLLAMA_NUM_PARALLEL=N_PARALLEL, OLLAMA_KEEP_ALIVE="30m")
+# flash attention + 8-bit kv cache halve the context memory, so the 32b judge with a 12k context stays fully on the gpus
+env = dict(os.environ, OLLAMA_CONTEXT_LENGTH=CTX, OLLAMA_NUM_PARALLEL=N_PARALLEL, OLLAMA_KEEP_ALIVE="30m",
+           OLLAMA_FLASH_ATTENTION="1", OLLAMA_KV_CACHE_TYPE="q8_0")
+# a restarted notebook keeps the old server running, and then the new settings above would be silently ignored
+!pkill -f "ollama serve"; sleep 3
 subprocess.Popen(["ollama", "serve"], env=env, stdout=open(f"{WORKDIR}/ollama.log", "w"), stderr=subprocess.STDOUT)
 for _ in range(30):
     try:
@@ -59,6 +64,8 @@ for _ in range(30):
 if not GROQ_JUDGE_KEY and JUDGE_MODEL != AGENT_MODEL:
     !ollama pull {JUDGE_MODEL}
 
+# keep results from an earlier (crashed) run before the fresh clone, see "Time limits" below
+!mkdir -p results_backup && cp -r PsyParse/PsyParse/results "results_backup/results_$(date +%H%M%S)" 2>/dev/null; true
 !rm -rf PsyParse
 !git clone https://github.com/manishsn7340/PsyParse.git
 !pip install -q -r PsyParse/PsyParse/requirements.txt
@@ -81,50 +88,70 @@ with open("PsyParse/PsyParse/.env", "w") as f:
 print(f"Setup complete | mode={MODE} agents={AGENT_MODEL} judge={JUDGE_MODEL} parallel={N_PARALLEL}")
 ```
 
-## Cell 2: check the judge (a few minutes)
+## How to use the cells
+
+Two separate sessions. MODE is fixed by Cell 1 and written to `.env`, so **every later cell uses the MODE from Cell 1**. Changing a command later does not switch modes.
+
+| Session                           | Cell 1 with      | Then run                       | Output                         |
+| --------------------------------- | ---------------- | ------------------------------ | ------------------------------ |
+| A: smoke test (optional, ~20 min) | `MODE = "quick"` | Cell 2, Cell 3, then **stop**  | `results_quick/` (not results) |
+| B: real results (hours)           | `MODE = "full"`  | Cell 2, Cell 4, Cell 5, Cell 6 | `results/`                     |
+
+To go from session A to B: **Run → Restart & clear cell outputs** (Kaggle) / **Runtime → Restart session** (Colab), set `MODE = "full"` in Cell 1, and run Cell 1 again. That pulls the bigger models and writes `QUICK_TEST=0`. Cells 4 and 5 refuse to run if Cell 1 was not in full mode.
+
+Check the first lines that `run_eval.py` prints:
+
+- quick: `*** QUICK_TEST mode ***` ... `intake 3 + therapy 2, baseline 5 | rounds 1, branches 2, k2 2` ... `results -> results_quick/`
+- full (Cell 5): `intake 5 + therapy 10, baseline 15 | rounds 3, branches 4, k2 3` ... `results -> results/`
+
+## Cell 2: check the judge (a few minutes, both sessions)
+
 The strong transcript must score clearly higher than the weak one (gap > 15). If not, the judge is too weak and the final deltas won't mean much; use the Groq judge option.
+
 ```python
 !PYTHONPATH=. python test_judge.py
 ```
 
-## Cell 3: quick end-to-end test (MODE = "quick")
+## Cell 3: grid search for alpha / w1 / w2 (session B only, dev set, 4 interviews)
+
 ```python
-!PYTHONPATH=. python evaluation/run_eval.py 2
-!cat results_quick/summary_table.md
+assert MODE == "full", "restart the session and run Cell 1 with MODE = 'full' first"
+!QUICK_TEST=0 PYTHONPATH=. python evaluation/grid_search.py
 ```
-Open `results_quick/transcripts/<id>.json` (file browser on the left) and check:
-- speakers are labeled correctly (Therapist / Patient)
-- the therapist uses details from the intake
-- the therapy names match
-- nothing looks broken
 
-The scores here mean nothing; this only checks that everything works.
+It prints `best: {'alpha': ..., 'w1': ..., 'w2': ...}`. Write those three numbers into Cell 5 (no need to edit `config.py`).
 
-## Cell 4: grid search for alpha / w1 / w2 (MODE = "full", dev set, 4 interviews)
+## Cell 4: final run (session B only, SOP: N ≥ 10, 10 therapy turns)
+
 ```python
-!PYTHONPATH=. python evaluation/grid_search.py
+assert MODE == "full", "restart the session and run Cell 1 with MODE = 'full' first"
+ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 4
+!QUICK_TEST=0 THERAPY_TURNS=10 ALPHA={ALPHA} W1={W1} W2={W2} PYTHONPATH=. python evaluation/run_eval.py 10 --resume
 ```
-It prints `best: {'alpha': ..., 'w1': ..., 'w2': ...}`. Put those numbers into the next cell (no need to edit `config.py`).
 
-## Cell 5: final run (MODE = "full", SOP: N ≥ 10, 10 therapy turns)
-```python
-!THERAPY_TURNS=10 ALPHA=0.5 W1=0.5 W2=0.5 PYTHONPATH=. python evaluation/run_eval.py 10 --resume
-```
-`--resume` skips scenarios already saved in `results/eval_results.json`. Results are saved after every scenario.
+`--resume` skips scenarios already saved in `results/eval_results.json`. Results are saved after every scenario, so if the session stops you lose at most one scenario.
 
-## Cell 6: download results
+## Cell 5: download results
+
 ```python
-!zip -qr results.zip results results_quick
+!zip -qr results.zip results
 !cat results/summary_table.md
 ```
-- **Kaggle:** download `results.zip` from the Output panel (`/kaggle/working`).
+
+- **Kaggle:** download `results.zip` from the Output panel (`/kaggle/working`). Kaggle may need a page refresh before the file shows up.
 - **Colab:** `from google.colab import files; files.download("results.zip")`.
 
 ---
 
 ### Notes
-- **Time limits:** Kaggle sessions stop after 12 hours (~30 GPU hours per week). Free Colab disconnects after a few hours or when idle. If a full run won't fit, run `run_eval.py 5`, download, then continue in a new session: run Cell 1, upload `eval_results.json` into `results/`, and run Cell 5 again with `--resume`.
+
+- **Run stopped but the session is still alive** (kernel crash, you pressed stop): run Cell 1 again (it copies the old results to `/kaggle/working/results_backup/` before re-cloning), then restore them and run Cell 5 again, it continues with `--resume`:
+  ```python
+  !cp -rT "$(ls -d /kaggle/working/results_backup/results_* | tail -1)" results
+  ```
+- Keep the browser tab open during the long run; an idle/closed interactive session can be stopped by Kaggle.
+- **Time limits:** Kaggle sessions stop after 12 hours (~30 GPU hours per week). Free Colab disconnects after a few hours or when idle. If a full run won't fit, run `run_eval.py 5`, download, then continue in a new session: run Cell 1 with `MODE = "full"`, upload `eval_results.json` into `results/` (create the folder first: `!mkdir -p results`), and run Cell 5 again with the same ALPHA/W1/W2 and `--resume`.
 - If you see `[warn] a call used ... tokens, close to CTX_LIMIT`: set `CTX = "16384"` in Cell 1 and `N_PARALLEL = "1"` (more context per slot uses more GPU memory).
-- If you see `[warn] a reply hit max_tokens`: add `f.write("MAX_TOKENS=800\n")` to the `.env` lines in Cell 1.
-- **Very slow:** the model may not fit in GPU memory and part of it moved to the CPU. Check `!ollama ps` and `ollama.log`, then use smaller models or a lower `N_PARALLEL`.
+- If you see `[warn] a reply hit max_tokens`: add `f.write("MAX_TOKENS=1536\n")` to the `.env` lines in Cell 1.
+- **Very slow:** the model may not fit in GPU memory and part of it moved to the CPU. Run `!ollama ps` while the judge is working: the PROCESSOR column must say `100% GPU`. If it shows a CPU share, set `N_PARALLEL = "1"` in Cell 1 and restart.
 - **Groq judge errors (429):** the free daily token limit was reached. Wait, or lower `JUDGE_SAMPLES` (add `f.write("JUDGE_SAMPLES=1\n")`).

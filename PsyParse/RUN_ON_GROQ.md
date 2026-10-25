@@ -10,8 +10,8 @@ What fits on the free tier:
 **Models** (Groq has retired the Llama chat models; check the current list with the cell below)
 - **Agents** (therapist / patient / evaluator): `openai/gpt-oss-20b`
 - **Judge:** `openai/gpt-oss-120b`. It has to be bigger than the agents, otherwise it gives 90+ to everything.
-- Both are "thinking" models: their hidden reasoning counts against the output limit. Always set **`REASONING_EFFORT=low`** (short thinking, faster) and **`MAX_TOKENS=1024`** (room for thinking + reply). If you see `[warn] a reply hit max_tokens`, raise it to 2048.
-- Groq models have a large context (131k), so set `CTX_LIMIT=131072`. The 8192 default is for Ollama.
+- Both are "thinking" models: their hidden reasoning counts against the output limit. Always set **`REASONING_EFFORT=low`** (short thinking, faster) and **`MAX_TOKENS=2048`** (room for thinking + reply). If you see `[warn] a reply hit max_tokens`, raise it to 3072.
+- Groq models have a large context (131k), so set `CTX_LIMIT=131072`. The 12288 default is for Ollama.
 
 Always set **`PARALLEL_CALLS=1`** with Groq. Parallel calls just hit the per-minute limit (429 errors). The code retries 429s automatically with a growing wait, so a run slows down instead of crashing.
 
@@ -51,7 +51,7 @@ with open("PsyParse/PsyParse/.env", "w") as f:
     f.write(f"JUDGE_MODEL={JUDGE_MODEL}\n")
     f.write("PARALLEL_CALLS=1\n")
     f.write("REASONING_EFFORT=low\n")
-    f.write("MAX_TOKENS=1024\n")
+    f.write("MAX_TOKENS=2048\n")
     f.write("CTX_LIMIT=131072\n")
     f.write("JUDGE_SAMPLES=1\n" if QUICK else "JUDGE_SAMPLES=2\n")
     f.write("QUICK_TEST=1\n" if QUICK else "QUICK_TEST=0\n")
@@ -117,7 +117,7 @@ JUDGE_MODEL=openai/gpt-oss-120b
 PARALLEL_CALLS=1
 JUDGE_SAMPLES=1
 REASONING_EFFORT=low
-MAX_TOKENS=1024
+MAX_TOKENS=2048
 CTX_LIMIT=131072
 ```
 

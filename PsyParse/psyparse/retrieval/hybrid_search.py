@@ -14,6 +14,17 @@ import config
 
 FIELDS = ["core_problems", "emotional_states", "symptoms"]
 
+# everyday chat words. the db is written in clinical language, so these look "rare" to its idf and pushed out
+# the words that actually describe the problem (old keywords were mostly feel/like/want/think)
+CHAT_WORDS = set("""
+feel feeling feels felt like know want wanted think thinking thought really just lot things thing way going make makes
+made hard okay yeah good able try trying start doing does constantly enjoy people time times maybe kind sort bit little
+stuff actually right sure need needs got getting say said saying tell told mean guess pretty big end head worse wrong
+waiting letting talk talking instead away hand used best place places forward stay live looking inside figure notice
+moments life making help come came goes better different long day days thank thanks especially probably
+doesn didn isn wasn couldn wouldn shouldn aren haven won
+""".split())
+
 
 # same tokenizer the bm25 index in data/ was built with
 def tokenize(text: str) -> List[str]:
@@ -63,12 +74,21 @@ class HybridRetriever:
             docs.append(" ".join([as_text(c["case_profile"].get(k)) for k in FIELDS] + tag.get("applicable_conditions", [])))
         self.tfidf = TfidfVectorizer(tokenizer=tokenize, lowercase=False, token_pattern=None)
         self.tfidf.fit(docs)
+        # doc freq back from the smooth idf, idf = ln((1+n)/(1+df)) + 1
+        self.df = np.round((len(docs) + 1) / np.exp(self.tfidf.idf_ - 1) - 1)
 
     def keywords(self, texts: List[str], top_n: int = 10) -> List[str]:
         vec = self.tfidf.transform([" ".join(texts)]).toarray()[0]
         vocab = self.tfidf.get_feature_names_out()
-        top = [i for i in np.argsort(vec)[::-1][:top_n] if vec[i] > 0]
-        return [vocab[i] for i in top]
+        # keep words that also show up in the db (df >= 2), else they can't match anything in bm25 anyway
+        res = []
+        for i in np.argsort(vec)[::-1]:
+            if vec[i] <= 0 or len(res) >= top_n:
+                break
+            w = vocab[i]
+            if w not in CHAT_WORDS and len(w) >= 4 and self.df[i] >= 2:
+                res.append(w)
+        return res
 
     def embed_profile(self, profile: Dict[str, Any]) -> np.ndarray:
         # embed each field on its own and mean pool, same as the case embeddings in the index
@@ -105,7 +125,10 @@ class HybridRetriever:
 
         # 3. hybrid score (Eq. 1), keep top k1 cases
         hyb = alpha * cos + (1.0 - alpha) * bm
-        top = np.argsort(hyb)[::-1][:k1]
+        order = np.argsort(hyb)[::-1]
+        top = order[:k1]
+        # next cases, only used to refill when the top k1 has fewer than k2 therapy types (db is ~69% SFBT)
+        extra = order[k1:3 * k1]
 
         # 4. therapy suitability (Eq. 2)
         # live patient has no topic label, so use the majority topic of the retrieved cases for App
@@ -113,8 +136,8 @@ class HybridRetriever:
         topic = Counter(case_topic.get(self.database[i]["dialog_id"], "Unknown") for i in top).most_common(1)[0][0]
         app_row = self.app_table.get("app", {}).get(topic) or self.app_table.get("app", {}).get("Unknown") or {}
 
-        cands = []
-        for i in top:
+        cands, more = [], []
+        for pos, i in enumerate(list(top) + list(extra)):
             case = self.database[i]
             tag = case.get("therapy_tag", {})
             th = tag.get("therapy_type", "CBT")
@@ -122,7 +145,7 @@ class HybridRetriever:
             if th in self.types:
                 m_s = float(np.clip(np.dot(q, self.type_emb[self.types.index(th)]), 0.0, 1.0))
             app = float(app_row.get(th, 0.5))
-            cands.append({
+            (cands if pos < len(top) else more).append({
                 "case_id": case["dialog_id"],
                 "score": float(hyb[i]),
                 "cos": float(cos[i]),
@@ -145,8 +168,8 @@ class HybridRetriever:
         best: Dict[str, Dict[str, Any]] = {}
         for c in kept:
             best.setdefault(c["therapy_type"], c)
-        if len(best) < k2:
-            for c in sorted(dropped, key=lambda c: c["therapy_type"] == "SFBT"):
+        for pool in [dropped, more]:
+            for c in sorted(pool, key=lambda c: (c["therapy_type"] == "SFBT", -c["s_th"])):
                 if len(best) >= k2:
                     break
                 best.setdefault(c["therapy_type"], c)

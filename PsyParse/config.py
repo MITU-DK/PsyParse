@@ -22,8 +22,8 @@ JUDGE_SAMPLES = int(os.getenv("JUDGE_SAMPLES", "3"))
 TEMP_JUDGE = 0.3
 
 # ---- speed ----
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "512"))        # default output cap per call (json/guidance calls ask for more)
-CTX_LIMIT = int(os.getenv("CTX_LIMIT", "8192"))         # should match OLLAMA_CONTEXT_LENGTH, only used for a warning
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1024"))       # output cap per call, same for both arms (512 cut off long baseline replies)
+CTX_LIMIT = int(os.getenv("CTX_LIMIT", "12288"))         # should match OLLAMA_CONTEXT_LENGTH, only used for a warning
 PARALLEL_CALLS = int(os.getenv("PARALLEL_CALLS", "4"))  # concurrent llm calls in stage 3a/3b, set 1 for rate-limited apis
 # for reasoning models (groq gpt-oss / qwen3): "low" keeps the hidden thinking short so it doesn't eat MAX_TOKENS. empty = not sent
 REASONING_EFFORT = os.getenv("REASONING_EFFORT", "")

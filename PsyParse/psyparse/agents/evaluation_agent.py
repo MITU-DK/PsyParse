@@ -1,7 +1,7 @@
 import re
 import json
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 from psyparse.agents.base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
@@ -76,17 +76,75 @@ class EvaluationAgent(BaseAgent):
         )
         return self._evaluate_json(prompt, {"empathy": 3.0, "stability": 3.0})
 
-    def score_trajectory(self, rollout_dialogue: str, therapy_name: str) -> Dict[str, float]:
-        # how the simulated patient actually took the rollout, used to tell therapies apart in stage 3a
+    def rank_candidates(self, conversation_history: str, candidates: List[str], reactions: List[str]) -> Optional[List[Dict[str, float]]]:
+        # Eq. 4 scores for all branches in ONE call, so the model compares them instead of giving each the same 4.5
+        block = ""
+        for i, (c, r) in enumerate(zip(candidates, reactions), 1):
+            block += f"--- Candidate {i} ---\nTherapist: {c}\nPredicted patient reaction: {r}\n\n"
         prompt = (
-            f"Below is a short simulated counseling exchange using {therapy_name}.\n\n"
-            f"{rollout_dialogue}\n\n"
-            "Judge ONLY the patient's reactions. Score on a continuous scale from 1.0 to 5.0:\n"
-            "- receptivity: does the patient open up, engage with the intervention and move forward "
-            "(1=resists, feels misunderstood or withdraws, 3=neutral, 5=clearly engaged and gaining insight)\n\n"
-            "Respond ONLY with valid JSON: {\"receptivity\": <float>}"
+            "You are comparing candidate therapist replies for the next turn of a counseling session. "
+            "Each candidate comes with the patient's predicted reaction to it.\n\n"
+            f"Recent dialogue:\n{conversation_history}\n\n"
+            f"{block}"
+            "Score EVERY candidate on a continuous 1.0-5.0 scale with one decimal, comparing them against each other: "
+            "the better candidate must get the higher score. Give equal scores only if two candidates are truly equally good.\n\n"
+            "empathy of the therapist reply (E):\n"
+            "  1 = cold, dismissive or generic; 2 = formulaic validation; 3 = accurate reflection of the feelings;\n"
+            "  4 = specific, personal understanding in the client's own terms; 5 = deeply attuned and anticipatory\n"
+            "stability, judged from the predicted patient reaction (S):\n"
+            "  1 = withdraws, feels misunderstood or more distressed; 2 = disengages or gives a flat answer; 3 = neutral, keeps talking;\n"
+            "  4 = opens up or engages with the intervention; 5 = gains insight, feels calmer or commits to a concrete step\n\n"
+            'Respond ONLY with valid JSON: {"scores": [{"id": 1, "empathy": <float>, "stability": <float>}, ...]} '
+            f"with exactly {len(candidates)} entries."
         )
-        return self._evaluate_json(prompt, {"receptivity": 3.0})
+        data = self._raw_json(prompt, max_tokens=300 + 60 * len(candidates))
+        try:
+            rows = {int(x["id"]): x for x in data["scores"]}
+            return [{k: min(5.0, max(1.0, float(rows[i][k]))) for k in ["empathy", "stability"]} for i in range(1, len(candidates) + 1)]
+        except Exception as e:
+            logger.warning("candidate ranking not parseable (%s), scoring one by one", e)
+            return None
+
+    def compare_trajectories(self, rollouts: Dict[str, str]) -> Optional[Dict[str, Dict[str, float]]]:
+        # stage 3a: put the simulated sessions next to each other and score them relative to each other
+        names = list(rollouts)
+        block = ""
+        for i, th in enumerate(names, 1):
+            block += f"=== Session {i} ({th}) ===\n{rollouts[th]}\n\n"
+        prompt = (
+            "Below are short simulated counseling sessions with the SAME client, each using a different therapy.\n\n"
+            f"{block}"
+            "Compare the sessions against each other and score each one on a continuous 1.0-5.0 scale with one decimal. "
+            "The better session must get the higher score; give equal scores only if they are truly equally good.\n"
+            "- empathy: how understood the client is (1 = generic, 5 = deeply attuned to this client)\n"
+            "- alignment: how clearly and correctly the therapist carries out techniques of its own therapy "
+            "(1 = no recognizable technique, 3 = shallow or only mentioned, 5 = skillful step-by-step execution)\n"
+            "- progress: how far the client moves from describing the problem toward new insight, a reframe or a concrete, "
+            "committed step (1 = stays in a listening/validation loop, 5 = clear insight and a concrete commitment)\n\n"
+            'Respond ONLY with valid JSON: {"sessions": [{"id": 1, "empathy": <float>, "alignment": <float>, "progress": <float>}, ...]} '
+            f"with exactly {len(names)} entries."
+        )
+        data = self._raw_json(prompt, max_tokens=300 + 80 * len(names))
+        try:
+            rows = {int(x["id"]): x for x in data["sessions"]}
+            return {th: {k: min(5.0, max(1.0, float(rows[i][k]))) for k in ["empathy", "alignment", "progress"]}
+                    for i, th in enumerate(names, 1)}
+        except Exception as e:
+            logger.warning("trajectory comparison not parseable: %s", e)
+            return None
+
+    def _raw_json(self, prompt: str, max_tokens: Optional[int] = None) -> Dict[str, Any]:
+        raw = self.generate(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            response_format={"type": "json_object"},
+            max_tokens=max_tokens,
+        )
+        try:
+            m = re.search(r"\{.*\}", re.sub(r"```(?:json)?", "", raw), re.DOTALL)
+            return json.loads(m.group(0) if m else raw)
+        except Exception:
+            return {}
 
     def _evaluate_json(self, prompt: str, fallback: Dict[str, float]) -> Dict[str, float]:
         raw = self.generate(

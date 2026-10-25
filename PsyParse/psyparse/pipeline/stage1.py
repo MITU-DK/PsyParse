@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Any, List, Tuple, Optional
 from sklearn.feature_extraction.text import TfidfVectorizer
 import config
-from psyparse.agents.base_agent import format_dialogue
+from psyparse.agents.base_agent import BaseAgent, format_dialogue
 from psyparse.agents.patient_agent import PatientAgent, get_opening
 from psyparse.agents.therapist_agent import TherapistAgent
 from psyparse.retrieval.hybrid_search import HybridRetriever
@@ -43,7 +43,7 @@ def run_stage_1(
     full_dialogue = patient.get_history()
 
     # Extract 6-field structured profile P
-    profile = extract_profile(full_dialogue, therapist)
+    profile = extract_profile(full_dialogue, therapist_model)
 
     # Extract keywords K from the patient's own words only
     patient_texts = [m["content"] for m in full_dialogue if m["role"] == "assistant"]
@@ -52,7 +52,9 @@ def run_stage_1(
     return profile, keywords, full_dialogue, patient
 
 
-def extract_profile(dialogue: List[Dict[str, str]], agent: TherapistAgent) -> Dict[str, Any]:
+def extract_profile(dialogue: List[Dict[str, str]], model: Optional[str] = None) -> Dict[str, Any]:
+    # own agent, the interview therapist's system prompt says "talk to the client, no lists" which fights json mode
+    agent = BaseAgent("You are a clinical assessment assistant. You output only valid JSON.", model=model, temperature=0.0)
     dialogue_str = format_dialogue(dialogue)
     prompt = (
         "Extract a structured clinical assessment profile from this intake conversation.\n"

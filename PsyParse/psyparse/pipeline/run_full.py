@@ -36,7 +36,8 @@ def run_psyparse_pipeline(
     print(f"Stage 1 Complete. keywords={keywords}")
 
     print("Running Stage 2: Multi-Therapy RAG & Guidance Synthesis...")
-    therapist_agent = TherapistAgent(mode="interview", model=model)
+    # not the interview agent: its "speak to the client, no lists" prompt fights the json output
+    therapist_agent = TherapistAgent(mode="guided", model=model)
     selected_therapies, guidance = run_stage_2(
         patient_profile=profile,
         keywords=keywords,

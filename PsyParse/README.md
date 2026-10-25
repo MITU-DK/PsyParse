@@ -56,9 +56,9 @@ flowchart TD
 
 | Stage | Module | Description | Clinical Purpose |
 | :--- | :--- | :--- | :--- |
-| **Stage 1: Diagnostic Intake** | [`stage1.py`](psyparse/pipeline/stage1.py) | 5-turn structured interview (one question-matrix target per turn) between `TherapistAgent` and `PatientAgent`. The patient opens with the real first line of the dataset session. | Extracts a 6-field patient profile JSON (`core_problems`, `emotional_states`, `symptoms`, `cognitive_distortions`, `interpersonal_issues`, `therapeutic_goals`) and TF-IDF keywords from the patient's own words. |
+| **Stage 1: Diagnostic Intake** | [`stage1.py`](psyparse/pipeline/stage1.py) | 5-turn intake between `TherapistAgent` and `PatientAgent`, one question-matrix topic per turn, adapted to what the patient just said. The simulated patient gets a persona built once per scenario from the background plus the client's own lines in the real session (`get_persona`); its opening line is written from that persona. Both are shared with the baseline. | Extracts a 6-field patient profile JSON (`core_problems`, `emotional_states`, `symptoms`, `cognitive_distortions`, `interpersonal_issues`, `therapeutic_goals`) and TF-IDF keywords from the patient's own words. |
 | **Stage 2: Hybrid Retrieval & Synthesis** | [`stage2.py`](psyparse/pipeline/stage2.py), [`hybrid_search.py`](psyparse/retrieval/hybrid_search.py) | Eq. 1: `α·cos(FAISS) + (1-α)·BM25`. Eq. 2: therapy score `w1·M_s + w2·App`. Drops the bottom 30% and keeps the top-3 distinct therapy types. | `TherapistAgent` writes one guidance framework (techniques + procedural steps) per retrieved therapy. |
-| **Stage 3a: Multi-Turn Rollout** | [`stage3a.py`](psyparse/pipeline/stage3a.py) | For each retrieved therapy: 3 simulated rounds on a forked copy of the patient. Replies scoring below `τ_resp` are regenerated (Eq. 3). Rollouts run in parallel. | Scores each therapy on empathy + alignment and the patient's receptivity, and picks the best one ($T^*$). The real patient is never touched. |
+| **Stage 3a: Multi-Turn Rollout** | [`stage3a.py`](psyparse/pipeline/stage3a.py) | For each retrieved therapy: 3 simulated rounds on a forked copy of the patient, spread over the therapy plan. Replies scoring below `τ_resp` are regenerated (Eq. 3). Rollouts run in parallel. | Score = mean $S_{resp}$ + a side-by-side comparison of the rollouts (empathy, alignment, progress); picks the best one ($T^*$). The real patient is never touched. |
 | **Stage 3b: Response Pruning** | [`stage3b.py`](psyparse/pipeline/stage3b.py) | Each turn: 4 candidate replies (Cognitive, Emotional, Behavioral, Socratic angle), each following the current step of the treatment plan. | Simulates the patient's reaction to each candidate, scores empathy + stability (Eq. 4), and sends the best one to the real patient. |
 
 ---
@@ -173,7 +173,7 @@ All in [`config.py`](config.py). Values marked *Paper* come from the paper's imp
 | `INTAKE_TURNS`, `THERAPY_TURNS` | Fixed / env | `5`, `5` | dialogue length; final run uses `THERAPY_TURNS=10` (baseline gets intake + therapy turns) |
 | `JUDGE_MODEL`, `JUDGE_SAMPLES` | env | agent model, `3` | judge model (should be bigger) and number of averaged judge runs |
 | `QUICK_TEST` | env | `0` | `1` = tiny settings for smoke tests |
-| `PARALLEL_CALLS`, `MAX_TOKENS`, `CTX_LIMIT` | env | `4`, `512`, `8192` | speed / safety settings, see the run guides |
+| `PARALLEL_CALLS`, `MAX_TOKENS`, `CTX_LIMIT` | env | `4`, `1024`, `12288` | speed / safety settings, see the run guides |
 
 ---
 
