@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Tuple
 import config
 from psyparse.agents.base_agent import format_dialogue, flip_roles
 from psyparse.agents.patient_agent import PatientAgent
-from psyparse.agents.therapist_agent import TherapistAgent
+from psyparse.agents.therapist_agent import TherapistAgent, is_stock
 from psyparse.agents.evaluation_agent import EvaluationAgent
 
 logger = logging.getLogger(__name__)
@@ -94,10 +94,14 @@ def run_stage_3b(
         turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0)
                              + wg_s * sc.get("goal", (sc.get("empathy", 3.0) + sc.get("stability", 3.0)) / 2), 3) for sc in scored]
 
+        # replies opening with a stock phrase ("I'm glad...", "That's a great...") only count if all 4 do,
+        # the prompt bans them but the model ignores that and the scorer doesn't mind them
+        stock = [is_stock(c) for c in candidates]
+        pool = [i for i in range(len(candidates)) if not stock[i]] or list(range(len(candidates)))
         # Eq. 4 first, the averaged rank breaks ties, random if still tied
-        keys = [(turn_scores[i], -scored[i].get("rank", 0.0)) for i in range(len(candidates))]
-        top = max(keys)
-        best_i = rng.choice([i for i, k in enumerate(keys) if k == top])
+        keys = {i: (turn_scores[i], -scored[i].get("rank", 0.0)) for i in pool}
+        top = max(keys.values())
+        best_i = rng.choice([i for i in pool if keys[i] == top])
         best_r = candidates[best_i]
 
         # 4. Commit best response, real patient reacts
@@ -109,7 +113,7 @@ def run_stage_3b(
         simulated_patient.set_history(real_patient.get_history())
         # keep the candidates so we can see later what the scorer picked and what it threw away
         logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i, "scores": scored,
-                     "focus": therapist.last_focus, "candidates": candidates, "reactions": reactions})
+                     "focus": therapist.last_focus, "stock": stock, "candidates": candidates, "reactions": reactions})
         print(f"  [stage3b] turn {turn}/{max_turns}: branch scores {turn_scores} -> picked {best_i + 1}")
 
         # 6. patient can only end after min_turns (enforced inside PatientAgent.respond)

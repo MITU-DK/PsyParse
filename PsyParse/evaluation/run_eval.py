@@ -8,7 +8,7 @@ from typing import Dict, Any, List, Optional
 import config
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.pipeline.run_full import run_psyparse_pipeline
-from psyparse.agents.base_agent import BaseAgent, clean_history, format_dialogue
+from psyparse.agents.base_agent import BaseAgent, clean_history, format_dialogue, has_cjk
 from psyparse.agents.patient_agent import PatientAgent, get_opening, get_persona
 
 logger = logging.getLogger(__name__)
@@ -109,6 +109,9 @@ class EvaluatorHarness:
             "baseline_turns": len([m for m in baseline if m["role"] == "user"]),
             "psyparse_turns": psy["turns"],
             "valid": valid,
+            # should stay empty now that the patient retries in english, kept to spot it if it still happens
+            "non_english": [n for n, h in [("baseline", baseline), ("psyparse", psy["transcript"])]
+                            if any(has_cjk(m["content"]) for m in h)],
             "baseline_scores": b_scores,
             "psyparse_scores": p_scores,
             "delta": {k: round(p_scores[k] - b_scores[k], 2) for k in METRICS} if valid else None,

@@ -57,6 +57,9 @@ def aggregate_eval_results(results_path: str = str(config.RESULTS_DIR / "eval_re
     wins = sum(1 for r in valid if np.mean(list(r["delta"].values())) > 0)
     lines.append(f"\nPsyPARSE better on average in {wins}/{len(valid)} scenarios.")
     lines.append(f"Chosen therapies (T*): {dict(Counter(r.get('best_therapy') for r in valid))}")
+    bad = [f"{r['scenario_id']} ({', '.join(r['non_english'])})" for r in valid if r.get("non_english")]
+    if bad:
+        lines.append(f"Transcripts with non-English text: {', '.join(bad)}")
 
     table_md = "\n".join(lines)
     config.RESULTS_DIR.mkdir(exist_ok=True)

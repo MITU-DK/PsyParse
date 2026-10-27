@@ -34,6 +34,11 @@ def flip_roles(history: List[Dict[str, str]]) -> List[Dict[str, str]]:
     return res
 
 
+def has_cjk(txt: str) -> bool:
+    # qwen sometimes drifts into chinese in long chats
+    return bool(re.search(r"[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]", txt or ""))
+
+
 _warned = set()
 
 

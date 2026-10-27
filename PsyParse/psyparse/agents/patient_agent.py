@@ -1,6 +1,6 @@
 import re
 from typing import Dict, Any, Optional
-from psyparse.agents.base_agent import BaseAgent
+from psyparse.agents.base_agent import BaseAgent, has_cjk
 
 
 _openings: Dict[str, str] = {}
@@ -96,6 +96,8 @@ class PatientAgent(BaseAgent):
             f"Who you are (stay consistent with this, it is your life): {self.background}\n\n"
             "Guidelines:\n"
             "- You are the CLIENT, never the counselor. Speak in first person, 2-5 sentences, like a real person talking.\n"
+            "- Always speak English.\n"
+            "- Answer in your own words. Don't copy the counselor's lists, plans or drafted messages back to them.\n"
             "- Speak naturally, emotionally, and authentically from your personal background.\n"
             "- Do not use clinical jargon, diagnose yourself, or offer therapeutic solutions.\n"
             "- Express your authentic struggles, hesitations, emotions, and thoughts.\n"
@@ -109,6 +111,12 @@ class PatientAgent(BaseAgent):
     def respond(self, therapist_message: str) -> str:
         self.current_turn += 1
         raw_response = self.send(therapist_message)
+        # the patient drifted into chinese in some runs and the counselor followed, retry in english (same for both arms)
+        tries = 0
+        while has_cjk(raw_response) and tries < 2:
+            tries += 1
+            raw_response = self.generate(self.history[:-1], ephemeral_system=self.system_prompt + "\n[Reply in English only.]")
+            self.history[-1]["content"] = raw_response
 
         if "[SESSION_END]" in raw_response:
             if self.current_turn < self.min_turns:
@@ -125,9 +133,8 @@ class PatientAgent(BaseAgent):
         to a prospective therapist response without modifying the active history.
         """
         temp_messages = self.get_history() + [{"role": "user", "content": proposed_response}]
-        reaction = self.generate(
-            messages=temp_messages,
-            temperature=self.temperature,
-            ephemeral_system=self.system_prompt + "\n[Predict your authentic, immediate reaction to the counselor's utterance.]"
-        )
+        sys = self.system_prompt + "\n[Predict your authentic, immediate reaction to the counselor's utterance.]"
+        reaction = self.generate(messages=temp_messages, temperature=self.temperature, ephemeral_system=sys)
+        if has_cjk(reaction):
+            reaction = self.generate(messages=temp_messages, temperature=self.temperature, ephemeral_system=sys + "\n[Reply in English only.]")
         return reaction.replace("[SESSION_END]", "").strip()

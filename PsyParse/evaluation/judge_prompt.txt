@@ -4,6 +4,10 @@ Rate the therapist's performance on the following 6 clinical dimensions on a con
 Lines starting with "Therapist:" are the counselor being evaluated; lines starting with "Patient:" are the client. Judge only the Therapist.
 Be strict and use the whole scale: polite, supportive but generic counseling belongs around 5.0-7.0. Reserve 8.0+ for responses that clearly meet the top band below, and 9.0+ for exceptional, expert-level work.
 
+Two things always lower the scores, wherever they happen in the transcript:
+- Repetition: Therapist turns that repeat or copy earlier content (the same plan, list, tips or message again, with little new) instead of moving the session forward. Lower Coherence and Strategic Progress, and Completeness if nothing new is added. The more turns are repeated, the lower the scores.
+- Language switching: Therapist turns in a different language than the rest of the session. Lower Coherence and Contextual Personalization.
+
 1. Coherence (Coh.): Logical consistency, smooth topical transitions, and contextual alignment across dialogue turns.
    - 1.0 - 4.0: Highly fragmented, abrupt jumps, contradicting previous statements.
    - 5.0 - 7.0: Generally coherent, minor lapses in conversational continuity.

@@ -25,6 +25,16 @@ KNOWN_TECHNIQUES = {
     "Existential": ["meaning exploration", "responsibility and choice", "facing uncertainty"],
 }
 
+# stock openers the 14b model keeps using even when the prompt bans them (59% of therapy turns in run 5)
+STOCK = re.compile(r"^\W*(it sounds like|that sounds like|that's (a |so |really )?(great|fantastic|wonderful|brilliant)|"
+                   r"it's (so |really |incredibly )?(wonderful|great|meaningful)|i'm (so |really |very )?(glad|thrilled)|it's (completely |totally |perfectly )?(normal|understandable)|you're (very |so )?welcome|"
+                   r"it's (really |incredibly |so )?(tough|brave|hard)|i'm (so |really )?sorry to hear|i (can |completely |totally )?understand)", re.I)
+
+
+def is_stock(txt: str) -> bool:
+    return bool(STOCK.match((txt or "").replace("\u2019", "'").strip()))
+
+
 def fallback_slice(cand: Dict[str, Any]) -> Dict[str, Any]:
     th = cand.get("therapy_type", "CBT")
     techs = KNOWN_TECHNIQUES.get(th) or [t[:120] for t in cand.get("techniques", [])[:2]] or ["supportive exploration"]
@@ -101,9 +111,13 @@ class TherapistAgent(BaseAgent):
             "Only use facts the client actually said. Don't open with a stock phrase or praise ('It sounds like...', "
             "'It's understandable...', 'It's really tough...', 'That's a great...'); start with the substance."
         )
-        if patient_last_response:
-            return self.send(f"{patient_last_response}\n\n[Instruction: {instruction}]")
-        return self.send(f"[Instruction: {instruction}]")
+        msg = f"{patient_last_response}\n\n[Instruction: {instruction}]" if patient_last_response else f"[Instruction: {instruction}]"
+        res = self.send(msg)
+        if is_stock(res):
+            # the model ignores the ban on stock openers half the time, one more try
+            res = self.generate(self.history[:-1], temperature=0.9)
+            self.history[-1]["content"] = res
+        return res
 
     def synthesize_guidance(self, top_therapies: List[Dict[str, Any]], patient_profile: Dict[str, Any]) -> Dict[str, Any]:
         names = [t.get("therapy_type", "CBT") for t in top_therapies]
@@ -263,13 +277,20 @@ class TherapistAgent(BaseAgent):
             )
         instruction += "\nOutput ONLY the counselor's spoken words."
 
-        resp = self.generate(
-            messages=self.get_history(),
-            temperature=temperature,
-            ephemeral_system=self.system_prompt + instruction,
-        )
-        resp = re.sub(r"^\s*\**(counselor|therapist)\**\s*:\s*", "", resp, flags=re.IGNORECASE)
-        return resp.strip().strip('"').strip()
+        resp = ""
+        for t in range(2):
+            resp = self.generate(
+                messages=self.get_history(),
+                temperature=temperature if t == 0 else min(1.0, temperature + 0.2),
+                ephemeral_system=self.system_prompt + instruction,
+            )
+            resp = re.sub(r"^\s*\**(counselor|therapist)\**\s*:\s*", "", resp, flags=re.IGNORECASE).strip().strip('"').strip()
+            if not is_stock(resp):
+                break
+            # half the drafts open with "I'm glad..." / "That's a great..." despite the ban, name it and try once more
+            opener = " ".join(resp.split()[:4])
+            instruction += f"\nDo NOT start with '{opener}' or any other praise or stock phrase. Start directly with the substance."
+        return resp
 
     def generate_diverse_branches(
         self,
