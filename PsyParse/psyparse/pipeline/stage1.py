@@ -32,7 +32,8 @@ def run_stage_1(
     therapist = TherapistAgent(mode="interview", model=therapist_model)
     # spec: interview prompt = baseline counseling strategies + question matrix
     qs = "\n".join(f"- {q}" for q in QUESTION_MATRIX[:config.INTAKE_TURNS])
-    therapist.swap_system_prompt(f"{config.COUNSELOR_PROMPT}\nAsk the following questions systematically, one per reply:\n{qs}")
+    therapist.swap_system_prompt(f"{config.COUNSELOR_PROMPT}\nIn this first part of the session, counsel the client as you normally would "
+                                 f"and also ask the following questions systematically, one per reply:\n{qs}")
 
     opening = get_opening(scenario, model=patient_model)
     patient.add_message("assistant", opening)

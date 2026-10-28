@@ -58,8 +58,10 @@ class TherapistAgent(BaseAgent):
         return config.COUNSELOR_PROMPT
 
     def conduct_interview_turn(self, target_question: str, patient_last_response: Optional[str] = None) -> str:
-        # spec: question matrix, "target question to incorporate naturally"
-        instruction = f"Target question to incorporate naturally in this reply: {target_question}"
+        # paper: intake uses "baseline counseling strategies", so reply like a normal counselor and weave the question in
+        # (only asking the question gave ~60 word replies vs ~350 for the baseline)
+        instruction = ("Respond to the client as you normally would as their counselor, then incorporate this target "
+                       f"question naturally in the same reply: {target_question}")
         msg = f"{patient_last_response}\n\n[Instruction: {instruction}]" if patient_last_response else f"[Instruction: {instruction}]"
         return self.send(msg)
 
