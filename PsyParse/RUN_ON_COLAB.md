@@ -92,17 +92,17 @@ print(f"Setup complete | mode={MODE} agents={AGENT_MODEL} judge={JUDGE_MODEL} pa
 
 Two separate sessions. MODE is fixed by Cell 1 and written to `.env`, so **every later cell uses the MODE from Cell 1**. Changing a command later does not switch modes.
 
-| Session                           | Cell 1 with      | Then run                       | Output                         |
-| --------------------------------- | ---------------- | ------------------------------ | ------------------------------ |
-| A: smoke test (optional, ~20 min) | `MODE = "quick"` | Cell 2, Cell 3, then **stop**  | `results_quick/` (not results) |
-| B: real results (hours)           | `MODE = "full"`  | Cell 2, Cell 4, Cell 5, Cell 6 | `results/`                     |
+| Session                           | Cell 1 with      | Then run                                                        | Output                         |
+| --------------------------------- | ---------------- | --------------------------------------------------------------- | ------------------------------ |
+| A: smoke test (optional, ~20 min) | `MODE = "quick"` | Cell 2, then `!PYTHONPATH=. python evaluation/run_eval.py 1`, then **stop** | `results_quick/` (not results) |
+| B: real results (hours)           | `MODE = "full"`  | Cell 2, Cell 3, Cell 4 (1 scenario, send it for a check), then Cell 5, Cell 6 | `results/`                     |
 
-To go from session A to B: **Run → Restart & clear cell outputs** (Kaggle) / **Runtime → Restart session** (Colab), set `MODE = "full"` in Cell 1, and run Cell 1 again. That pulls the bigger models and writes `QUICK_TEST=0`. Cells 4 and 5 refuse to run if Cell 1 was not in full mode.
+To go from session A to B: **Run → Restart & clear cell outputs** (Kaggle) / **Runtime → Restart session** (Colab), set `MODE = "full"` in Cell 1, and run Cell 1 again. That pulls the bigger models and writes `QUICK_TEST=0`. Cells 3, 4 and 5 refuse to run if Cell 1 was not in full mode.
 
 Check the first lines that `run_eval.py` prints:
 
 - quick: `*** QUICK_TEST mode ***` ... `intake 3 + therapy 2, baseline 5 | rounds 1, branches 2, k2 2` ... `results -> results_quick/`
-- full (Cell 5): `intake 5 + therapy 10, baseline 15 | rounds 3, branches 4, k2 3` ... `results -> results/`
+- full (Cells 4 and 5): `intake 5 + therapy 10, baseline 15 | rounds 3, branches 4, k2 3` ... `results -> results/`
 
 ## Cell 2: check the judge (a few minutes, both sessions)
 
@@ -119,19 +119,31 @@ assert MODE == "full", "restart the session and run Cell 1 with MODE = 'full' fi
 !QUICK_TEST=0 PYTHONPATH=. python evaluation/grid_search.py
 ```
 
-It prints `best: {'alpha': ..., 'w1': ..., 'w2': ...}`. Write those three numbers into Cell 5 (no need to edit `config.py`).
+It prints `best: {'alpha': ..., 'w1': ..., 'w2': ...}`. Write those three numbers into Cells 4 and 5 (no need to edit `config.py`).
 
-## Cell 4: final run (session B only, SOP: N ≥ 10, 10 therapy turns)
+## Cell 4: check run, 1 scenario first (session B only, ~30-40 min)
+
+Runs only the first scenario with the real models, so a bad setup shows up before the long run. Send `results/transcripts/000432.json` (or zip `results/`) for a check: are the PsyParse intake and therapy replies about as long and as concrete as the baseline's?
 
 ```python
 assert MODE == "full", "restart the session and run Cell 1 with MODE = 'full' first"
-ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 4
+ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 3
+!QUICK_TEST=0 THERAPY_TURNS=10 ALPHA={ALPHA} W1={W1} W2={W2} PYTHONPATH=. python evaluation/run_eval.py 1
+```
+
+## Cell 5: final run (session B only, SOP: N ≥ 10, 10 therapy turns)
+
+Same command with 10 scenarios. `--resume` keeps the scenario from Cell 4 and continues with the other 9.
+
+```python
+assert MODE == "full", "restart the session and run Cell 1 with MODE = 'full' first"
+ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 3
 !QUICK_TEST=0 THERAPY_TURNS=10 ALPHA={ALPHA} W1={W1} W2={W2} PYTHONPATH=. python evaluation/run_eval.py 10 --resume
 ```
 
 `--resume` skips scenarios already saved in `results/eval_results.json`. Results are saved after every scenario, so if the session stops you lose at most one scenario.
 
-## Cell 5: download results
+## Cell 6: download results
 
 ```python
 !zip -qr results.zip results
@@ -145,7 +157,7 @@ ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 4
 
 ### Notes
 
-- **Run stopped but the session is still alive** (kernel crash, you pressed stop): run Cell 1 again (it copies the old results to `/kaggle/working/results_backup/` before re-cloning), then restore them and run Cell 5 again, it continues with `--resume`:
+- **Run stopped but the session is still alive** (kernel crash, you pressed stop): run Cell 1 again (it copies the old results to `/kaggle/working/results_backup/` before re-cloning), then restore them and run Cell 5 again (it continues with `--resume`):
   ```python
   !cp -rT "$(ls -d /kaggle/working/results_backup/results_* | tail -1)" results
   ```

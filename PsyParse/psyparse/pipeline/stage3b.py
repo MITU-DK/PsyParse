@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Tuple
 import config
 from psyparse.agents.base_agent import format_dialogue, flip_roles
 from psyparse.agents.patient_agent import PatientAgent
-from psyparse.agents.therapist_agent import TherapistAgent, is_stock
+from psyparse.agents.therapist_agent import TherapistAgent
 from psyparse.agents.evaluation_agent import EvaluationAgent
 
 logger = logging.getLogger(__name__)
@@ -21,8 +21,6 @@ def run_stage_3b(
     t_single: float = config.TEMP_SINGLE,
     we_s: float = config.WE_S,
     ws: float = config.WS,
-    wg_s: float = config.WG_S,
-    support: List[str] = None,
 ) -> Tuple[List[Dict[str, str]], List[Dict[str, Any]]]:
     """
     Stage 3b: Response Pruning for Empathetic Optimization.
@@ -30,7 +28,7 @@ def run_stage_3b(
     prunes via Eq. 4, and prevents premature session closure.
     """
     therapist = TherapistAgent(mode="guided", model=evaluator.model)
-    therapist.setup_rollout_mode(best_therapy_slice, patient_profile, support=support)
+    therapist.setup_rollout_mode(best_therapy_slice, patient_profile)
     # therapist remembers the intake interview
     therapist.set_history(flip_roles(real_patient.get_history()))
 
@@ -53,7 +51,6 @@ def run_stage_3b(
     for turn in range(1, max_turns + 1):
         # 1. Generate diverse therapist candidate branches
         candidates = therapist.generate_diverse_branches(
-            therapy_slice=best_therapy_slice,
             turn=turn,
             max_turns=max_turns,
             n=num_branches,
@@ -65,15 +62,14 @@ def run_stage_3b(
         with ThreadPoolExecutor(max_workers=workers) as ex:
             reactions = list(ex.map(simulated_patient.simulate_reaction, candidates))
 
-        # 3. Eq. 4 scores + ranking, all candidates in one call so they actually get compared
+        # 3. Eq. 4 scores, all candidates in one call
         # last few messages are enough context here and keep the prompt small
         hist = format_dialogue(real_patient.get_history()[-8:])
-        # rank in a shuffled order and again in the reversed order, then average: the scorer tends to just go
-        # down the list, that cancels out this way and only a real preference survives
+        # shuffled order (spec) and again reversed, then averaged: the scorer tends to just go down the list
         order = list(range(len(candidates)))
         rng.shuffle(order)
 
-        def rank(o):
+        def score(o):
             r = evaluator.rank_candidates(hist, [candidates[i] for i in o], [reactions[i] for i in o])
             if r is None:
                 return None
@@ -82,26 +78,20 @@ def run_stage_3b(
                 res[i] = r[pos]
             return res
         with ThreadPoolExecutor(max_workers=max(1, min(config.PARALLEL_CALLS, 2))) as ex:
-            runs = [x for x in ex.map(rank, [order, order[::-1]]) if x]
-        scored = None
+            runs = [x for x in ex.map(score, [order, order[::-1]]) if x]
         if runs:
-            scored = [{k: round(sum(r[i][k] for r in runs) / len(runs), 3) for k in runs[0][i]} for i in range(len(candidates))]
-        if scored is None:
+            scored = [{k: round(sum(r[i][k] for r in runs) / len(runs), 3) for k in ["empathy", "stability"]}
+                      for i in range(len(candidates))]
+        else:
             full = format_dialogue(real_patient.get_history())
             with ThreadPoolExecutor(max_workers=workers) as ex:
                 scored = list(ex.map(lambda cr: evaluator.score_pruning(full, cr[0], cr[1]), zip(candidates, reactions)))
-        # the one-by-one fallback has no goal score, use the mean of the other two there
-        turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0)
-                             + wg_s * sc.get("goal", (sc.get("empathy", 3.0) + sc.get("stability", 3.0)) / 2), 3) for sc in scored]
+        # Eq. 4: S_single = we_s * E + ws * S
+        turn_scores = [round(we_s * sc.get("empathy", 3.0) + ws * sc.get("stability", 3.0), 3) for sc in scored]
 
-        # replies opening with a stock phrase ("I'm glad...", "That's a great...") only count if all 4 do,
-        # the prompt bans them but the model ignores that and the scorer doesn't mind them
-        stock = [is_stock(c) for c in candidates]
-        pool = [i for i in range(len(candidates)) if not stock[i]] or list(range(len(candidates)))
-        # Eq. 4 first, the averaged rank breaks ties, random if still tied
-        keys = {i: (turn_scores[i], -scored[i].get("rank", 0.0)) for i in pool}
-        top = max(keys.values())
-        best_i = rng.choice([i for i in pool if keys[i] == top])
+        # best Eq. 4 score, random tie break
+        top = max(turn_scores)
+        best_i = rng.choice([i for i, x in enumerate(turn_scores) if x == top])
         best_r = candidates[best_i]
 
         # 4. Commit best response, real patient reacts
@@ -113,7 +103,7 @@ def run_stage_3b(
         simulated_patient.set_history(real_patient.get_history())
         # keep the candidates so we can see later what the scorer picked and what it threw away
         logs.append({"turn": turn, "branch_scores": turn_scores, "chosen": best_i, "scores": scored,
-                     "focus": therapist.last_focus, "stock": stock, "candidates": candidates, "reactions": reactions})
+                     "candidates": candidates, "reactions": reactions})
         print(f"  [stage3b] turn {turn}/{max_turns}: branch scores {turn_scores} -> picked {best_i + 1}")
 
         # 6. patient can only end after min_turns (enforced inside PatientAgent.respond)

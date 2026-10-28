@@ -8,7 +8,7 @@ from psyparse.pipeline.stage3a import run_stage_3a
 from psyparse.pipeline.stage3b import run_stage_3b
 from psyparse.retrieval.hybrid_search import HybridRetriever
 from psyparse.agents.evaluation_agent import EvaluationAgent
-from psyparse.agents.therapist_agent import TherapistAgent, support_for
+from psyparse.agents.therapist_agent import TherapistAgent
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,6 @@ def run_psyparse_pipeline(
     print(f"Stage 3a Complete. T* = {best_slice.get('therapy')}")
 
     print(f"Running Stage 3b: Pruned Therapy Dialogue (Using {best_slice.get('therapy', 'selected therapy')})...")
-    support = support_for(guidance, best_slice.get("therapy", ""))
     full_transcript, pruning_logs = run_stage_3b(
         best_therapy_slice=best_slice,
         patient_profile=profile,
@@ -66,7 +65,6 @@ def run_psyparse_pipeline(
         evaluator=evaluator,
         max_turns=turns,
         min_turns=min(turns, config.MIN_THERAPY_TURNS),
-        support=support,
     )
     print("Stage 3b Complete. Pipeline Finished!\n")
 

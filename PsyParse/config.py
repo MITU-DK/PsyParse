@@ -58,6 +58,9 @@ MIN_THERAPY_TURNS = max(1, THERAPY_TURNS - 2)
 BASELINE_TURNS = INTAKE_TURNS + THERAPY_TURNS
 RESULTS_DIR = ROOT / ("results_quick" if QUICK_TEST else "results")
 
+# plain counselor prompt: the whole baseline, and the "baseline counseling strategies" of the psyparse intake (paper stage 1)
+COUNSELOR_PROMPT = "You are a professional psychological counselor. Have a supportive counseling conversation with the client."
+
 # ---- AGENT_TEMPERATURES ----
 TEMP_PATIENT = 0.7
 TEMP_EVAL = 0.0
@@ -72,11 +75,5 @@ W2 = float(os.getenv("W2", "0.5"))         # therapy score weight for App
 WE_M = 0.5          # rollout: empathy weight (Eq. 3)
 WT_M = 0.5          # rollout: alignment weight (Eq. 3)
 TAU_RESP = 2.5      # rollout discard threshold (out of 5)
-# stage 3a totals (2-10) closer than this are a tie and go to the stage 2 score. the rollout scorer gives
-# nearly the same score to every therapy, so smaller gaps are noise (run 3: gaps of 0.03-0.12)
-ROLLOUT_MARGIN = float(os.getenv("ROLLOUT_MARGIN", "0.15"))
-# pruning (Eq. 4) plus a goal-fit term: the paper picks "the response that best fits the therapeutic goals and
-# emotional context", with only E and S the scorer preferred soothing replies over helpful ones
-WE_S = 0.34         # pruning: empathy weight
-WS = 0.33           # pruning: stability weight
-WG_S = 0.33         # pruning: therapeutic goal / helpfulness weight
+WE_S = 0.5          # pruning: empathy weight (Eq. 4)
+WS = 0.5            # pruning: stability weight (Eq. 4)

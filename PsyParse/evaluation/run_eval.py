@@ -65,7 +65,7 @@ class EvaluatorHarness:
     def run_baseline_dialogue(self, scenario: Dict[str, Any], max_turns: int = config.BASELINE_TURNS) -> List[Dict[str, str]]:
         # vanilla llm counselor: no topic, no background, no intake script (SOP: plain LLM baseline)
         therapist = BaseAgent(
-            system_prompt="You are a professional psychological counselor. Have a supportive counseling conversation with the client.",
+            system_prompt=config.COUNSELOR_PROMPT,
             model=self.model,
             temperature=0.7,
         )

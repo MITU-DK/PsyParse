@@ -66,19 +66,19 @@ class EvaluationAgent(BaseAgent):
             "  3 = accurate reflection of the client's feelings\n"
             "  4 = specific, personal understanding in the client's own terms\n"
             "  5 = deeply attuned and anticipatory\n"
-            "stability, judged from the predicted patient reaction (Eq. 4 S):\n"
-            "  1 = client withdraws, feels misunderstood, gets more distressed or pushes back\n"
+            "stability, judged from the predicted patient reaction (Eq. 4 S): is the conversation stable, without "
+            "misunderstanding or a negative reaction?\n"
+            "  1 = client feels misunderstood, gets more distressed, withdraws or pushes back\n"
             "  2 = client disengages or gives a short, flat answer\n"
             "  3 = client stays neutral and keeps talking\n"
-            "  4 = client opens up, shares more, or engages with the intervention\n"
-            "  5 = client gains insight, feels calmer, or commits to a concrete step\n\n"
+            "  4 = client feels understood and stays calm and engaged\n"
+            "  5 = client clearly feels understood, is calmer and opens up further\n\n"
             "Respond ONLY with valid JSON: {\"empathy\": <float>, \"stability\": <float>}"
         )
         return self._evaluate_json(prompt, {"empathy": 3.0, "stability": 3.0})
 
     def rank_candidates(self, conversation_history: str, candidates: List[str], reactions: List[str]) -> Optional[List[Dict[str, float]]]:
-        # Eq. 4 scores for all branches in ONE call, plus a forced best-to-worst ranking. scores alone tied in ~half
-        # the turns (all 4.0) and otherwise just went down with the list position (4.5, 4.4, 4.3, 4.2)
+        # Eq. 4 E and S for all branches in one call (batch scoring with shuffled order, as in the spec)
         block = ""
         for i, (c, r) in enumerate(zip(candidates, reactions), 1):
             block += f"--- Candidate {i} ---\nTherapist: {c}\nPredicted patient reaction: {r}\n\n"
@@ -88,76 +88,24 @@ class EvaluationAgent(BaseAgent):
             "Each candidate comes with the patient's predicted reaction to it.\n\n"
             f"Recent dialogue:\n{conversation_history}\n\n"
             f"{block}"
-            "First read all candidates and decide which one is best for the client right now, considering what each one "
-            "actually does (which technique, how specific to this client, what it adds compared to the earlier turns). "
-            "The order in which they are listed means nothing. Put them in a \"ranking\" from best to worst: every id "
-            "exactly once, no ties. Then score every candidate on a 1.0-5.0 scale with one decimal, consistent with your ranking.\n\n"
+            "Score EVERY candidate on a 1.0-5.0 scale with one decimal. The order in which they are listed means nothing; "
+            "a better candidate must get a higher score.\n\n"
             "empathy of the therapist reply (E):\n"
             "  1 = cold, dismissive or generic; 2 = formulaic validation; 3 = accurate reflection of the feelings;\n"
             "  4 = specific, personal understanding in the client's own terms; 5 = deeply attuned and anticipatory\n"
-            "stability, judged from the predicted patient reaction (S):\n"
-            "  1 = withdraws, feels misunderstood or more distressed; 2 = disengages or gives a flat answer; 3 = neutral, keeps talking;\n"
-            "  4 = opens up or engages with the intervention; 5 = gains insight, feels calmer or commits to a concrete step\n"
-            "therapeutic value of the therapist reply (G):\n"
-            "  1 = no real help: empty praise, stock phrases, repeats earlier turns or keeps polishing a task that is already done;\n"
-            "  2 = mostly questions or reflection; 3 = some useful content;\n"
-            "  4 = substantive help tied to this client's details (insight, a technique carried out, a concrete step);\n"
-            "  5 = rich, personal help that covers feelings, thoughts and actions and clearly moves the client toward their goals\n\n"
-            'Respond ONLY with valid JSON: {"ranking": [<best id>, ..., <worst id>], '
-            '"scores": [{"id": 1, "empathy": <float>, "stability": <float>, "goal": <float>}, ...]} '
-            f"with exactly {n} ids in the ranking and {n} score entries."
+            "stability, judged from the predicted patient reaction (S): is the conversation stable, without misunderstanding "
+            "or a negative reaction?\n"
+            "  1 = feels misunderstood, more distressed, withdraws or pushes back; 2 = disengages or gives a flat answer;\n"
+            "  3 = neutral, keeps talking; 4 = feels understood, calm and engaged; 5 = clearly feels understood, calmer and opens up further\n\n"
+            'Respond ONLY with valid JSON: {"scores": [{"id": 1, "empathy": <float>, "stability": <float>}, ...]} '
+            f"with exactly {n} entries."
         )
-        data = self._raw_json(prompt, max_tokens=300 + 80 * n)
+        data = self._raw_json(prompt, max_tokens=300 + 60 * n)
         try:
             rows = {int(x["id"]): x for x in data["scores"]}
-            res = []
-            for i in range(1, n + 1):
-                e, st = float(rows[i]["empathy"]), float(rows[i]["stability"])
-                g = float(rows[i].get("goal", (e + st) / 2))
-                res.append({k: min(5.0, max(1.0, v)) for k, v in [("empathy", e), ("stability", st), ("goal", g)]})
+            return [{k: min(5.0, max(1.0, float(rows[i][k]))) for k in ["empathy", "stability"]} for i in range(1, n + 1)]
         except Exception as e:
-            logger.warning("candidate ranking not parseable (%s), scoring one by one", e)
-            return None
-        try:
-            order = [int(x) for x in data.get("ranking", [])]
-        except Exception:
-            order = []
-        if sorted(order) == list(range(1, n + 1)):
-            for pos, i in enumerate(order, 1):
-                res[i - 1]["rank"] = float(pos)
-        else:
-            # no usable ranking, derive it from the scores (equal scores share a rank)
-            tot = [sum(r.values()) for r in res]
-            for i, r in enumerate(res):
-                r["rank"] = float(1 + sum(1 for t in tot if t > tot[i]))
-        return res
-
-    def compare_trajectories(self, rollouts: Dict[str, str]) -> Optional[Dict[str, Dict[str, float]]]:
-        # stage 3a: put the simulated sessions next to each other and score them relative to each other
-        names = list(rollouts)
-        block = ""
-        for i, th in enumerate(names, 1):
-            block += f"=== Session {i} ({th}) ===\n{rollouts[th]}\n\n"
-        prompt = (
-            "Below are short simulated counseling sessions with the SAME client, each using a different therapy.\n\n"
-            f"{block}"
-            "Compare the sessions against each other and score each one on a continuous 1.0-5.0 scale with one decimal. "
-            "The better session must get the higher score; give equal scores only if they are truly equally good.\n"
-            "- empathy: how understood the client is (1 = generic, 5 = deeply attuned to this client)\n"
-            "- alignment: how clearly and correctly the therapist carries out techniques of its own therapy "
-            "(1 = no recognizable technique, 3 = shallow or only mentioned, 5 = skillful step-by-step execution)\n"
-            "- progress: how far the client moves from describing the problem toward new insight, a reframe or a concrete, "
-            "committed step (1 = stays in a listening/validation loop, 5 = clear insight and a concrete commitment)\n\n"
-            'Respond ONLY with valid JSON: {"sessions": [{"id": 1, "empathy": <float>, "alignment": <float>, "progress": <float>}, ...]} '
-            f"with exactly {len(names)} entries."
-        )
-        data = self._raw_json(prompt, max_tokens=300 + 80 * len(names))
-        try:
-            rows = {int(x["id"]): x for x in data["sessions"]}
-            return {th: {k: min(5.0, max(1.0, float(rows[i][k]))) for k in ["empathy", "alignment", "progress"]}
-                    for i, th in enumerate(names, 1)}
-        except Exception as e:
-            logger.warning("trajectory comparison not parseable: %s", e)
+            logger.warning("candidate scores not parseable (%s), scoring one by one", e)
             return None
 
     def _raw_json(self, prompt: str, max_tokens: Optional[int] = None) -> Dict[str, Any]:
