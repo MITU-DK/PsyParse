@@ -1,4 +1,6 @@
 import logging
+import threading
+import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Tuple
 import config
@@ -8,6 +10,13 @@ from psyparse.agents.therapist_agent import TherapistAgent, fallback_slice
 from psyparse.agents.evaluation_agent import EvaluationAgent
 
 logger = logging.getLogger(__name__)
+# rollouts run in threads and the fast tokenizer breaks ("Already borrowed") when two threads encode at once
+_enc_lock = threading.Lock()
+
+
+def embed(encoder, txt):
+    with _enc_lock:
+        return encoder.encode([txt], normalize_embeddings=True)[0]
 
 def run_stage_3a(
     selected_therapies: List[Dict[str, Any]],
@@ -21,6 +30,7 @@ def run_stage_3a(
     we_m: float = config.WE_M,
     wt_m: float = config.WT_M,
     total_turns: int = config.THERAPY_TURNS,
+    encoder=None,
 ) -> Tuple[Dict[str, Any], Dict[str, Any], float]:
     """
     Stage 3a: Multi-Turn Rollout for Personalized Therapy Selection.
@@ -39,6 +49,11 @@ def run_stage_3a(
         therapist.setup_rollout_mode(sl, patient_profile)
         therapist.set_history(flip_roles(snap))
 
+        # Eq. 3 A = semantic similarity between the reply and this therapy's techniques + steps (paper: "e.g. semantic
+        # similarity"). the llm alignment score gave 91 of 132 replies the same 4.35, so 3a couldn't tell therapies apart
+        plan_txt = "; ".join(sl.get("techniques", []) + sl.get("procedural_steps", []))
+        plan_vec = embed(encoder, plan_txt)
+
         # simulated patient forked from the post-interview state, never ends early during a rollout
         sim = PatientAgent(scenario=patient.scenario, model=patient.model, min_turns=10 ** 6)
         sim.set_history(snap)
@@ -47,16 +62,18 @@ def run_stage_3a(
         rounds = []
         for r in range(1, num_rounds + 1):
             hist = format_dialogue(sim.get_history())
-            best_msg, best_s = "", -1.0
+            best_msg, best_s, best_ea = "", -1.0, (0.0, 0.0)
 
             # Eq. 3: responses below tau_resp are discarded and regenerated, keep the best one
             for retry in range(max_retries + 1):
                 temp = config.TEMP_SINGLE if retry == 0 else min(1.0, config.TEMP_SINGLE + 0.2)
                 resp = therapist.respond_step(r, total_turns, temperature=temp)
-                sc = evaluator.score_rollout(hist, resp, th)
-                s = we_m * sc.get("empathy", 3.0) + wt_m * sc.get("alignment", 3.0)
+                e = evaluator.score_rollout(hist, resp).get("empathy", 3.0)
+                cos = float(np.dot(embed(encoder, resp), plan_vec))
+                a = 1.0 + 4.0 * max(0.0, cos)  # cos 0..1 -> same 1..5 scale as E
+                s = we_m * e + wt_m * a
                 if s > best_s:
-                    best_s, best_msg = s, resp
+                    best_s, best_msg, best_ea = s, resp, (e, a)
                 if s >= tau_resp:
                     break
 
@@ -64,7 +81,7 @@ def run_stage_3a(
             therapist.add_message("assistant", best_msg)
             reaction = sim.respond(best_msg).replace("[SESSION_END]", "").strip()
             therapist.add_message("user", reaction)
-            rounds.append({"round": r, "s_resp": round(best_s, 3)})
+            rounds.append({"round": r, "s_resp": round(best_s, 3), "e": best_ea[0], "a": round(best_ea[1], 3)})
 
         return th, cum, rounds, sl
 
@@ -79,7 +96,7 @@ def run_stage_3a(
         logs[th] = {"score": round(cum, 3), "rounds": rounds, "slice": sl}
         print(f"  [stage3a] {th}: cumulative S_resp = {cum:.2f} ({[x['s_resp'] for x in rounds]})")
 
-    # exact ties go to the stage 2 suitability score (the 14b scorer often gives every reply the same score)
+    # exact ties (now rare) go to the stage 2 suitability score
     s_th = {c.get("therapy_type"): c.get("s_th", 0.0) for c in selected_therapies}
     win = max(scores, key=lambda k: (scores[k], s_th.get(k, 0.0))) if scores else selected_therapies[0]["therapy_type"]
 

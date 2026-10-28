@@ -22,13 +22,12 @@ class EvaluationAgent(BaseAgent):
         self,
         conversation_history: str,
         therapist_response: str,
-        therapy_name: str,
     ) -> Dict[str, float]:
+        # only E of Eq. 3 here, A is the semantic similarity computed in stage 3a (paper: "e.g. semantic similarity")
         prompt = (
             f"Evaluate the following therapist response within the ongoing session.\n\n"
             f"Dialogue History:\n{conversation_history}\n\n"
             f"Therapist Response:\n{therapist_response}\n\n"
-            f"Target Therapy: {therapy_name}\n\n"
             "Score the response on a continuous scale from 1.0 to 5.0, using one decimal (e.g. 3.6). Use the full range and "
             "do not default to whole numbers; small differences in quality should show up as different scores.\n\n"
             "empathy (Eq. 3 E):\n"
@@ -36,16 +35,10 @@ class EvaluationAgent(BaseAgent):
             "  2 = polite but formulaic validation (\"that sounds hard\")\n"
             "  3 = accurate reflection of the client's feelings\n"
             "  4 = reflects the specific feelings AND their meaning for this client, in the client's own terms\n"
-            "  5 = deeply attuned, anticipates what the client may feel next, makes the client feel truly understood\n"
-            f"alignment with {therapy_name} (Eq. 3 A):\n"
-            "  1 = no recognizable technique, off-track, or invents facts about the client\n"
-            "  2 = mentions a technique or gives generic advice without doing it\n"
-            "  3 = starts a technique but stays shallow\n"
-            "  4 = clearly carries out a technique, tied to the client's actual details\n"
-            "  5 = skillful, step-by-step execution that moves the client forward in the plan\n\n"
-            "Respond ONLY with valid JSON: {\"empathy\": <float>, \"alignment\": <float>}"
+            "  5 = deeply attuned, anticipates what the client may feel next, makes the client feel truly understood\n\n"
+            "Respond ONLY with valid JSON: {\"empathy\": <float>}"
         )
-        return self._evaluate_json(prompt, {"empathy": 3.0, "alignment": 3.0})
+        return self._evaluate_json(prompt, {"empathy": 3.0})
 
     def score_pruning(
         self,

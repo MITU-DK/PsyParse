@@ -54,6 +54,7 @@ def run_psyparse_pipeline(
         patient=patient_agent,
         evaluator=evaluator,
         total_turns=turns,
+        encoder=retriever.encoder,
     )
     print(f"Stage 3a Complete. T* = {best_slice.get('therapy')}")
 

@@ -71,9 +71,12 @@ class TherapistAgent(BaseAgent):
         for t in top_therapies:
             cands.append({
                 "therapy": t.get("therapy_type", "CBT"),
-                "techniques_from_similar_case": [x[:120] for x in t.get("techniques", [])[:3]],
+                # db technique tags are notes about another patient ("exploring george's relationship with his mother"),
+                # the llm used to copy them as the technique names (96/117 in runs 7-8)
+                "notes_from_a_different_patient": [x[:120] for x in t.get("techniques", [])[:3]],
                 "applicable_conditions": t.get("applicable_conditions", [])[:3],
             })
+        copied = {x[:40].lower() for c in cands for x in c["notes_from_a_different_patient"]}
 
         def ask(cs, ns):
             prompt = (
@@ -81,9 +84,13 @@ class TherapistAgent(BaseAgent):
                 "for the following patient profile:\n"
                 f"{json.dumps(patient_profile, indent=2)}\n\n"
                 f"Retrieved candidate therapies:\n{json.dumps(cs, indent=2)}\n\n"
-                "For each therapy give the therapy type, its core techniques for this patient and the procedural steps. "
-                "You must rely on your internal clinical knowledge to actively generate step-by-step procedural_steps for how "
-                "to apply these techniques to this patient.\n"
+                "The notes come from a DIFFERENT patient's case in the database. Use them only as hints about what fits; "
+                "never copy their wording, names, people or events.\n"
+                "For each therapy give the therapy type, its core techniques for this patient and the procedural steps:\n"
+                "- techniques: 2-4 core techniques of that therapy, each as a short standard technique name (2-6 words) "
+                "as found in clinical textbooks.\n"
+                "- procedural_steps: You must rely on your internal clinical knowledge to actively generate step-by-step "
+                "procedural_steps for how to apply these techniques to this patient's own problems.\n"
                 f"Write exactly ONE framework for EACH of these therapies: {json.dumps(ns)}. "
                 "The \"therapy\" field must be exactly the given name (do not merge or rename therapies).\n"
                 "Output strictly valid JSON with this exact schema:\n"
@@ -121,6 +128,8 @@ class TherapistAgent(BaseAgent):
                     if isinstance(f.get(k), str):
                         f[k] = [x.strip() for x in re.split(r"\n|;|(?=Step \d)", f[k]) if x.strip()]
                     f[k] = [str(x) for x in (f.get(k) or []) if str(x).strip()]
+                # drop copied case notes and long descriptions, keep real technique names
+                f["techniques"] = [t for t in f["techniques"] if len(t.split()) <= 8 and t[:40].lower() not in copied]
                 if f["techniques"] and len(f["procedural_steps"]) >= 3:
                     return f
             return None
