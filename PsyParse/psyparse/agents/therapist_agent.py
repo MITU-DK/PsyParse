@@ -25,6 +25,24 @@ KNOWN_TECHNIQUES = {
     "Existential": ["meaning exploration", "responsibility and choice", "facing uncertainty"],
 }
 
+# db labels are short, the 14b model read "PCT" as cbt and gave it cognitive restructuring (run 9)
+FULL_NAMES = {
+    "CBT": "Cognitive Behavioral Therapy (CBT)",
+    "SFBT": "Solution-Focused Brief Therapy (SFBT)",
+    "PCT": "Person-Centered Therapy (PCT, Rogerian / client-centered)",
+    "ACT": "Acceptance and Commitment Therapy (ACT)",
+    "REBT": "Rational Emotive Behavior Therapy (REBT)",
+    "Psychoanalytic": "Psychoanalytic Therapy",
+    "Adlerian": "Adlerian Therapy",
+    "Family": "Family Therapy",
+    "Family Systems": "Family Systems Therapy",
+    "Gestalt": "Gestalt Therapy",
+    "Reality": "Reality Therapy (choice theory)",
+    "Postmodern": "Postmodern / Narrative Therapy",
+    "Existential": "Existential Therapy",
+}
+
+
 def fallback_slice(cand: Dict[str, Any]) -> Dict[str, Any]:
     # only used when the llm gives no usable framework for a therapy
     th = cand.get("therapy_type", "CBT")
@@ -71,6 +89,7 @@ class TherapistAgent(BaseAgent):
         for t in top_therapies:
             cands.append({
                 "therapy": t.get("therapy_type", "CBT"),
+                "full_name": FULL_NAMES.get(t.get("therapy_type", "CBT"), t.get("therapy_type", "CBT")),
                 # db technique tags are notes about another patient ("exploring george's relationship with his mother"),
                 # the llm used to copy them as the technique names (96/117 in runs 7-8)
                 "notes_from_a_different_patient": [x[:120] for x in t.get("techniques", [])[:3]],
@@ -87,7 +106,7 @@ class TherapistAgent(BaseAgent):
                 "The notes come from a DIFFERENT patient's case in the database. Use them only as hints about what fits; "
                 "never copy their wording, names, people or events.\n"
                 "For each therapy give the therapy type, its core techniques for this patient and the procedural steps:\n"
-                "- techniques: 2-4 core techniques of that therapy, each as a short standard technique name (2-6 words) "
+                "- techniques: 2-4 core techniques of that therapy (see full_name), each as a short standard technique name (2-6 words) "
                 "as found in clinical textbooks.\n"
                 "- procedural_steps: You must rely on your internal clinical knowledge to actively generate step-by-step "
                 "procedural_steps for how to apply these techniques to this patient's own problems.\n"
@@ -114,13 +133,22 @@ class TherapistAgent(BaseAgent):
                 logger.error("Failed to parse guidance JSON: %s", e)
                 return []
 
+        # the llm sometimes writes the full name back ("Family Systems Therapy"), map it to the short label first
+        back = {}
+        for k, v in FULL_NAMES.items():
+            back[v.lower()] = k
+            back[v.split(" (")[0].lower()] = k
+
+        def label(f):
+            x = str(f.get("therapy", "")).strip()
+            return back.get(x.lower(), x).lower()
+
         def find(got, name):
             # exact name first, "family" is also inside "family systems"
             others = {n.lower() for n in names if n.lower() != name.lower()}
-            exact = [f for f in got if str(f.get("therapy", "")).strip().lower() == name.lower()]
+            exact = [f for f in got if label(f) == name.lower()]
             # loose match ("CBT" in "CBT framework") but never steal another requested therapy's plan
-            loose = [f for f in got if name.lower() in str(f.get("therapy", "")).lower() and f not in exact
-                     and str(f.get("therapy", "")).strip().lower() not in others]
+            loose = [f for f in got if name.lower() in label(f) and f not in exact and label(f) not in others]
             for f in exact + loose:
                 f = dict(f)
                 # small models sometimes give one string instead of a list
@@ -155,7 +183,7 @@ class TherapistAgent(BaseAgent):
         techs = ", ".join(therapy_slice.get("techniques", []))
         steps = "\n".join(therapy_slice.get("procedural_steps", []))
         guided_prompt = (
-            f"You are a psychological counselor. Using {th_name} techniques, specifically {techs}, following these "
+            f"You are a psychological counselor. Using {FULL_NAMES.get(th_name, th_name)} techniques, specifically {techs}, following these "
             f"procedural steps:\n{steps}\n"
             f"and keeping in mind the patient's profile: {json.dumps(patient_profile)}, respond to the patient.\n"
             "You already had an intake conversation with this patient (it is in the conversation history); continue the "
