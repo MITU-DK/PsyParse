@@ -153,6 +153,20 @@ ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 3
 - **Kaggle:** download `results.zip` from the Output panel (`/kaggle/working`). Kaggle may need a page refresh before the file shows up.
 - **Colab:** `from google.colab import files; files.download("results.zip")`.
 
+## Cell 7 (optional): re-judge the saved transcripts with another judge (~1 h for 10 scenarios)
+
+Scores the same transcripts again with a different judge model, so no pipeline run is needed. The agents don't run here, only the judge (6 calls per scenario). Run it after Cell 5 in the same session, or in a new session: run Cell 1 with `MODE = "full"`, then upload the `transcripts` folder from an earlier `results.zip` to `results/transcripts/` (`!mkdir -p results/transcripts` first).
+
+```python
+NEW_JUDGE = "gemma3:27b"   # or "mistral-small3.2:24b". needs a long context: rubric + the longest transcript is ~13k tokens (gemma2 only has 8k, don't use it)
+!ollama stop {AGENT_MODEL}; ollama stop {JUDGE_MODEL}   # free the gpu memory for the new judge
+!ollama pull {NEW_JUDGE}
+!JUDGE_MODEL={NEW_JUDGE} PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
+!zip -qr rejudge.zip results/rejudge_*
+```
+
+It prints Δ per scenario next to the old judge's Δ and writes `results/rejudge_<model>.json` and `.md` (same metrics, plus the old judge's Δ for comparison). `--resume` continues where it stopped. Free Groq (`gpt-oss-120b`) does not work for this: its 8K tokens/minute limit is smaller than the longest judge calls (~13k tokens).
+
 ---
 
 ### Notes
