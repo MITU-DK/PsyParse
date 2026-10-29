@@ -1,202 +1,299 @@
-# PsyParse 🧠
-### *Adaptive Multi-Agent Psychotherapy Simulation & Evidence-Based Clinical Reasoning*
+<h1 align="center">PsyPARSE · Reproduction</h1>
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Framework](https://img.shields.io/badge/Architecture-Multi--Agent_Simulation-orange.svg)]()
-[![Retrieval](https://img.shields.io/badge/RAG-FAISS%20%2B%20BM25-purple.svg)]()
-[![Model Backend](https://img.shields.io/badge/Backend-Groq%20%7C%20Ollama%20%7C%20OpenAI-lightgrey.svg)]()
+<p align="center">
+  <b>Retrieval-Augmented Slow Thinking for Personalized Empathetic Counseling</b><br/>
+  An independent reimplementation of the AAAI-26 framework on open data and open-weight LLMs
+</p>
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Ollama" src="https://img.shields.io/badge/LLM%20serving-Ollama-000000">
+  <img alt="Agents" src="https://img.shields.io/badge/agents-Qwen2.5--14B-5A4FCF">
+  <img alt="Judge" src="https://img.shields.io/badge/judge-Gemma--4--31B-4285F4">
+  <img alt="Dataset" src="https://img.shields.io/badge/dataset-Psy--Insight%20(EN)-2A9D8F">
+  <img alt="Status" src="https://img.shields.io/badge/status-course%20project-lightgrey">
+</p>
+
+<p align="center">
+  <a href="#results">Results</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#how-it-works">How It Works</a> ·
+  <a href="#citation">Citation</a>
+</p>
 
 ---
 
 ## Overview
 
-**PsyParse** is a modular, multi-agent AI framework designed to simulate, adapt, and evaluate therapeutic dialogues using evidence-based clinical methodologies. Grounded in computational psychotherapy research, PsyParse models clinical encounters across four distinct phases: structured diagnostic intake, hybrid therapeutic knowledge retrieval, parallel trajectory rollout, and real-time branch-pruned dialogue generation.
+PsyPARSE (Wang et al., AAAI-26) improves LLM counseling in three steps: it builds a patient profile, retrieves several suitable therapies, and "thinks slowly" by simulating sessions before it answers. The authors did not release code, prompts, weights or their evaluation judge.
 
-By orchestrating specialized LLM agents (`TherapistAgent`, `PatientAgent`, and `EvaluationAgent`), PsyParse enables reproducible research into automated therapeutic alliance, technique adherence, and patient affective modeling without requiring live clinical interventions.
+This repository rebuilds the complete pipeline from the paper and evaluates it on the English **Psy-Insight** dataset. Everything runs on free hardware (Kaggle, 2× T4) using open-weight models served with Ollama.
+
+**Highlights**
+
+- **All six metrics improve:** PsyPARSE beats a vanilla counselor that uses the same model on every judge metric, by **+18.0** points on average, and wins in **10 / 10** scenarios.
+- **Same pattern as the paper:** the largest gains are in *Technical Specificity* (+23.9) and *Strategic Progress* (+23.1), the smallest in *Humanoid Quality* (+8.4).
+- **Judge sensitivity:** on the same transcripts, the measured gain ranges from **−0.2** to **+18.0** depending on the judge model. We document how the judge was selected.
 
 ---
 
-## System Architecture
+## Table of Contents
+
+- [Results](#results)
+- [How It Works](#how-it-works)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Project Structure](#project-structure)
+- [Differences from the Paper](#differences-from-the-paper)
+- [Limitations](#limitations)
+- [Team](#team)
+- [Citation](#citation)
+
+---
+
+## Results
+
+**Setup**
+
+| | |
+| :--- | :--- |
+| Scenarios | 10 held-out Psy-Insight scenarios |
+| Agents | Qwen2.5-14B-Instruct |
+| Judge | Gemma-4-31B (thinking off), 3 samples averaged |
+| Session length | 5 intake + 10 therapy turns (baseline: 15 turns) |
+
+All scores are on a scale of 10–100. Δ = PsyPARSE − baseline.
+
+| Metric | Baseline | PsyPARSE | Δ | SOP target | Paper Δ (Qwen2.5-32B) |
+| :--- | ---: | ---: | ---: | :---: | ---: |
+| Coherence | 35.9 | 56.7 | **+20.8** | > +5 ✅ | +9.2 |
+| Completeness | 50.5 | 65.9 | **+15.4** | > +8 ✅ | +12.9 |
+| Humanoid Quality | 57.8 | 66.2 | **+8.4** | ≥ +5 ✅ | +7.1 |
+| Technical Specificity | 48.9 | 72.8 | **+23.9** | > +10 ✅ | +21.9 |
+| Strategic Progress | 22.8 | 46.0 | **+23.1** | ≥ +8 ✅ | +14.0 |
+| Context Retention | 60.7 | 77.1 | **+16.5** | ≥ +10 ✅ | +15.3 |
+| **Average** | **46.1** | **64.1** | **+18.0** | | +13.4 |
+
+95% confidence interval of the average Δ: **[+10.9, +25.1]**.
+
+### Judge sensitivity
+
+The paper does not name its judge. We re-scored the same 20 transcripts with three judges using [`evaluation/rejudge.py`](evaluation/rejudge.py):
+
+| Judge | Baseline | PsyPARSE | Δ | Wins | Score range | Length bias* |
+| :--- | ---: | ---: | ---: | :---: | :---: | :---: |
+| Qwen2.5-32B | 90.9 | 90.7 | −0.2 | 6 / 10 | 83–94 | 0.73 |
+| Gemma-3-27B | 83.1 | 84.7 | +1.6 | 6 / 10 | 75–90 | 0.56 |
+| **Gemma-4-31B** | **46.1** | **64.1** | **+18.0** | **10 / 10** | **36–90** | **0.44** |
+
+<sub>*Correlation between the baseline's score and the baseline transcript's length. Lower is better.</sub>
+
+Gemma-4-31B was selected because it uses the full score range, has the lowest length bias, separates a weak and a strong transcript best ([`test_judge.py`](test_judge.py): +60.8 vs +48.3), and comes from a different model family than the agents.
+
+> [!NOTE]
+> The judge was selected using these same transcripts, and N = 10. A confirmation run on unseen scenarios has not been done yet.
+
+---
+
+## How It Works
 
 ```mermaid
-flowchart TD
-    subgraph S1["Stage 1: Clinical Intake & Profiling"]
-        A[Patient Scenario] --> B[Intake Dialogue\n5 Iterative Turns]
-        B --> C[TherapistAgent\nStructured Extraction]
-        C --> D[Patient Profile JSON\n+ TF-IDF Keywords]
+flowchart LR
+    subgraph PsyPARSE
+        direction LR
+        S1["<b>Stage 1</b><br/>Profile construction"] --> S2["<b>Stage 2</b><br/>Multi-therapy RAG"]
+        S2 --> S3a["<b>Stage 3a</b><br/>Multi-turn rollout"]
+        S3a --> S3b["<b>Stage 3b</b><br/>Response pruning"]
     end
 
-    subgraph S2["Stage 2: Hybrid RAG & Synthesis"]
-        D --> E[Hybrid Search\nFAISS Dense + BM25 Lexical]
-        E --> F[Top-K Therapy Modalities\nCBT, ACT, SFBT, etc.]
-        F --> G[TherapistAgent Synthesis]
-        G --> H[Guidance Framework\nPhased Treatment Plan]
-    end
-
-    subgraph S3A["Stage 3a: Parallel Rollout & Strategy Selection"]
-        H --> I["Multi-Turn Rollouts (top-3 therapies x 3 rounds)\nSimulated Patient Copy"]
-        I --> J[EvaluationAgent\nTrajectory Alignment Scoring]
-        J --> K["Selected Optimal Therapy (T*)"]
-    end
-
-    subgraph S3B["Stage 3b: Pruned Multi-Turn Session"]
-        K --> L[Candidate Generation\n4 Strategic Branches per Turn]
-        L --> M[Patient Counter-Response Simulation]
-        M --> N[EvaluationAgent Scoring\nEmpathy + Therapeutic Stability]
-        N --> O[Optimal Turn Execution & State Update]
-    end
-
-    S1 --> S2 --> S3A --> S3B
+    P([Simulated patient]) <-->|intake| S1
+    DB[(487 Psy-Insight cases<br/>FAISS + BM25)] --> S2
+    S3b -->|10 therapy turns| J{{LLM judge}}
+    B["Baseline<br/>plain counselor, 15 turns"] --> J
+    P -.-> B
 ```
+
+| Stage | What it does | Equations |
+| :--- | :--- | :---: |
+| **1 · Profile construction** | Runs 5 intake turns with a structured question matrix, then extracts a 6-field patient profile and TF-IDF keywords. | — |
+| **2 · Multi-therapy RAG** | Runs a hybrid FAISS + BM25 case search, scores therapy types and keeps the top 3. A guidance plan (techniques and procedural steps) is written for each therapy. | Eq. 1–2 |
+| **3a · Multi-turn rollout** | Simulates 3 rounds per therapy on a forked copy of the patient, scoring each reply for empathy and alignment with the plan. The best therapy is selected. | Eq. 3 |
+| **3b · Response pruning** | Generates 4 candidate replies per turn, predicts the patient's reaction to each, and sends the reply with the best empathy and stability score. | Eq. 4 |
+
+The **baseline** uses the same LLM with a plain counselor prompt. It talks to the same simulated patient for the same total number of turns, without a profile, retrieval or slow thinking. Both transcripts are judged independently.
 
 ---
 
-## Core Pipeline Stages
+## Quick Start
 
-| Stage | Module | Description | Clinical Purpose |
-| :--- | :--- | :--- | :--- |
-| **Stage 1: Diagnostic Intake** | [`stage1.py`](psyparse/pipeline/stage1.py) | 5-turn intake between `TherapistAgent` and `PatientAgent`, one question-matrix topic per turn, adapted to what the patient just said. The simulated patient gets a persona built once per scenario from the background plus the client's own lines in the real session (`get_persona`); its opening line is written from that persona. Both are shared with the baseline. | Extracts a 6-field patient profile JSON (`core_problems`, `emotional_states`, `symptoms`, `cognitive_distortions`, `interpersonal_issues`, `therapeutic_goals`) and TF-IDF keywords from the patient's own words. |
-| **Stage 2: Hybrid Retrieval & Synthesis** | [`stage2.py`](psyparse/pipeline/stage2.py), [`hybrid_search.py`](psyparse/retrieval/hybrid_search.py) | Eq. 1: `α·cos(FAISS) + (1-α)·BM25`. Eq. 2: therapy score `w1·M_s + w2·App`. Drops the bottom 30% and keeps the top-3 distinct therapy types. | `TherapistAgent` writes one guidance framework (techniques + procedural steps) per retrieved therapy. |
-| **Stage 3a: Multi-Turn Rollout** | [`stage3a.py`](psyparse/pipeline/stage3a.py) | For each retrieved therapy: 3 simulated rounds on a forked copy of the patient, using only that therapy's slice of the guidance framework. Replies scoring below `τ_resp` are regenerated (Eq. 3). Rollouts run in parallel. | The trajectory with the highest cumulative $S_{resp}$ is selected ($T^*$); exact ties go to the Stage 2 score. The real patient is never touched. |
-| **Stage 3b: Response Pruning** | [`stage3b.py`](psyparse/pipeline/stage3b.py) | Each turn: 4 candidate replies from the same guided prompt (therapy, techniques, procedural steps, profile); diversity comes from `T_single`. | Simulates the patient's reaction to each candidate, scores empathy + stability (Eq. 4) in a shuffled order and its reverse, and sends the best one to the real patient. |
-
----
-
-## Repository Structure
-
-```
-PsyParse/                         # (the inner folder, run everything from here)
-├── config.py                     # all parameters; most can be overridden via .env / shell
-├── requirements.txt
-├── .env                          # API / model settings (gitignored, you create it)
-├── test_judge.py                 # checks the judge prefers a strong transcript over a weak one
-├── RUN_LOCALLY.md                # how to run with Ollama on your machine
-├── RUN_ON_COLAB.md               # how to run on Google Colab / Kaggle
-├── RUN_ON_GROQ.md                # how to run with the Groq API
-├── data/
-│   ├── dev_scenarios.json        # 4 dev scenarios (used for the grid search)
-│   ├── eval_scenarios.json       # 20 evaluation scenarios (Psy-Insight)
-│   ├── therapy_database.json     # 487 cases, 13 therapy types
-│   ├── therapy_faiss.index       # FAISS index of case profiles
-│   ├── therapy_bm25.pkl          # BM25 index of therapy tags
-│   └── app_table.json, therapy_types.json, *.npy   # App scores, therapy type embeddings
-├── evaluation/
-│   ├── run_eval.py               # baseline vs PsyParse A/B evaluation
-│   ├── grid_search.py            # alpha x (w1, w2) grid search on the dev set
-│   ├── aggregate.py              # summary table vs SOP targets
-│   └── judge_prompt.txt          # 6-axis judge rubric
-├── psyparse/
-│   ├── agents/
-│   │   ├── base_agent.py         # LLM client, retries, output cap, transcript helpers
-│   │   ├── therapist_agent.py    # interview, guidance synthesis, step-aware replies
-│   │   ├── patient_agent.py      # simulated patient with snapshot / fork
-│   │   └── evaluation_agent.py   # rollout, pruning and trajectory scoring
-│   ├── pipeline/
-│   │   ├── run_full.py           # runs stages 1 -> 3b
-│   │   └── stage1.py, stage2.py, stage3a.py, stage3b.py
-│   └── retrieval/
-│       └── hybrid_search.py      # FAISS + BM25 retrieval and therapy scoring
-├── results/                      # eval_results.json, summary_table.md, transcripts/
-└── results_quick/                # same, for QUICK_TEST runs (not real results)
-```
-
----
-
-## Getting Started
-
-Pick a setup guide. Each one has the full step-by-step commands:
-
-| Guide | Use when |
-| :--- | :--- |
-| [`RUN_LOCALLY.md`](RUN_LOCALLY.md) | you have a GPU and want to run with Ollama, no API limits |
-| [`RUN_ON_COLAB.md`](RUN_ON_COLAB.md) | you want a free GPU on Google Colab or Kaggle |
-| [`RUN_ON_GROQ.md`](RUN_ON_GROQ.md) | you have no GPU and use the Groq API (free tier has daily limits) |
-
-Short version (Ollama). Run everything from the inner `PsyParse` folder (the one with `config.py`) with `PYTHONPATH=.`:
+### 1. Install
 
 ```bash
 git clone https://github.com/manishsn7340/PsyParse.git
-cd PsyParse/PsyParse              # existing copy (e.g. ~/aa_ML/Project): cd PsyParse
+cd PsyParse/PsyParse            # all commands run from the folder containing config.py
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-`.env` in that folder:
+### 2. Start the model server
+
+```bash
+OLLAMA_CONTEXT_LENGTH=32768 ollama serve
+ollama pull qwen2.5:14b
+ollama pull gemma4:31b
+```
+
+> [!IMPORTANT]
+> Set `OLLAMA_CONTEXT_LENGTH`. The default context is 2–4k tokens, and Ollama silently cuts off the start of longer prompts.
+
+### 3. Configure
+
+Create `.env` next to `config.py`:
+
 ```env
 DEEPSEEK_API_KEY=ollama
 DEEPSEEK_BASE_URL=http://localhost:11434/v1
 DEEPSEEK_MODEL=qwen2.5:14b
-JUDGE_MODEL=qwen2.5:32b      # the judge must be bigger than the agents
+JUDGE_MODEL=gemma4:31b
+JUDGE_REASONING_EFFORT=none
+THERAPY_TURNS=10
 ```
-(The `DEEPSEEK_*` names are left over from the original plan; any OpenAI-compatible endpoint works.)
 
----
-
-## Execution
+### 4. Run
 
 ```bash
-# 1. quick test: tiny settings, finishes in minutes, results in results_quick/ (NOT real numbers)
+# smoke test (tiny settings, writes to results_quick/)
 QUICK_TEST=1 PYTHONPATH=. python evaluation/run_eval.py 2
 
-# 2. check the judge can tell a weak transcript from a strong one
+# judge sanity check: a weak transcript must score clearly below a strong one
 PYTHONPATH=. python test_judge.py
 
-# 3. tune alpha / w1 / w2 on the dev set
-PYTHONPATH=. python evaluation/grid_search.py
+# full evaluation on the first N scenarios, resumable
+PYTHONPATH=. python evaluation/run_eval.py 10 --resume
+PYTHONPATH=. python evaluation/aggregate.py
 
-# 4. final A/B evaluation (SOP: N >= 10 scenarios, 10 therapy turns)
-THERAPY_TURNS=10 ALPHA=0.5 W1=0.5 W2=0.5 PYTHONPATH=. python evaluation/run_eval.py 10 --resume
+# re-score saved transcripts with a different judge
+JUDGE_MODEL=gemma4:31b JUDGE_REASONING_EFFORT=none MAX_TOKENS=2048 \
+  PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
+```
 
-# demo: run the pipeline on one dev scenario and print the transcript
-PYTHONPATH=. python -m psyparse.pipeline.run_full
+Platform-specific guides: [Local / Ollama](RUN_LOCALLY.md) · [Kaggle / Colab](RUN_ON_COLAB.md) (used for the reported results) · [Groq API](RUN_ON_GROQ.md)
+
+> A full scenario needs about 200 LLM calls. Ten scenarios take several hours on 2× T4.
+
+---
+
+## Configuration
+
+All settings live in [`config.py`](config.py) and can be overridden with environment variables.
+
+| Variable | Default | Description |
+| :--- | :---: | :--- |
+| `DEEPSEEK_MODEL` | — | Agent model. The name is historical; any OpenAI-compatible endpoint works. |
+| `JUDGE_MODEL` | agent model | Judge model. It should be larger than the agents and from a different family. |
+| `JUDGE_BASE_URL`, `JUDGE_API_KEY` | agent endpoint | Lets the judge run on a different server. |
+| `JUDGE_SAMPLES` | `3` | Number of judge calls averaged per transcript. |
+| `INTAKE_TURNS`, `THERAPY_TURNS` | `5`, `5` | Session length. The reported run uses `THERAPY_TURNS=10`. |
+| `ROLLOUT_ROUNDS`, `PRUNING_BRANCHES` | `3`, `4` | Paper values for Stages 3a and 3b. |
+| `RAG_TOP_K1`, `RAG_TOP_K2` | `10`, `3` | Cases kept by retrieval and therapies kept after scoring. |
+| `ALPHA`, `W1`, `W2` | `0.5` | Weights of Eq. 1 and Eq. 2. |
+| `WE_M`, `WT_M`, `TAU_RESP` | `0.5`, `0.5`, `2.5` | Rollout weights and discard threshold (Eq. 3). |
+| `WE_S`, `WS` | `0.5`, `0.5` | Pruning weights (Eq. 4). |
+| `PARALLEL_CALLS`, `MAX_TOKENS` | `4`, `1024` | Throughput settings. Use `PARALLEL_CALLS=1` for rate-limited APIs. |
+| `QUICK_TEST` | `0` | `1` shrinks all settings for smoke tests. |
+
+---
+
+## Project Structure
+
+```
+PsyParse/
+├── config.py                 # central configuration
+├── test_judge.py             # judge discrimination check
+├── data/                     # case database, FAISS/BM25 indexes, dev + eval scenarios
+├── psyparse/
+│   ├── agents/               # therapist, patient and scoring agents; LLM client
+│   ├── pipeline/             # stage1 · stage2 · stage3a · stage3b · run_full
+│   └── retrieval/            # hybrid search and therapy scoring
+└── evaluation/
+    ├── run_eval.py           # A/B evaluation (baseline vs PsyPARSE)
+    ├── rejudge.py            # re-score saved transcripts
+    ├── aggregate.py          # summary table vs SOP targets
+    ├── grid_search.py        # alpha / w1 / w2 search on the dev set
+    └── judge_prompt.txt      # six-metric rubric
 ```
 
 ---
 
-## Hyperparameters & Settings
+## Differences from the Paper
 
-All in [`config.py`](config.py). Values marked *Paper* come from the paper's implementation details / SOP Table VI.
+<details>
+<summary>Implementation choices where the paper is unspecified or resources were unavailable</summary>
+<br/>
 
-| Parameter | Type | Default | Meaning |
-| :--- | :--- | :--- | :--- |
-| `ROLLOUT_ROUNDS` | Paper | `3` | simulated rounds per therapy in Stage 3a |
-| `PRUNING_BRANCHES` | Paper | `4` | candidate replies per turn in Stage 3b |
-| `RAG_TOP_K1` | Fixed | `10` | cases kept after hybrid retrieval (Eq. 1) |
-| `RAG_TOP_K2` | Paper | `3` | therapy types kept after scoring (Eq. 2) |
-| `RAG_DROP_FRAC` | Fixed | `0.3` | bottom fraction dropped before picking therapies |
-| `ALPHA` | Tunable | `0.5` | dense (FAISS) vs lexical (BM25) weight, grid {0.3, 0.5, 0.7} |
-| `W1`, `W2` | Tunable | `0.5`, `0.5` | weights of symptom match $M_s$ and applicability $App$ (Eq. 2) |
-| `WE_M`, `WT_M`, `TAU_RESP` | Tunable | `0.5`, `0.5`, `2.5` | rollout empathy / alignment weights and discard threshold (Eq. 3) |
-| `WE_S`, `WS` | Tunable | `0.5`, `0.5` | pruning empathy / stability weights (Eq. 4) |
-| `TEMP_SINGLE` | Fixed | `0.7` | temperature for candidate replies |
-| `INTAKE_TURNS`, `THERAPY_TURNS` | Fixed / env | `5`, `5` | dialogue length; final run uses `THERAPY_TURNS=10` (baseline gets intake + therapy turns) |
-| `JUDGE_MODEL`, `JUDGE_SAMPLES` | env | agent model, `3` | judge model (should be bigger) and number of averaged judge runs |
-| `QUICK_TEST` | env | `0` | `1` = tiny settings for smoke tests |
-| `PARALLEL_CALLS`, `MAX_TOKENS`, `CTX_LIMIT` | env | `4`, `1024`, `16384` | speed / safety settings, see the run guides |
+| Component | Paper | This repository |
+| :--- | :--- | :--- |
+| LLM backend | GPT-4, Qwen2.5, LLaMA-3.x, DeepSeek-V3 | Qwen2.5-14B-Instruct (Ollama) |
+| Data | CPsyCounR / CPsyCounE (Chinese) | Psy-Insight (English): 487 database cases, 20 eval + 4 dev scenarios |
+| *M_s* (Eq. 2) | Symptom match (Jaccard) | Cosine similarity between the profile and therapy-type embeddings |
+| *A* (Eq. 3) | "Keyword / semantic similarity" | MiniLM cosine between the reply and the therapy's techniques and steps |
+| Eq. 4 scoring | Not specified | All 4 candidates scored jointly in two orders and averaged, to cancel position bias |
+| Unknown weights | Not published | Neutral 0.5; τ_resp = 2.5 |
+| Judge | Unnamed LLM, rubric in an unpublished appendix | Gemma-4-31B with our rubric |
+| Human evaluation | Certified counselors | Team review of 5 transcript pairs |
+
+</details>
 
 ---
 
-## Clinical Evaluation Dimensions
+## Limitations
 
-Each transcript (baseline and PsyParse, judged separately) is scored by an LLM judge using [`judge_prompt.txt`](evaluation/judge_prompt.txt) on a 1.0–10.0 scale, reported ×10 (10–100) like the paper. The baseline is the same LLM as a plain counselor: no profile, no retrieval, no slow thinking, and the same number of turns. The reported number is **Δ = PsyParse − baseline**, compared with the SOP targets (`Coh > +5, Cpl > +8, Tec > +10, Hum ≥ +5, Str ≥ +8, Ctx ≥ +10`).
+- Results come from a single run of 10 scenarios, with no repeated seeds.
+- The size of the gain depends strongly on the judge model.
+- The patient and the judge are both simulated by LLMs. There was no rating by human experts.
+- The dataset's labelled therapy was among the top-3 retrieved therapies in 4 of 10 scenarios.
+- Commit `3ea0103` (full therapy names in prompts) was added after the evaluation run and has not been evaluated.
 
-1. **Coherence (Coh.)**: logical flow and smooth topical transitions.
-2. **Completeness (Cpl.)**: how thoroughly the patient's problems, symptoms and emotions are explored.
-3. **Humanoid Quality (Hum.)**: warmth, emotional resonance and anticipatory empathy.
-4. **Technical Specificity (Tec.)**: explicit execution of evidence-based techniques (e.g., CBT restructuring, SFBT scaling questions).
-5. **Strategic Progress (Str.)**: phased movement from exploration to intervention and insight.
-6. **Contextual Personalization (Ctx.)**: use of the patient's personal background and details.
-
----
-
-## Ethical & Safety Notice
-
-> **IMPORTANT DISCLAIMER**  
-> PsyParse is developed exclusively as a **computational research and simulation framework**. It is **not** a certified medical device, does not provide clinical diagnostic services, and is not a substitute for professional mental health care or crisis intervention. Do not use this software for actual psychiatric treatment or real-world clinical decision-making.
+> [!WARNING]
+> This is a research and course project. It is not a medical device and must not be used for real counseling, diagnosis or crisis support.
 
 ---
 
-## License
+## Team
 
-This project is licensed under the [MIT License](LICENSE).
+**E.D.I.T.H**
+
+| Name | Roll No. | Contribution |
+| :--- | :--- | :--- |
+| Manish Shroyan | B24CS026 | Therapy database, FAISS + BM25 hybrid retrieval, pipeline |
+| Mitu Kumar | B24CS029 | Patient / therapist agents, profile construction, therapy matching |
+| Shivam Chaurasia | B24CS039 | Rollout + pruning (slow thinking), evaluation, report |
+
+---
+
+## Citation
+
+If you use this work, please cite the original paper and the dataset:
+
+```bibtex
+@inproceedings{wang2026psyparse,
+  title     = {PsyPARSE: Retrieval-Augmented Slow Thinking for Personalized Empathetic Counseling},
+  author    = {Wang, Longxiang and Zhao, Pukun and Chen, Chen and Bi, Jinhe and Wang, Huacan and Zhang, Tong and Chen, Ronghao},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence (AAAI-26)},
+  year      = {2026}
+}
+
+@article{chen2025psyinsight,
+  title   = {Psy-Insight: Explainable Multi-turn Bilingual Dataset for Mental Health Counseling},
+  author  = {Chen and Sun and Wen and Lian and Gao and Li},
+  journal = {arXiv preprint arXiv:2503.03607},
+  year    = {2025}
+}
+```
+
+## Acknowledgements
+
+- The authors of PsyPARSE, for a detailed method description.
+- The [Psy-Insight](https://github.com/ckqqqq/Psy-Insight) team, for releasing the dataset.
+- [Ollama](https://ollama.com), Qwen and Gemma, for the open-weight models.
+- Kaggle, for free GPU compute.
