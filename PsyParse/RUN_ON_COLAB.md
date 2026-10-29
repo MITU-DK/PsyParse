@@ -158,14 +158,21 @@ ALPHA, W1, W2 = 0.5, 0.5, 0.5     # <- the best values from Cell 3
 Scores the same transcripts again with a different judge model, so no pipeline run is needed. The agents don't run here, only the judge (6 calls per scenario). Run it after Cell 5 in the same session, or in a new session: run Cell 1 with `MODE = "full"`, then upload the `transcripts` folder from an earlier `results.zip` to `results/transcripts/` (`!mkdir -p results/transcripts` first).
 
 ```python
-NEW_JUDGE = "gemma3:27b"   # or "mistral-small3.2:24b". needs a long context: rubric + the longest transcript is ~13k tokens (gemma2 only has 8k, don't use it)
-!ollama stop {AGENT_MODEL}; ollama stop {JUDGE_MODEL}   # free the gpu memory for the new judge
+import subprocess, os, time
+NEW_JUDGE = "gemma4:31b"   # ~20 GB, 256K context, not the qwen family of the agents. other option: "gemma3:27b"
+# restart ollama with a 32k context: the longest transcript + rubric is ~16k tokens and ollama silently cuts the
+# START of a longer prompt (= the rubric). 1 parallel slot so the 31b model + 32k context fit on the 2x T4
+!pkill -f "ollama serve"; sleep 3
+env = dict(os.environ, OLLAMA_CONTEXT_LENGTH="32768", OLLAMA_NUM_PARALLEL="1", OLLAMA_KEEP_ALIVE="30m",
+           OLLAMA_FLASH_ATTENTION="1", OLLAMA_KV_CACHE_TYPE="q8_0")
+subprocess.Popen(["ollama", "serve"], env=env, stdout=open(f"{WORKDIR}/ollama_judge.log", "w"), stderr=subprocess.STDOUT)
+time.sleep(15)
 !ollama pull {NEW_JUDGE}
-!JUDGE_MODEL={NEW_JUDGE} PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
+!CTX_LIMIT=32768 JUDGE_MODEL={NEW_JUDGE} PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
 !zip -qr rejudge.zip results/rejudge_*
 ```
 
-It prints Δ per scenario next to the old judge's Δ and writes `results/rejudge_<model>.json` and `.md` (same metrics, plus the old judge's Δ for comparison). `--resume` continues where it stopped. Free Groq (`gpt-oss-120b`) does not work for this: its 8K tokens/minute limit is smaller than the longest judge calls (~13k tokens).
+It prints Δ per scenario next to the old judge's Δ and writes `results/rejudge_<model>.json` and `.md` (same metrics, plus the old judge's Δ for comparison), one file per judge model, so several judges can be compared on the same transcripts. `--resume` continues where it stopped. If it keeps printing `judge output not parseable`, stop it: that judge doesn't follow the JSON format. Download `rejudge.zip` (Output panel) and send it. Free Groq (`gpt-oss-120b`) does not work for this: its 8K tokens/minute limit is smaller than the longest judge calls (~16k tokens).
 
 ---
 
