@@ -160,6 +160,9 @@ Scores the same transcripts again with a different judge model, so no pipeline r
 ```python
 import subprocess, os, time
 NEW_JUDGE = "gemma4:31b"   # ~20 GB, 256K context, not the qwen family of the agents. other option: "gemma3:27b"
+# gemma4 thinks before answering by default and spends the whole MAX_TOKENS on it, so the json comes back empty.
+# "none" switches thinking off (ignored by models without thinking, like gemma3)
+EFFORT = "none"
 # restart ollama with a 32k context: the longest transcript + rubric is ~16k tokens and ollama silently cuts the
 # START of a longer prompt (= the rubric). 1 parallel slot so the 31b model + 32k context fit on the 2x T4
 !pkill -f "ollama serve"; sleep 3
@@ -168,11 +171,11 @@ env = dict(os.environ, OLLAMA_CONTEXT_LENGTH="32768", OLLAMA_NUM_PARALLEL="1", O
 subprocess.Popen(["ollama", "serve"], env=env, stdout=open(f"{WORKDIR}/ollama_judge.log", "w"), stderr=subprocess.STDOUT)
 time.sleep(15)
 !ollama pull {NEW_JUDGE}
-!CTX_LIMIT=32768 JUDGE_MODEL={NEW_JUDGE} PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
+!CTX_LIMIT=32768 JUDGE_MODEL={NEW_JUDGE} JUDGE_REASONING_EFFORT={EFFORT} MAX_TOKENS=2048 PYTHONPATH=. python evaluation/rejudge.py results/transcripts --resume
 !zip -qr rejudge.zip results/rejudge_*
 ```
 
-It prints Δ per scenario next to the old judge's Δ and writes `results/rejudge_<model>.json` and `.md` (same metrics, plus the old judge's Δ for comparison), one file per judge model, so several judges can be compared on the same transcripts. `--resume` continues where it stopped. If it keeps printing `judge output not parseable`, stop it: that judge doesn't follow the JSON format. Download `rejudge.zip` (Output panel) and send it. Free Groq (`gpt-oss-120b`) does not work for this: its 8K tokens/minute limit is smaller than the longest judge calls (~16k tokens).
+It prints Δ per scenario next to the old judge's Δ and writes `results/rejudge_<model>.json` and `.md` (same metrics, plus the old judge's Δ for comparison), one file per judge model, so several judges can be compared on the same transcripts. `--resume` continues where it stopped and judges invalid scenarios again. If it keeps printing `judge output not parseable`, stop it: check that thinking is off (`EFFORT = "none"`), otherwise that judge doesn't follow the JSON format. If you stopped the cell and get `ConnectError`, the ollama server died with it: run the whole cell again (the model is already downloaded). gemma4:31b is the judge we use for the results (see the judge comparison: least length bias, widest score range, test_judge gap +60.8). Download `rejudge.zip` (Output panel) and send it. Free Groq (`gpt-oss-120b`) does not work for this: its 8K tokens/minute limit is smaller than the longest judge calls (~16k tokens).
 
 ---
 

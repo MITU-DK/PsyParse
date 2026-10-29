@@ -28,7 +28,8 @@ def main():
     out = config.RESULTS_DIR / f"rejudge_{name}.json"
     res = []
     if "--resume" in sys.argv and out.exists():
-        res = json.load(open(out))
+        # invalid ones (judge output not parseable) get judged again
+        res = [r for r in json.load(open(out)) if r["valid"]]
         print(f"resuming, {len(res)} already judged")
     done = {r["scenario_id"] for r in res}
 
